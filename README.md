@@ -83,3 +83,14 @@ chmod a+rwx /mnt/io_tank/
 ```
 
 Note: Still need to load the key and mount `io_tank` following reboot. Can this be automated?
+
+## 2024-12-12 populate storage
+
+Using a combination of compressed and uncompressible data.
+
+```text
+user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    io_tank
+```
