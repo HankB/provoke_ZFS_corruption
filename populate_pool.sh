@@ -8,16 +8,19 @@ set -x
 ############### end of Boilerplate
 
 # some tuning parameters
-max_timeout_seconds=10
-files_per_dir=20
+max_timeout_seconds=10          # timeout for creating compressible files
+files_per_dir=20                # max file creation loops (2 files/loop)
+max_random_count=10             # block count for random files
+random_blk_size=1G            # max block size for random
 
 add_files() {
     cd "$1"
     for fn in $(seq 1 $files_per_dir)
     do
         tmo=$((1 + RANDOM % "$max_timeout_seconds"))
-        timeout "$tmo" yes 0123456789 > "f_$fn" || :
-        xz -0 < "f_$fn"  > "f_$fn.xz"
+        timeout "$tmo" yes 0123456789 > "txt_$fn" || :
+        blocks=$((1 + RANDOM % "$max_random_count"))
+        dd if=/dev/urandom bs=$random_blk_size count=$blocks of="rnd_$fn" 
     done
 }
 
