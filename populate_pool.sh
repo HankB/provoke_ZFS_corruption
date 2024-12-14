@@ -7,6 +7,8 @@ set -o nounset
 set -x
 ############### end of Boilerplate
 
+# see https://github.com/HankB/provoke_ZFS_corruption
+
 # some tuning parameters
 max_timeout_seconds=10          # timeout for creating compressible files
 files_per_dir=20                # max file creation loops (2 files/loop)
