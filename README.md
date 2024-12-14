@@ -86,7 +86,55 @@ Note: Still need to load the key and mount `io_tank` following reboot. Can this 
 
 ## 2024-12-12 populate storage
 
-Using a combination of compressed and uncompressible data.
+Using a combination of compressed and uncompressible data. This task performed by `populate_pool.sh` which creates a three level tier of filesystems and populates with some compressible and incompressible files. Because it creates and mounts directories, it needs to be run as root. It takes no command line arguments but there are some parameters that can be used for tuning operation.
+
+## 2024-12-13 sanoid and syncoid
+
+`populate_pool.sh` can run for a while so while that's going, install `sanoid` from the repo and configure snapshots.
+
+```text
+sudo apt install sanoid lsof mbuffer # lsof and mbuffer were already installed.
+sudo mkdir /etc/sanoid
+sudo cp /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/sanoid.conf # per /usr/share/doc/sanoid/README.Debian
+sudo vim /etc/sanoid/sanoid.conf
+diff /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/sanoid.conf
+```
+
+```text
+hbarta@io:~$ diff /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/sanoid.conf
+35a36,39
+> [io_tank]
+>       use_template = production
+>       recursive = zfs
+>       frequently = 10
+hbarta@io:~$ 
+```
+
+Check operation
+
+```text
+sudo sanoid --cron --verbose # test config
+```
+
+Need to delete the example for `parent2`. Othewwrwise seems to be working as desired. Next task is to `syncoid` to send the entire pool recursively to another host with space on a single drive HDD pool. The prototype command (which eventually results in "permanent errors") is
+
+```text
+/bin/time -p /sbin/syncoid --recursive --no-privilege-elevation rocinante:rpool olive:ST8TB-ZA20HR7B/rocinante-backup/rpool
+```
+
+And the actual command (planned to run on the sending server) will be
+
+```text
+/bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+```
+
+But first must create the destination filesystem on the destination host. (Question: Could the bug be provoked by sending to a filesystem on the same host?)
+
+```text
+sudo zfs create ST8TB-ZA20HR7B/io-backup
+```
+
+The `syncoid` command can be run as a normal user when the appropriate `zfs allow` command is run. On the first run it will complain abnout not being able to mount directories but those can be ignored and if desired, the destination filesystems can be mounted manually.
 
 ```text
 user=hbarta
@@ -94,3 +142,9 @@ sudo zfs allow -u $user \
     compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
     io_tank
 ```
+
+At this instant the `syncoid` command is executing while the `populate_pool.sh` is executing and the pool is at 18% of capacity. The desire is to have the pool at about 40% of capacity. It will be necessary to kill `populate_pool.sh` at that point.
+
+## 2024-12-13 stir the pool
+
+Once the pool is fully populated it will be necessary to alter some of the files in the pool to simulate normal operation. `stir_pool.sh` will randomly regenerate files in the target dataset. Initially this will be approximately 1 in 10.
