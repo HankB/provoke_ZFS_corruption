@@ -140,3 +140,41 @@ user 79.85
 sys 234.76
 hbarta@io:~$ 
 ```
+
+## 2024-12-14 rerunning syncoid
+
+```text
+hbarta@io:~$ /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+Sending incremental io_tank@syncoid_io_2024-12-13:19:23:02-GMT-06:00 ... syncoid_io_2024-12-14:10:25:16-GMT-06:00 (~ 15 KB):
+16.8KiB 0:00:00 [61.9KiB/s] [===================================================================================================] 105%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-13:19:23:11-GMT-06:00 ... syncoid_io_2024-12-14:10:25:28-GMT-06:00 (~ 483 KB):
+ 211KiB 0:00:00 [ 641KiB/s] [==========================================>                                                         ] 43%            
+Sending incremental io_tank/test@syncoid_io_2024-12-13:19:23:19-GMT-06:00 ... syncoid_io_2024-12-14:10:25:41-GMT-06:00 (~ 15 KB):
+16.8KiB 0:00:00 [60.2KiB/s] [===================================================================================================] 105%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-13:19:23:28-GMT-06:00 ... syncoid_io_2024-12-14:10:25:52-GMT-06:00 (~ 15 KB):
+16.8KiB 0:00:00 [55.4KiB/s] [===================================================================================================] 105%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-13:19:23:36-GMT-06:00 ... syncoid_io_2024-12-14:10:26:04-GMT-06:00 (~ 75 KB):
+22.1KiB 0:00:00 [64.5KiB/s] [============================>                                                                       ] 29%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-13:19:23:44-GMT-06:00 ... syncoid_io_2024-12-14:10:26:16-GMT-06:00 (~ 75 KB):
+28.4KiB 0:00:00 [76.1KiB/s] [====================================>                                                               ] 37%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-13:19:41:33-GMT-06:00 ... syncoid_io_2024-12-14:10:26:28-GMT-06:00 (~ 75 KB):
+22.1KiB 0:00:00 [61.4KiB/s] [============================>                                                                       ] 29%            
+real 86.04
+user 2.58
+sys 2.09
+hbarta@io:~$ 
+```
+
+Loop with 15 minute delays.
+
+```text
+hbarta@io:~$ while(:)
+> do
+> /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+> echo
+> echo
+> sleep 750
+> done
+```
+
+After running overnight (nearly 24 hours, no errors reported and `syncoid` is taking 16-20 seconds to complete.)
