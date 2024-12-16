@@ -10,7 +10,15 @@ set -o nounset
 # see https://github.com/HankB/provoke_ZFS_corruption
 
 # tunables
-skip_range=20 # skip 0-20 files and modify 
+skip_range=20                   # skip 0-20 files and modify 
+
+# Modify files. There are many ways to do this
+# but the first cut will just replace a random character in the file.
+modify_file() {
+    file_len=$(stat --printf="%s" "$1")
+    offset=$((RANDOM % "$file_len"))
+    echo x | dd of=file bs=1 count=1 seek=$offset conv=notrunc of="$1"
+}
 
 # following solution found at 
 # https://stackoverflow.com/questions/23356779/how-can-i-store-the-find-command-results-as-an-array-in-bash
@@ -30,6 +38,5 @@ do
     then
         break;
     fi
-    echo skip $skip to $file_index
-    echo "${file_list[$file_index]}"
+    modify_file "${file_list[$file_index]}"
 done
