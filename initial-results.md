@@ -178,3 +178,25 @@ hbarta@io:~$ while(:)
 ```
 
 After running overnight (nearly 24 hours, no errors reported and `syncoid` is taking 16-20 seconds to complete.)
+
+## 2024-12-15 modify files
+
+`stir_pool.sh` is intended to do this. In order to run as an ordinary user, it is necessary to change perms or ownership of all files in the pool. For now...
+
+```text
+user=hbarta
+pool=io_tank
+sudo chown -R $user:$user /mnt/$pool/test/
+./stir_pool.sh
+```
+Observation: Running `stir_pool.sh` concurrently with `syncoid` seems to have an impact on performance beyond the extra blocks that need to be transferred.
+
+## 2024-12-15 things to do differently
+
+* Need more files and filesystems. 140 and 5 respectively - smaller files!
+* Use a .txt or .rnd file extension for easier matching later.
+* Set perms/ownership on files and directories during creation.
+* Put tunables in an ini file of some sort in order to share between scripts. (defer)
+* Provide more efficient ways to modify the files.
+    * `sed -i s/../abcd/ file` replaces first two chars with "abcd"
+    * `echo x | dd of=file bs=1 count=1 seek=<rnd> conv=notrunc` replaces byte at 0 with 'x' 
