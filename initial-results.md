@@ -200,3 +200,4 @@ Observation: Running `stir_pool.sh` concurrently with `syncoid` seems to have an
 * Provide more efficient ways to modify the files.
     * `sed -i s/../abcd/ file` replaces first two chars with "abcd"
     * `echo x | dd of=file bs=1 count=1 seek=<rnd> conv=notrunc` replaces byte at 0 with 'x' 
+* Base text file size on size, not time. On `iox86` the text files are larger than the binary packages.
