@@ -148,3 +148,25 @@ At this instant the `syncoid` command is executing while the `populate_pool.sh` 
 ## 2024-12-13 stir the pool
 
 Once the pool is fully populated it will be necessary to alter some of the files in the pool to simulate normal operation. `stir_pool.sh` will randomly regenerate files in the target dataset. Initially this will be approximately 1 in 10.
+
+## 2024-12-18 success
+
+```
+hbarta@io:~$ zpool status
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:19:40 with 0 errors on Tue Dec 17 14:10:37 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 163 data errors, use '-v' for a list
+hbarta@io:~$
+```
