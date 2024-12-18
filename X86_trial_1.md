@@ -441,3 +441,39 @@ recv   440G   150G   290G        -         -     1%    34%  1.00x    ONLINE  -
 send   448G   153G   295G        -         -     1%    34%  1.00x    ONLINE  -
 hbarta@iox86:~$ 
 ```
+
+Rerunning the `syncoid` command took 338.20s.
+
+## 2024-12-18 stirring and syncing
+
+Looping `stir_pool.sh` and the syncoid command on the other host `io` has successfully provoked the errors. That process will be repeated here, again with a 15 minute delay.
+
+First mount all datasets and change ownership to user.
+
+```text
+for i in $(zfs list -r send -o name -H)
+do 
+    sudo zfs mount $i
+    echo $i mounted
+done
+sudo chown -R hbarta:hbarta /mnt/send
+```
+
+```text
+while(:)
+do
+    time -p /home/hbarta/Programming/provoke_ZFS_corruption/stir_pool.sh 2>/dev/null
+    echo
+    sleep 750
+done
+```
+
+```text
+while(:)
+do
+    time -p /sbin/syncoid --recursive --no-privilege-elevation send recv
+    zpool status send
+    echo
+    sleep 750
+done
+```
