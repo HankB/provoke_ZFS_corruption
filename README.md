@@ -170,3 +170,5 @@ config:
 errors: 163 data errors, use '-v' for a list
 hbarta@io:~$
 ```
+
+A quick check of `dmesg` output and SMART stats for the drive does not reveal any obvious error conditions with the H/W. Scrolling back on the output of the repeated `syncoid` commands I see a number of errors reported. The entire screen buffer can be seen at [syncoid-errors](./syncoid-errors.md) and the buffer begins with a pool status with no errors. At this point in time I plan to stop the loops that stir the pool and send the pool as well as `sanoid` snapshots.
