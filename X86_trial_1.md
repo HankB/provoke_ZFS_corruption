@@ -477,3 +477,7 @@ do
     sleep 750
 done
 ```
+
+## 2024-12-19 no corruption yet
+
+`syncoid` runs are taking about 170s, stirring the pool about 3s, so they don't seem to be synchronizing. Overall, everything appears to be working as desired and w/out the warnings seen on `io`.
