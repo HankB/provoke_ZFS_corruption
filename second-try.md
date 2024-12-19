@@ -1164,3 +1164,27 @@ hbarta@io:~$
 ```
 
 Start looping and stir and syncoid, running them with 10 minute delays between and in separate terminals so they are not synchronized.
+
+## 2024-12-18 success
+
+```
+hbarta@io:~$ zpool status
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:19:40 with 0 errors on Tue Dec 17 14:10:37 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 163 data errors, use '-v' for a list
+hbarta@io:~$
+```
+
+A quick check of `dmesg` output and SMART stats for the drive does not reveal any obvious error conditions with the H/W. Scrolling back on the output of the repeated `syncoid` commands I see a number of errors reported. The entire screen buffer can be seen at [syncoid-errors](./syncoid-errors.md) and the buffer begins with a pool status with no errors. At this point in time I plan to stop the loops that stir the pool and send the pool as well as `sanoid` snapshots.
