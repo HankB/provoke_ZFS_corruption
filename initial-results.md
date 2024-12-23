@@ -294,7 +294,7 @@ sys 2.09
 hbarta@io:~$ 
 ```
 
-Loop with 15 minute delays.
+Loop with ~10 minute delays.
 
 ```text
 hbarta@io:~$ while(:)
@@ -330,3 +330,8 @@ Observation: Running `stir_pool.sh` concurrently with `syncoid` seems to have an
     * `sed -i s/../abcd/ file` replaces first two chars with "abcd"
     * `echo x | dd of=file bs=1 count=1 seek=<rnd> conv=notrunc` replaces byte at 0 with 'x' 
 * Base text file size on size, not time. On `iox86` the text files are larger than the binary packages.
+* provide a command line argument for the sending pool name.
+
+## 2024-12-22 bringing back up
+
+`scrub`, `clear`, `scrub` cleared the errors. Building ZFS from backports and repeating test.
