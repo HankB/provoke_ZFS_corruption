@@ -160,3 +160,7 @@ do
     sleep 750
 done
 ```
+
+## 2024-12-23 still looping - no errors
+
+As of 0900.
