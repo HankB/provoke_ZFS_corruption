@@ -334,4 +334,24 @@ Observation: Running `stir_pool.sh` concurrently with `syncoid` seems to have an
 
 ## 2024-12-22 bringing back up
 
-`scrub`, `clear`, `scrub` cleared the errors. Building ZFS from backports and repeating test.
+`scrub`, `clear`, `scrub` cleared the errors. Building ZFS from backports and repeating test. Loops:
+
+```text
+while(:)
+do
+    /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+    zpool status 
+    echo
+    echo
+    sleep 750
+done
+```
+
+```text
+while(:)
+do
+    /home/hbarta/Programming/provoke_ZFS_corruption/stir_pool.sh io_tank
+    echo
+    sleep 750
+done
+```
