@@ -1,4 +1,4 @@
-# X86 third trial\
+# X86 third trial
 
 Switching to a different H/W platform.
 
