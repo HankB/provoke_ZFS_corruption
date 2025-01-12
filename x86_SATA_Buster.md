@@ -106,7 +106,53 @@ done >>syncoid.txt 2>&1
 while(:)
 do
     date +%Y-%m-%d-%H%M
-    /home/$user/provoke_ZFS_corruption/stir_pool.sh
+    /home/$user/provoke_ZFS_corruption/stir_pool.sh 2>/dev/null
     sleep 750
-done 2>/dev/null >>stir.txt
+done >>stir.txt
 ```
+
+After over a week and over 900 loops there are no errors reported and this test is concluded: bug does not exist in the 0.8.6 release.
+
+## 2025-01-06 move to 2.0.0
+
+`tar` up home directory and begin nuke and pave. Takes about 10 minutes to install Buster. Finish install and start customizing. (Note: look where the untarred files are going.) Install was a bit different this time.
+
+```text
+sudo vim /etc/apt/sources.list # add `contrib`
+sudo apt update 
+apt install -y build-essential libghc-zlib-dev uuid-dev libblkid-dev libssl-dev libnvpair1linux vim git lzop pv mbuffer linux-headers-$(uname -r)
+# Copy the source tar to ~/Downloads
+cd Downloads
+tar xf zfs-2.0.0.tar.gz
+cd zfs-2.0.0
+git checkout master
+sh autogen.sh
+./configure
+make -s -j$(nproc)
+# sudo make install?
+```
+
+Create pools and kick off stress loops (stir, syncoid) and configure `sanoid` snapshots, adding to `/etc/sanoid/sanoid.conf`
+
+```text
+[send/test]
+        use_template = production
+        frequently = 10
+        recursive = zfs
+```
+
+## 2025-01-08 no errors in AM
+
+```text
+errors: No known data errors
+```
+
+162 iterations.
+
+## 2025-01-09 no errors in AM
+
+Kicked off scrub on both pools. 284 iterations.
+
+## 2025-01-12 no errors in AM
+
+Daily (morning) scrubs, 622 loops. Maybe 2.0.0 does not have the corruption bug.
