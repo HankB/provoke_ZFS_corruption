@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>ARHM64 NVME ZFS 2.2.6 - Provoke ZFS corruption</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Methodology <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../methodology/" class="dropdown-item">methodology</a>
+</li>
+                                    
+<li>
+    <a href="../../methodology/setup_2025-02-03/" class="dropdown-item">First methodology exploration</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../arm64_NVME_2.2.6-uninteresting/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../arm64_NVME_bullseye/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#arhm64-nvme-zfs-226" class="nav-link">ARHM64 NVME ZFS 2.2.6</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="arhm64-nvme-zfs-226">ARHM64 NVME ZFS 2.2.6</h1>
+<p>Continuation on the first test platform:</p>
+<ul>
+<li>Raspberry Pi CM4 wioth 8GB RAM</li>
+<li>1TB NVME SSD in PCIe/NVME adapter in official IO board.</li>
+<li>Debian 12 (AKA STable, Bookworm)</li>
+<li>ZFS upgraded from backports</li>
+</ul>
+<p>Prior to upgrading, processed the pool with <code>zfs scrub</code>, <code>zfs clear</code> and <code>zfs clear</code>. This cleared the errors and the test reused the pool rather than recreate it. When the test was repeated, restroring <code>sanoid</code> operation was overlooked so the test proceeded with loops that modify the pool and send the pool. <a href="../arm64_NVME_2.2.6-uninteresting/">Uninteresting results </a> and <a href="../arm64_NVME_2.2.6-interesting/">interestiong results</a> are preserved and segregated.</p>
+<pre><code class="language-text">hbarta@io:~$ while(:)
+do
+    /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+    zpool status 
+    echo
+    echo
+    sleep 750
+done
+</code></pre>
+<pre><code class="language-text">while(:)
+do
+    /home/hbarta/Programming/provoke_ZFS_corruption/stir_pool.sh io_tank
+    echo
+    sleep 750
+done
+</code></pre>
+<pre><code class="language-test">  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:20:57 with 0 errors on Mon Dec 23 11:08:15 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 4 data errors, use '-v' for a list
+hbarta@io:~$ 
+</code></pre>
+<p>The first error reported by <code>syncoid</code> did not seem to cascade but the error count reported by <code>zpool status</code> increased to 4 on the next pass and remained there for four additional passes.</p>
+<pre><code class="language-text">cannot receive incremental stream: checksum mismatch or incomplete stream.
+Partially received snapshot is saved.
+A resuming stream can be generated on the sending system by running:
+    zfs send -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1735001499 io ' zfs send  -I '&quot;'&quot;'io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;'@'&quot;'&quot;'syncoid_io_2024-12-23:18:38:57-GMT-06:00'&quot;'&quot;' '&quot;'&quot;'io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;'@'&quot;'&quot;'syncoid_io_2024-12-23:18:53:57-GMT-06:00'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 1108016 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1735001499 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;' 2&gt;&amp;1' failed: 256 at /sbin/syncoid line 817.
+</code></pre>
+<p>This completes testing on this configuration. This setup will be migrated to Debian Bullseye and an older kernel installed to support testing older ZFS versions.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

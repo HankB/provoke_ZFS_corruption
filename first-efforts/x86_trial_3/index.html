@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>X86 third trial - Provoke ZFS corruption</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Methodology <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../methodology/" class="dropdown-item">methodology</a>
+</li>
+                                    
+<li>
+    <a href="../../methodology/setup_2025-02-03/" class="dropdown-item">First methodology exploration</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../x86_SATA_Buster/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../methodology/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#x86-third-trial" class="nav-link">X86 third trial</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2024-12-23-looping-start-at-0900" class="nav-link">2024-12-23 looping start at 0900</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="x86-third-trial">X86 third trial</h1>
+<p>Switching to a different H/W platform.</p>
+<ul>
+<li>Supermicro X86DTL</li>
+<li>16GB ECC RAM</li>
+<li>2x Intel Xeon E5620 @ 2.40GHz</li>
+<li>Serial Attached SCSI controller: Broadcom / LSI SAS2008 PCI-Express Fusion-MPT SAS-2 [Falcon] (rev 03) (SATA3?)</li>
+<li>2x 500GB EVO 850 on HBA</li>
+<li>1x 240GB Patriot Burst Elite on motherboard SATA2 port. Boot device.</li>
+</ul>
+<pre><code class="language-text">root@orcus:~# zfs --version
+zfs-2.2.6-1~bpo12+3
+zfs-kmod-2.2.6-1~bpo12+3
+root@orcus:~# 
+</code></pre>
+<p>Devices for pools (boot on <code>/dev/sdc</code>)</p>
+<pre><code class="language-text">root@orcus:~# ls -l /dev/disk/by-id|grep -E &quot;sda|sdb&quot;|grep -v part|grep wwn
+lrwxrwxrwx 1 root root  9 Dec 22 20:46 wwn-0x5002538d40878f8e -&gt; ../../sdb
+lrwxrwxrwx 1 root root  9 Dec 22 20:46 wwn-0x5002538d41628a33 -&gt; ../../sda
+root@orcus:~# 
+</code></pre>
+<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d40878f8e
+zfs load-key -a
+chmod a+rwx /mnt/send/
+</code></pre>
+<pre><code class="language-text">zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d41628a33
+chmod a+rwx /mnt/recv/
+</code></pre>
+<pre><code class="language-text">root@orcus:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   716K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   740K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orcus:~# 
+</code></pre>
+<p>Since the text files are generated based on time, they ar a lot larger due to faster processor and storage. If the test results do not produce corruption within about a day, the <code>populate_pool.sh</code> needs to be modified to produce text file size based on byte count vs. time.</p>
+<p><code>syncoid</code> command</p>
+<pre><code>user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test
+</code></pre>
+<p>first, second <code>syncoid</code> runs. SSDs seem to be getting SATA3 throughput.</p>
+<pre><code class="language-text">hbarta@orcus:~$ time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test
+INFO: Sending oldest full snapshot send/test@syncoid_orcus_2024-12-23:00:26:47-GMT-06:00 (~ 86 KB) to new target filesystem:
+47.7KiB 0:00:00 [2.13MiB/s] [======================================================&gt;                                             ] 55%            
+cannot mount 'recv/test': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0@syncoid_orcus_2024-12-23:00:26:47-GMT-06:00 (~ 288.7 GB) to new target filesystem:
+ 288GiB 0:08:18 [ 592MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0@syncoid_orcus_2024-12-23:00:35:06-GMT-06:00 (~ 315.1 GB) to new target filesystem:
+ 315GiB 0:09:05 [ 591MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_0@syncoid_orcus_2024-12-23:00:44:12-GMT-06:00 (~ 266.1 GB) to new target filesystem:
+ 266GiB 0:07:31 [ 603MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_0/l2_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_1@syncoid_orcus_2024-12-23:00:51:44-GMT-06:00 (~ 265.6 GB) to new target filesystem:
+ 265GiB 0:07:35 [ 597MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_0/l2_1': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_2@syncoid_orcus_2024-12-23:00:59:20-GMT-06:00 (~ 280.8 GB) to new target filesystem:
+ 280GiB 0:08:05 [ 593MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_0/l2_2': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_3@syncoid_orcus_2024-12-23:01:07:25-GMT-06:00 (~ 255.4 GB) to new target filesystem:
+ 255GiB 0:07:20 [ 594MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_0/l2_3': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1@syncoid_orcus_2024-12-23:01:14:45-GMT-06:00 (~ 267.8 GB) to new target filesystem:
+ 267GiB 0:07:47 [ 586MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_1': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_0@syncoid_orcus_2024-12-23:01:22:33-GMT-06:00 (~ 317.3 GB) to new target filesystem:
+ 317GiB 0:08:59 [ 602MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_1/l2_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_1@syncoid_orcus_2024-12-23:01:31:33-GMT-06:00 (~ 278.3 GB) to new target filesystem:
+ 278GiB 0:07:56 [ 598MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_1/l2_1': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_2@syncoid_orcus_2024-12-23:01:39:29-GMT-06:00 (~ 330.0 GB) to new target filesystem:
+ 330GiB 0:09:29 [ 593MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_1/l2_2': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_3@syncoid_orcus_2024-12-23:01:48:59-GMT-06:00 (~ 338.5 GB) to new target filesystem:
+ 338GiB 0:09:39 [ 598MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_1/l2_3': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2@syncoid_orcus_2024-12-23:01:58:39-GMT-06:00 (~ 288.8 GB) to new target filesystem:
+ 288GiB 0:08:19 [ 592MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_2': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_0@syncoid_orcus_2024-12-23:02:06:59-GMT-06:00 (~ 338.4 GB) to new target filesystem:
+ 338GiB 0:09:45 [ 592MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_2/l2_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_1@syncoid_orcus_2024-12-23:02:16:44-GMT-06:00 (~ 295.4 GB) to new target filesystem:
+ 295GiB 0:08:23 [ 601MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_2/l2_1': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_2@syncoid_orcus_2024-12-23:02:25:07-GMT-06:00 (~ 228.8 GB) to new target filesystem:
+ 228GiB 0:06:39 [ 586MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_2/l2_2': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_3@syncoid_orcus_2024-12-23:02:31:47-GMT-06:00 (~ 313.2 GB) to new target filesystem:
+ 313GiB 0:09:04 [ 589MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_2/l2_3': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3@syncoid_orcus_2024-12-23:02:40:52-GMT-06:00 (~ 248.4 GB) to new target filesystem:
+ 248GiB 0:07:10 [ 590MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_3': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_0@syncoid_orcus_2024-12-23:02:48:03-GMT-06:00 (~ 303.5 GB) to new target filesystem:
+ 303GiB 0:08:38 [ 599MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_3/l2_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_1@syncoid_orcus_2024-12-23:02:56:42-GMT-06:00 (~ 327.3 GB) to new target filesystem:
+ 327GiB 0:09:24 [ 594MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_3/l2_1': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_2@syncoid_orcus_2024-12-23:03:06:06-GMT-06:00 (~ 266.9 GB) to new target filesystem:
+ 266GiB 0:07:41 [ 591MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_3/l2_2': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_3@syncoid_orcus_2024-12-23:03:13:49-GMT-06:00 (~ 298.3 GB) to new target filesystem:
+ 298GiB 0:08:37 [ 591MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_0/l1_3/l2_3': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_1@syncoid_orcus_2024-12-23:03:22:26-GMT-06:00 (~ 307.9 GB) to new target filesystem:
+ 308GiB 0:08:52 [ 592MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_1': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0@syncoid_orcus_2024-12-23:03:31:19-GMT-06:00 (~ 266.8 GB) to new target filesystem:
+ 266GiB 0:07:37 [ 597MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_1/l1_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_0@syncoid_orcus_2024-12-23:03:38:56-GMT-06:00 (~ 274.0 GB) to new target filesystem:
+ 274GiB 0:07:52 [ 594MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_1/l1_0/l2_0': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_1@syncoid_orcus_2024-12-23:03:46:49-GMT-06:00 (~ 341.2 GB) to new target filesystem:
+ 341GiB 0:09:48 [ 594MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_1/l1_0/l2_1': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_2@syncoid_orcus_2024-12-23:03:56:37-GMT-06:00 (~ 288.7 GB) to new target filesystem:
+ 288GiB 0:08:09 [ 604MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_1/l1_0/l2_2': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_3@syncoid_orcus_2024-12-23:04:04:46-GMT-06:00 (~ 306.3 GB) to new target filesystem:
+ 306GiB 0:08:53 [ 587MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_1/l1_0/l2_3': Insufficient privileges
+INFO: Sending oldest full snapshot send/test/l0_1/l1_1@syncoid_orcus_2024-12-23:04:13:41-GMT-06:00 (~ 296.3 GB) to new target filesystem:
+ 296GiB 0:12:40 [ 399MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount 'recv/test/l0_1/l1_1': Insufficient privileges
+real 14374.81
+user 547.67
+sys 32085.07
+hbarta@orcus:~$ 
+hbarta@orcus:~$ 
+hbarta@orcus:~$ 
+hbarta@orcus:~$ time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test
+Sending incremental send/test@syncoid_orcus_2024-12-23:00:26:47-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:25-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [43.2KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0@syncoid_orcus_2024-12-23:00:26:47-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:25-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [40.3KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_0@syncoid_orcus_2024-12-23:00:35:06-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:25-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.3KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_0/l2_0@syncoid_orcus_2024-12-23:00:44:12-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:26-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [33.0KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_0/l2_1@syncoid_orcus_2024-12-23:00:51:44-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:26-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [40.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_0/l2_2@syncoid_orcus_2024-12-23:00:59:20-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:27-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [37.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_0/l2_3@syncoid_orcus_2024-12-23:01:07:25-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:27-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.4KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_1@syncoid_orcus_2024-12-23:01:14:45-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:27-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [40.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_1/l2_0@syncoid_orcus_2024-12-23:01:22:33-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:28-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.2KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_1/l2_1@syncoid_orcus_2024-12-23:01:31:33-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:28-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [37.5KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_1/l2_2@syncoid_orcus_2024-12-23:01:39:29-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:29-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [37.2KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_1/l2_3@syncoid_orcus_2024-12-23:01:48:59-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:29-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [41.6KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_2@syncoid_orcus_2024-12-23:01:58:39-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:29-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [42.1KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_2/l2_0@syncoid_orcus_2024-12-23:02:06:59-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:30-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.0KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_2/l2_1@syncoid_orcus_2024-12-23:02:16:44-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:30-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [37.2KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_2/l2_2@syncoid_orcus_2024-12-23:02:25:07-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:31-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [41.0KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_2/l2_3@syncoid_orcus_2024-12-23:02:31:47-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:31-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.2KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_3@syncoid_orcus_2024-12-23:02:40:52-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:31-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [39.6KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_3/l2_0@syncoid_orcus_2024-12-23:02:48:03-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:32-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.9KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_3/l2_1@syncoid_orcus_2024-12-23:02:56:42-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:32-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [39.5KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_3/l2_2@syncoid_orcus_2024-12-23:03:06:06-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:33-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [39.6KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_0/l1_3/l2_3@syncoid_orcus_2024-12-23:03:13:49-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:33-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [36.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_1@syncoid_orcus_2024-12-23:03:22:26-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:34-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.3KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_1/l1_0@syncoid_orcus_2024-12-23:03:31:19-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:34-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [39.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_1/l1_0/l2_0@syncoid_orcus_2024-12-23:03:38:56-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:34-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [38.3KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_1/l1_0/l2_1@syncoid_orcus_2024-12-23:03:46:49-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:35-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [37.8KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_1/l1_0/l2_2@syncoid_orcus_2024-12-23:03:56:37-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:35-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [39.5KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_1/l1_0/l2_3@syncoid_orcus_2024-12-23:04:04:46-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:36-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [40.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental send/test/l0_1/l1_1@syncoid_orcus_2024-12-23:04:13:41-GMT-06:00 ... syncoid_orcus_2024-12-23:07:42:36-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [39.6KiB/s] [=====================================&gt;                                                              ] 38%            
+real 12.00
+user 2.95
+sys 6.08
+hbarta@orcus:~$ 
+</code></pre>
+<h2 id="2024-12-23-looping-start-at-0900">2024-12-23 looping start at 0900</h2>
+<p>The loops run considerably faster.</p>
+<pre><code class="language-text">while(:)
+do
+    time -p /home/hbarta/Programming/provoke_ZFS_corruption/stir_pool.sh 2&gt;/dev/null
+    echo
+    sleep 750
+done
+</code></pre>
+<pre><code class="language-text">while(:)
+do
+    time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test
+    zpool status send
+    echo
+    sleep 750
+done
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

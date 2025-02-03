@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>ARM64 Pi CM4 Initial Results - Provoke ZFS corruption</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Methodology <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../methodology/" class="dropdown-item">methodology</a>
+</li>
+                                    
+<li>
+    <a href="../../methodology/setup_2025-02-03/" class="dropdown-item">First methodology exploration</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../arm64_SATA_USB_trial/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../second-try/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#arm64-pi-cm4-initial-results" class="nav-link">ARM64 Pi CM4 Initial Results</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2024-12-12-build-data-source" class="nav-link">2024-12-12 build data source</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-12-populate-storage" class="nav-link">2024-12-12 populate storage</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-12-populate-storage_1" class="nav-link">2024-12-12 populate storage</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-13-sanoid-and-syncoid" class="nav-link">2024-12-13 sanoid and syncoid</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-13-stir-the-pool" class="nav-link">2024-12-13 stir the pool</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-13" class="nav-link">2024-12-13</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-14-rerunning-syncoid" class="nav-link">2024-12-14 rerunning syncoid</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-15-modify-files" class="nav-link">2024-12-15 modify files</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-15-things-to-do-differently" class="nav-link">2024-12-15 things to do differently</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-22-bringing-back-up" class="nav-link">2024-12-22 bringing back up</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="arm64-pi-cm4-initial-results">ARM64 Pi CM4 Initial Results</h1>
+<h2 id="2024-12-12-build-data-source">2024-12-12 build data source</h2>
+<p>Use the Ansible playbooks in <a href="https://github.com/HankB/polana-ansible">https://github.com/HankB/polana-ansible</a>.</p>
+<pre><code class="language-text">ansible-playbook provision-Debian.yml -b -K --extra-vars &quot;ssd_dev=/dev/sdb \
+    os_image=/home/hbarta/Downloads/Pi/Debian/20231109_raspi_4_bookworm.img.xz \
+    new_host_name=io poolname=io_tank part_prefix=&quot;&quot;\
+    eth_mac=dc:a6:32:bf:65:b1 wifi_mac=dc:a6:32:bf:65:b2&quot;
+</code></pre>
+<p><code>blkdisk</code> failed on USB connected SSD but other commands succeeded. ZFS version for pool creation is <code>zfs-2.1.11-1</code> (on Debian Bookworm.)</p>
+<pre><code class="language-text">PLAY RECAP *******************************************************************************************************
+localhost                  : ok=28   changed=19   unreachable=0    failed=0    skipped=1    rescued=0    ignored=1   
+</code></pre>
+<p>Failed to boot. <code>start4.elf is not compatible</code> Repeating playbook on the target host (booting RpiOS form SD card) and using a newer Debian image. ZFS version is <code>zfs-2.2.3-1~bpo12+1~rpt1</code> (module version matches.)</p>
+<pre><code class="language-text">ansible-playbook provision-Debian.yml -b -K --extra-vars &quot;ssd_dev=/dev/nvme0n1 \
+    os_image=/home/hbarta/Downloads/Pi/Debian/20231109_raspi_4_bookworm.img.xz \
+    new_host_name=io poolname=io_tank part_prefix=&quot;p&quot;\
+    eth_mac=dc:a6:32:bf:65:b1 wifi_mac=dc:a6:32:bf:65:b2&quot;
+</code></pre>
+<p>Copy authorized_keys from other host (to permit passwordless login for further Ansible operations.)</p>
+<pre><code class="language-text">ansible-playbook first-boot-Debian.yml -i inventory -l 192.168.1.197 -u root
+</code></pre>
+<p>Note: Playbook hangs on the upgrade and has to be killed and the upgrade completed manually whereupon the playbook can be rerun.</p>
+<p>Remap the MAC/IP address (to get a static IP and DNS - local requirement) and reboot to launch the most recent kernel and new IP address/.</p>
+<pre><code class="language-text">ansible-playbook second-boot-bookworm-Debian.yml -i inventory -l io -u root \
+     --extra-vars &quot;poolname=io_tank&quot; --skip-tags &quot;docker&quot;
+</code></pre>
+<h2 id="2024-12-12-populate-storage">2024-12-12 populate storage</h2>
+<p>Recreate pool using encryption.</p>
+<pre><code class="language-text">zpool destroy io_tank
+user=hbarta
+chown -R $user:$user /home/$user
+dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -o ashift=13 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/io_tank \
+      io_tank /dev/disk/by-id/nvme-eui.0000000001000000e4d25c8051695501-part3
+zfs load-key -a
+zfs mount io_tank
+chmod a+rwx /mnt/io_tank/
+</code></pre>
+<p>Note: Still need to load the key and mount <code>io_tank</code> following reboot. Can this be automated?</p>
+<h2 id="2024-12-12-populate-storage_1">2024-12-12 populate storage</h2>
+<p>Using a combination of compressed and uncompressible data. This task performed by <code>populate_pool.sh</code> which creates a three level tier of filesystems and populates with some compressible and incompressible files. Because it creates and mounts directories, it needs to be run as root. It takes no command line arguments but there are some parameters that can be used for tuning operation.</p>
+<h2 id="2024-12-13-sanoid-and-syncoid">2024-12-13 sanoid and syncoid</h2>
+<p><code>populate_pool.sh</code> can run for a while so while that's going, install <code>sanoid</code> from the repo and configure snapshots.</p>
+<pre><code class="language-text">sudo apt install sanoid lsof mbuffer # lsof and mbuffer were already installed.
+sudo mkdir /etc/sanoid
+sudo cp /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/sanoid.conf # per /usr/share/doc/sanoid/README.Debian
+sudo vim /etc/sanoid/sanoid.conf
+diff /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/sanoid.conf
+</code></pre>
+<pre><code class="language-text">hbarta@io:~$ diff /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/sanoid.conf
+35a36,39
+&gt; [io_tank]
+&gt;       use_template = production
+&gt;       recursive = zfs
+&gt;       frequently = 10
+hbarta@io:~$ 
+</code></pre>
+<p>Check operation</p>
+<pre><code class="language-text">sudo sanoid --cron --verbose # test config
+</code></pre>
+<p>Need to delete the example for <code>parent2</code>. Othewwrwise seems to be working as desired. Next task is to <code>syncoid</code> to send the entire pool recursively to another host with space on a single drive HDD pool. The prototype command (which eventually results in "permanent errors") is</p>
+<pre><code class="language-text">/bin/time -p /sbin/syncoid --recursive --no-privilege-elevation rocinante:rpool olive:ST8TB-ZA20HR7B/rocinante-backup/rpool
+</code></pre>
+<p>And the actual command (planned to run on the sending server) will be</p>
+<pre><code class="language-text">/bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+</code></pre>
+<p>But first must create the destination filesystem on the destination host. (Question: Could the bug be provoked by sending to a filesystem on the same host?)</p>
+<pre><code class="language-text">sudo zfs create ST8TB-ZA20HR7B/io-backup
+</code></pre>
+<p>The <code>syncoid</code> command can be run as a normal user when the appropriate <code>zfs allow</code> command is run. On the first run it will complain abnout not being able to mount directories but those can be ignored and if desired, the destination filesystems can be mounted manually.</p>
+<pre><code class="language-text">user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    io_tank
+</code></pre>
+<p>At this instant the <code>syncoid</code> command is executing while the <code>populate_pool.sh</code> is executing and the pool is at 18% of capacity. The desire is to have the pool at about 40% of capacity. It will be necessary to kill <code>populate_pool.sh</code> at that point.</p>
+<h2 id="2024-12-13-stir-the-pool">2024-12-13 stir the pool</h2>
+<p>Once the pool is fully populated it will be necessary to alter some of the files in the pool to simulate normal operation. <code>stir_pool.sh</code> will randomly regenerate files in the target dataset. Initially this will be approximately 1 in 10.</p>
+<h2 id="2024-12-13">2024-12-13</h2>
+<h3 id="conditions">Conditions</h3>
+<h4 id="sender">Sender</h4>
+<ul>
+<li>Raspberry Pi CM4<ul>
+<li>8GB RAM </li>
+<li>mounted in an official IO Board </li>
+<li>passive cooling</li>
+<li>Not overclocked (1.5 GHz - RpiOS defaults to 1.8 GHz.)</li>
+<li>Ethernet LAN (WiFi not working on Debian.)</li>
+</ul>
+</li>
+<li>Intel 670p 1TB SSD operating in a PCIe 2.0 x1 slot. (Boot device and pool.)</li>
+<li>Debian 12 (not RpiOS) fully updated.</li>
+<li>ZFS 2.1.11</li>
+</ul>
+<pre><code class="language-text">hbarta@io:~$ zfs --version
+zfs-2.1.11-1
+zfs-kmod-2.1.11-1
+hbarta@io:~$ 
+</code></pre>
+<p>The first "complete" run with <code>populate_pool.sh</code> was interrupted when the pool hit about 40%. At this point it had created six filesystems (many less than planned) for a total of eight filesystems. Local development is taking place in <code>io_tank/Programming</code> mounted at <code>/home/hbarta/Programming</code> to take advantage of ZFS backups (in addition to pushing to Github.)</p>
+<pre><code class="language-text">hbarta@io:~$ zfs list -r io_tank
+NAME                          USED  AVAIL     REFER  MOUNTPOINT
+io_tank                       374G   518G      368K  /mnt/io_tank
+io_tank/Programming          3.19M   518G     1.73M  /home/hbarta/Programming
+io_tank/test                  374G   518G      336K  /mnt/io_tank/test
+io_tank/test/l0_0             374G   518G     94.2G  /mnt/io_tank/test/l0_0
+io_tank/test/l0_0/l1_0        279G   518G      113G  /mnt/io_tank/test/l0_0/l1_0
+io_tank/test/l0_0/l1_0/l2_0   111G   518G      111G  /mnt/io_tank/test/l0_0/l1_0/l2_0
+io_tank/test/l0_0/l1_0/l2_1  55.1G   518G     55.1G  /mnt/io_tank/test/l0_0/l1_0/l2_1
+hbarta@io:~$ 
+</code></pre>
+<p>Time to get to 40% was</p>
+<pre><code class="language-text">hbarta@io:~/Programming/provoke_ZFS_corruption$ time -p sudo ./populate_pool.sh 
+...
+Terminated
+real 13981.71
+user 0.01
+sys 0.10
+hbarta@io:~/Programming/provoke_ZFS_corruption$
+</code></pre>
+<p>While <code>populate_pool.sh</code> was still running, <code>sanoid</code> was installed, configured and started taking snapshots. At present there are 125 snapshots including 8 created by <code>syncoid</code> (which at present is still running.)</p>
+<p>As mentioned <code>syncoid</code> was started using</p>
+<pre><code class="language-text">/bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+</code></pre>
+<p>Temperature of the SSD peaked at 51°C while <code>populate_pool.sh</code> and <code>syncoid</code> were running. With only <code>syncoid</code> it has dropped to 47°C. The SSD is in an adapter card in the PCIe slot in an IO Board and the result is it is vertical (with the 2280 length horizontal) which provides reasonable convective cooling.</p>
+<p>Full record of the first run was</p>
+<pre><code class="language-text">hbarta@io:~$ /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+INFO: Sending oldest full snapshot io_tank@autosnap_2024-12-13_11:09:03_monthly (~ 114 KB) to new target filesystem:
+46.1KiB 0:00:00 [ 297KiB/s] [=======================================&gt;                                                            ] 40%            
+cannot mount '/mnt/ST8TB-ZA20HR7B/io-backup/io_tank': failed to create mountpoint: Permission denied
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1734111191 io ' zfs send  '&quot;'&quot;'io_tank'&quot;'&quot;'@'&quot;'&quot;'autosnap_2024-12-13_11:09:03_monthly'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 116848 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1734111192 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank'&quot;'&quot;'' failed: 256 at /sbin/syncoid line 492.
+INFO: Sending oldest full snapshot io_tank/Programming@autosnap_2024-12-13_11:09:03_monthly (~ 366 KB) to new target filesystem:
+ 274KiB 0:00:00 [1.42MiB/s] [=========================================================================&gt;                          ] 74%            
+cannot mount '/mnt/ST8TB-ZA20HR7B/io-backup/io_tank/Programming': failed to create mountpoint: Permission denied
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1734111191 io ' zfs send  '&quot;'&quot;'io_tank/Programming'&quot;'&quot;'@'&quot;'&quot;'autosnap_2024-12-13_11:09:03_monthly'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 375776 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1734111192 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/Programming'&quot;'&quot;'' failed: 256 at /sbin/syncoid line 492.
+INFO: Sending oldest full snapshot io_tank/test@autosnap_2024-12-13_11:09:03_monthly (~ 98 KB) to new target filesystem:
+45.8KiB 0:00:00 [ 280KiB/s] [=============================================&gt;                                                      ] 46%            
+cannot mount '/mnt/ST8TB-ZA20HR7B/io-backup/io_tank/test': failed to create mountpoint: Permission denied
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1734111191 io ' zfs send  '&quot;'&quot;'io_tank/test'&quot;'&quot;'@'&quot;'&quot;'autosnap_2024-12-13_11:09:03_monthly'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 100464 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1734111192 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test'&quot;'&quot;'' failed: 256 at /sbin/syncoid line 492.
+INFO: Sending oldest full snapshot io_tank/test/l0_0@autosnap_2024-12-13_11:09:03_monthly (~ 96.1 GB) to new target filesystem:
+96.1GiB 2:56:51 [9.28MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount '/mnt/ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0': failed to create mountpoint: Permission denied
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1734111191 io ' zfs send  '&quot;'&quot;'io_tank/test/l0_0'&quot;'&quot;'@'&quot;'&quot;'autosnap_2024-12-13_11:09:03_monthly'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 103159673408 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1734111192 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0'&quot;'&quot;'' failed: 256 at /sbin/syncoid line 492.
+INFO: Sending oldest full snapshot io_tank/test/l0_0/l1_0@autosnap_2024-12-13_11:09:03_monthly (~ 29.2 GB) to new target filesystem:
+29.2GiB 0:25:00 [19.9MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount '/mnt/ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0/l1_0': failed to create mountpoint: Permission denied
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1734111191 io ' zfs send  '&quot;'&quot;'io_tank/test/l0_0/l1_0'&quot;'&quot;'@'&quot;'&quot;'autosnap_2024-12-13_11:09:03_monthly'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 31347889024 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1734111192 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0/l1_0'&quot;'&quot;'' failed: 256 at /sbin/syncoid line 492.
+real 12298.22
+user 459.28
+sys 1292.74
+hbarta@io:~$ 
+</code></pre>
+<p>Performance was not spectacular. Hopefully that's not important to revealing the corruption bug. Immediately restarted to capture the rest of the filesystems/files that were created. That actually bumped SSD temperature to 60°C briefly.</p>
+<pre><code class="language-text">hbarta@io:~$ /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+Sending incremental io_tank@autosnap_2024-12-13_11:09:03_monthly ... syncoid_io_2024-12-13:14:59:22-GMT-06:00 (~ 14 KB):
+15.5KiB 0:00:00 [63.6KiB/s] [===================================================================================================] 106%            
+Sending incremental io_tank/Programming@autosnap_2024-12-13_11:09:03_monthly ... syncoid_io_2024-12-13:14:59:38-GMT-06:00 (~ 738 KB):
+ 192KiB 0:00:00 [ 538KiB/s] [========================&gt;                                                                           ] 25%            
+Sending incremental io_tank/test@autosnap_2024-12-13_11:09:03_monthly ... syncoid_io_2024-12-13:14:59:50-GMT-06:00 (~ 74 KB):
+20.3KiB 0:00:00 [69.3KiB/s] [==========================&gt;                                                                         ] 27%            
+Sending incremental io_tank/test/l0_0@autosnap_2024-12-13_11:09:03_monthly ... syncoid_io_2024-12-13:15:00:01-GMT-06:00 (~ 74 KB):
+20.3KiB 0:00:00 [68.9KiB/s] [==========================&gt;                                                                         ] 27%            
+Sending incremental io_tank/test/l0_0/l1_0@autosnap_2024-12-13_11:09:03_monthly ... syncoid_io_2024-12-13:15:00:12-GMT-06:00 (~ 84.9 GB):
+84.9GiB 1:12:02 [20.1MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot io_tank/test/l0_0/l1_0/l2_0@autosnap_2024-12-13_19:00:03_hourly (~ 91.0 GB) to new target filesystem:
+91.1GiB 1:17:48 [20.0MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount '/mnt/ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0/l1_0/l2_0': failed to create mountpoint: Permission denied
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1734123560 io ' zfs send  '&quot;'&quot;'io_tank/test/l0_0/l1_0/l2_0'&quot;'&quot;'@'&quot;'&quot;'autosnap_2024-12-13_19:00:03_hourly'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 97735681696 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1734123561 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0/l1_0/l2_0'&quot;'&quot;'' failed: 256 at /sbin/syncoid line 492.
+INFO: Sending oldest full snapshot io_tank/test/l0_0/l1_0/l2_1@autosnap_2024-12-13_20:00:02_hourly (~ 55.4 GB) to new target filesystem:
+55.4GiB 0:48:28 [19.5MiB/s] [==================================================================================================&gt;] 100%            
+cannot mount '/mnt/ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0/l1_0/l2_1': failed to create mountpoint: Permission denied
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1734123560 io ' zfs send  '&quot;'&quot;'io_tank/test/l0_0/l1_0/l2_1'&quot;'&quot;'@'&quot;'&quot;'autosnap_2024-12-13_20:00:02_hourly'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 59457559624 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1734123561 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_0/l1_0/l2_1'&quot;'&quot;'' failed: 256 at /sbin/syncoid line 492.
+real 11961.31
+user 872.08
+sys 2639.39
+hbarta@io:~$ 
+</code></pre>
+<p>One more time for now. Virtually no files changed (except in <code>~/Programming</code>.)</p>
+<pre><code class="language-text">hbarta@io:~$ /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+Sending incremental io_tank@syncoid_io_2024-12-13:14:59:22-GMT-06:00 ... syncoid_io_2024-12-13:19:23:02-GMT-06:00 (~ 10 KB):
+11.3KiB 0:00:00 [55.4KiB/s] [===================================================================================================] 108%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-13:14:59:38-GMT-06:00 ... syncoid_io_2024-12-13:19:23:11-GMT-06:00 (~ 300 KB):
+97.2KiB 0:00:00 [ 369KiB/s] [===============================&gt;                                                                    ] 32%            
+Sending incremental io_tank/test@syncoid_io_2024-12-13:14:59:50-GMT-06:00 ... syncoid_io_2024-12-13:19:23:19-GMT-06:00 (~ 10 KB):
+11.3KiB 0:00:00 [49.5KiB/s] [===================================================================================================] 108%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-13:15:00:01-GMT-06:00 ... syncoid_io_2024-12-13:19:23:28-GMT-06:00 (~ 10 KB):
+11.3KiB 0:00:00 [48.1KiB/s] [===================================================================================================] 108%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-13:15:00:12-GMT-06:00 ... syncoid_io_2024-12-13:19:23:36-GMT-06:00 (~ 9 KB):
+10.7KiB 0:00:00 [43.6KiB/s] [===================================================================================================] 109%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@autosnap_2024-12-13_19:00:03_hourly ... syncoid_io_2024-12-13:19:23:44-GMT-06:00 (~ 20.9 GB):
+21.0GiB 0:17:39 [20.3MiB/s] [==================================================================================================&gt;] 100%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@autosnap_2024-12-13_20:00:02_hourly ... syncoid_io_2024-12-13:19:41:33-GMT-06:00 (~ 10 KB):
+11.9KiB 0:00:00 [43.8KiB/s] [===================================================================================================] 108%            
+real 1121.05
+user 79.85
+sys 234.76
+hbarta@io:~$ 
+</code></pre>
+<h2 id="2024-12-14-rerunning-syncoid">2024-12-14 rerunning syncoid</h2>
+<pre><code class="language-text">hbarta@io:~$ /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+Sending incremental io_tank@syncoid_io_2024-12-13:19:23:02-GMT-06:00 ... syncoid_io_2024-12-14:10:25:16-GMT-06:00 (~ 15 KB):
+16.8KiB 0:00:00 [61.9KiB/s] [===================================================================================================] 105%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-13:19:23:11-GMT-06:00 ... syncoid_io_2024-12-14:10:25:28-GMT-06:00 (~ 483 KB):
+ 211KiB 0:00:00 [ 641KiB/s] [==========================================&gt;                                                         ] 43%            
+Sending incremental io_tank/test@syncoid_io_2024-12-13:19:23:19-GMT-06:00 ... syncoid_io_2024-12-14:10:25:41-GMT-06:00 (~ 15 KB):
+16.8KiB 0:00:00 [60.2KiB/s] [===================================================================================================] 105%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-13:19:23:28-GMT-06:00 ... syncoid_io_2024-12-14:10:25:52-GMT-06:00 (~ 15 KB):
+16.8KiB 0:00:00 [55.4KiB/s] [===================================================================================================] 105%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-13:19:23:36-GMT-06:00 ... syncoid_io_2024-12-14:10:26:04-GMT-06:00 (~ 75 KB):
+22.1KiB 0:00:00 [64.5KiB/s] [============================&gt;                                                                       ] 29%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-13:19:23:44-GMT-06:00 ... syncoid_io_2024-12-14:10:26:16-GMT-06:00 (~ 75 KB):
+28.4KiB 0:00:00 [76.1KiB/s] [====================================&gt;                                                               ] 37%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-13:19:41:33-GMT-06:00 ... syncoid_io_2024-12-14:10:26:28-GMT-06:00 (~ 75 KB):
+22.1KiB 0:00:00 [61.4KiB/s] [============================&gt;                                                                       ] 29%            
+real 86.04
+user 2.58
+sys 2.09
+hbarta@io:~$ 
+</code></pre>
+<p>Loop with ~10 minute delays.</p>
+<pre><code class="language-text">hbarta@io:~$ while(:)
+&gt; do
+&gt; /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+&gt; echo
+&gt; echo
+&gt; sleep 750
+&gt; done
+</code></pre>
+<p>After running overnight (nearly 24 hours, no errors reported and <code>syncoid</code> is taking 16-20 seconds to complete.)</p>
+<h2 id="2024-12-15-modify-files">2024-12-15 modify files</h2>
+<p><code>stir_pool.sh</code> is intended to do this. In order to run as an ordinary user, it is necessary to change perms or ownership of all files in the pool. For now...</p>
+<pre><code class="language-text">user=hbarta
+pool=io_tank
+sudo chown -R $user:$user /mnt/$pool/test/
+./stir_pool.sh
+</code></pre>
+<p>Observation: Running <code>stir_pool.sh</code> concurrently with <code>syncoid</code> seems to have an impact on performance beyond the extra blocks that need to be transferred.</p>
+<h2 id="2024-12-15-things-to-do-differently">2024-12-15 things to do differently</h2>
+<ul>
+<li>Need more files and filesystems. 140 and 5 respectively - smaller files!</li>
+<li>Use a .txt or .rnd file extension for easier matching later.</li>
+<li>Set perms/ownership on files and directories during creation.</li>
+<li>Put tunables in an ini file of some sort in order to share between scripts. (defer)</li>
+<li>Provide more efficient ways to modify the files.<ul>
+<li><code>sed -i s/../abcd/ file</code> replaces first two chars with "abcd"</li>
+<li><code>echo x | dd of=file bs=1 count=1 seek=&lt;rnd&gt; conv=notrunc</code> replaces byte at 0 with 'x' </li>
+</ul>
+</li>
+<li>Base text file size on size, not time. On <code>iox86</code> the text files are larger than the binary packages.</li>
+<li>provide a command line argument for the sending pool name.</li>
+</ul>
+<h2 id="2024-12-22-bringing-back-up">2024-12-22 bringing back up</h2>
+<p><code>scrub</code>, <code>clear</code>, <code>scrub</code> cleared the errors. Building ZFS from backports and repeating test. Loops:</p>
+<pre><code class="language-text">while(:)
+do
+    /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation io:io_tank olive:ST8TB-ZA20HR7B/io-backup/io_tank
+    zpool status 
+    echo
+    echo
+    sleep 750
+done
+</code></pre>
+<pre><code class="language-text">while(:)
+do
+    /home/hbarta/Programming/provoke_ZFS_corruption/stir_pool.sh io_tank
+    echo
+    sleep 750
+done
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>X86 SATA testing with Buster - Provoke ZFS corruption</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Methodology <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../methodology/" class="dropdown-item">methodology</a>
+</li>
+                                    
+<li>
+    <a href="../../methodology/setup_2025-02-03/" class="dropdown-item">First methodology exploration</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../syncoid-errors/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../x86_trial_3/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#x86-sata-testing-with-buster" class="nav-link">X86 SATA testing with Buster</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2024-12-26-install-buster" class="nav-link">2024-12-26 install Buster</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-27-re-install-and-restart" class="nav-link">2024-12-27 re-install and restart</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2024-12-28-start-loops" class="nav-link">2024-12-28 start loops</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-01-06-move-to-200" class="nav-link">2025-01-06 move to 2.0.0</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-01-08-no-errors-in-am" class="nav-link">2025-01-08 no errors in AM</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-01-09-no-errors-in-am" class="nav-link">2025-01-09 no errors in AM</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-01-12-no-errors-in-am" class="nav-link">2025-01-12 no errors in AM</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-01-15-still-no-errors" class="nav-link">2025-01-15 still no errors</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-01-24-kernel-418-zfs-203-no-errors" class="nav-link">2025-01-24 kernel 4.18 ZFS 2.0.3 no errors</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-02-kernel-510-zfs-213-no-errors" class="nav-link">2025-02-02 kernel 5.10 ZFS 2.1.3 no errors</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="x86-sata-testing-with-buster">X86 SATA testing with Buster</h1>
+<p>The purpose is to be able to test with older ZFS versi0ons (back to 0.8) The expectation is this test will not produce corruption for these test conditions (send from encrypted pool to non-encrypted pool.)</p>
+<h2 id="2024-12-26-install-buster">2024-12-26 install Buster</h2>
+<p>Prerequisite was to reproduce the error with a current Debian install. The previous (J1900) host was wonky and seems no longer useful. The "new" system is a proper server (X8DTL) with ECC RAM and an HBA to connect the SSDs but is not bootable. The Bookworm install took days to reproduce the error.</p>
+<p>Install Buster usintg the Netinst ISO. NB, this board is too old to support EFI.</p>
+<p>Add <code>contrib</code> to <code>/etc/apt/sources.list</code> and install dependencies</p>
+<ul>
+<li><code>apt install -y build-essential libghc-zlib-dev uuid-dev libblkid-dev libssl-dev libnvpair1linux vim git</code></li>
+</ul>
+<p>Pull/extract the tarball and inside the project directory</p>
+<pre><code class="language-text">apt search linux-headers-$(uname -r)
+sudo apt install linux-headers-4.19.0-27-amd64
+wget https://github.com/openzfs/zfs/releases/download/zfs-0.8.6/zfs-0.8.6.tar.gz
+tar xf zfs-0.8.6.tar.gz
+cd zfs-0.8.6
+./configure
+make -j16
+sudo make -j16 install
+</code></pre>
+<p>Seems to be working! Now to destroy the old pool (secure erase) and create the new pool. Repeating <a href="../x86_trial_3/">commands from Bookworm</a></p>
+<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d40878f8e
+zfs load-key -a
+chmod a+rwx /mnt/send/
+</code></pre>
+<pre><code class="language-text">zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d41628a33
+chmod a+rwx /mnt/recv/
+</code></pre>
+<h2 id="2024-12-27-re-install-and-restart">2024-12-27 re-install and restart</h2>
+<h3 id="pull-provoke_zfs_corruption">Pull provoke_ZFS_corruption</h3>
+<pre><code class="language-text">git clone https://github.com/HankB/provoke_ZFS_corruption.git
+cd provoke_ZFS_corruption
+vim populate_pool.sh # change pool name &quot;pool=send&quot;
+sudo ./populate_pool.sh
+</code></pre>
+<p>No <code>sanoid</code> in repos so install following suggestions at <a href="https://github.com/jimsalterjrs/sanoid/issues/975">https://github.com/jimsalterjrs/sanoid/issues/975</a> ... But this won't configure the timer, setup config files etc. Instead, fork sanoid and remove the ZFS dependency, <a href="https://github.com/HankB/sanoid">https://github.com/HankB/sanoid</a> Build and install as instructed and have working <code>sanoid</code>. And also install <code>lzop</code>, <code>pv</code> and <code>mbuffer</code>.</p>
+<pre><code class="language-text">sudo apt install lzop pv mbuffer
+...
+</code></pre>
+<p>First backup</p>
+<pre><code class="language-text">user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+</code></pre>
+<p>First pool stir</p>
+<pre><code class="language-text">vim stir_pool.sh # Fix start directory for find command
+sudo chown -R $user:$user /mnt/test 
+./stir_pool.sh
+</code></pre>
+<h2 id="2024-12-28-start-loops">2024-12-28 start loops</h2>
+<p>Off site so using <code>tmux</code> and directing output to a disk file and adding time stamps.</p>
+<pre><code class="language-text">while(:)
+do
+    date +%Y-%m-%d-%H%M
+    time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+    zpool status send
+    echo
+    sleep 750
+done &gt;&gt;syncoid.txt 2&gt;&amp;1
+</code></pre>
+<pre><code class="language-text">while(:)
+do
+    date +%Y-%m-%d-%H%M
+    /home/$user/provoke_ZFS_corruption/stir_pool.sh 2&gt;/dev/null
+    sleep 750
+done &gt;&gt;stir.txt
+</code></pre>
+<p>After over a week and over 900 loops there are no errors reported and this test is concluded: bug does not exist in the 0.8.6 release.</p>
+<h2 id="2025-01-06-move-to-200">2025-01-06 move to 2.0.0</h2>
+<p><code>tar</code> up home directory and begin nuke and pave. Takes about 10 minutes to install Buster. Finish install and start customizing. (Note: look where the untarred files are going.) Install was a bit different this time.</p>
+<pre><code class="language-text">sudo vim /etc/apt/sources.list # add `contrib`
+sudo apt update 
+apt install -y build-essential libghc-zlib-dev uuid-dev libblkid-dev libssl-dev libnvpair1linux vim git lzop pv mbuffer linux-headers-$(uname -r)
+# Copy the source tar to ~/Downloads
+cd Downloads
+tar xf zfs-2.0.0.tar.gz
+cd zfs-2.0.0
+git checkout master
+sh autogen.sh
+./configure
+make -s -j$(nproc)
+sudo make install # ? yes!
+</code></pre>
+<p>Create pools and kick off stress loops (stir, syncoid) and configure <code>sanoid</code> snapshots, adding to <code>/etc/sanoid/sanoid.conf</code></p>
+<pre><code class="language-text">[send/test]
+        use_template = production
+        frequently = 10
+        recursive = zfs
+</code></pre>
+<h2 id="2025-01-08-no-errors-in-am">2025-01-08 no errors in AM</h2>
+<pre><code class="language-text">errors: No known data errors
+</code></pre>
+<p>162 iterations.</p>
+<h2 id="2025-01-09-no-errors-in-am">2025-01-09 no errors in AM</h2>
+<p>Kicked off scrub on both pools. 284 iterations.</p>
+<h2 id="2025-01-12-no-errors-in-am">2025-01-12 no errors in AM</h2>
+<p>Daily (morning) scrubs, 622 loops. Maybe 2.0.0 does not have the corruption bug.</p>
+<h2 id="2025-01-15-still-no-errors">2025-01-15 still no errors</h2>
+<p>Calling it on 2.0.0. Next try will be 2.0.3 using kernel 4.19. Before doing this, the entire $HOME directory on the test host was tarred and copied to <code>~/Downloads/provoke_ZFS_corruption/4.19_2.0.0.tar</code>.</p>
+<p>With the root filesystem only 2% occupied, I'm considering a modification of the install strategy:</p>
+<ol>
+<li>Install and add desired programs (without ZFS.)</li>
+<li>Repartition the boot drive to allow an additional storage partition.</li>
+<li>Copy the MBR and root partition to the storage partition, allowing it to easily be copied back to reproduce starting conditions. (System is too old to support EFI so there is no EFI partition.)</li>
+<li>
+<p>Install desired ZFS version.</p>
+</li>
+<li>
+<p>Install (choosing "standard system utilities" and "SSH server" at <code>tasksel</code> step.)</p>
+</li>
+<li>Spoof MAC address for <code>enp7s0</code> to <code>00:25:90:06:df:be</code> (using <code>systemd</code> link file.)</li>
+<li>Tweak <code>sources.list</code></li>
+<li>Install desired programs.</li>
+<li>Reboot</li>
+</ol>
+<pre><code class="language-text">vi /etc/systemd/network/00-enp7s0.link      # use 00:25:90:06:df:be
+vi /etc/apt/sources.list                    # add contrib
+apt update
+apt install -y build-essential libghc-zlib-dev uuid-dev libblkid-dev libssl-dev libnvpair1linux vim git linux-headers-$(uname -r) lzop pv mbuffer
+reboot
+</code></pre>
+<p>Live env is horribly slow and there is a problem with the USB keyboard and mouse. It will be easier to swap the dive to another host to manipulate the partitions and backup. Unfortunately <code>gparted</code> doesn;t understand MBR partition tables. Further, I chose a separate $HOME partition and the Buster installer created an extended partition for swap and $HOME complicating partition manipulation. I will repeat the install and put everything in one partition. Installer still creates an extended partition for 1GB swap at the end of the device but that will not present a problem.</p>
+<pre><code class="language-text">cat &gt;/etc/systemd/network/00-enp7s0.link &lt;&lt;EOF
+[Match]
+Driver=macb bcmgenet r8152 r8169 e1000e
+
+[Link]
+MACAddress=00:25:90:06:df:be
+EOF
+</code></pre>
+<p>In other host, the device is <code>/dev/sdc</code>. Resizing <code>/dev/sdc</code> to 10GB using Gnome Disks. Creating a new 229GB partition <code>/dev/sdc3</code> formatted EXT4. This partition will not be added to <code>/etec/fstab</code> and will not be mounted during the tests. It will be mounted in the other host (using Gnome Disks) in order to backup the fresh install. (<code>/media/hbarta/storage</code>)</p>
+<pre><code class="language-text">mkdir /media/hbarta/storage/4.19_2.0.3
+sudo dd if=/dev/sdc of=/media/hbarta/storage/4.19_2.0.3/MBR.img bs=512 count=1
+sudo rsync --copy-devices --partial --inplace -B 4096 /dev/sdc1 /media/hbarta/storage/4.19_2.0.3/dev.sdc1
+sudo tar -tf /media/hbarta/storage/4.19_2.0.3/dev.sdc1 &amp;&gt; /dev/null; echo $?
+</code></pre>
+<p>Place drive back in target and boot. Build ZFS 2.0.3.</p>
+<pre><code class="language-text">mkdir ZFS
+cd ZFS
+wget https://github.com/openzfs/zfs/releases/download/zfs-2.0.3/zfs-2.0.3.tar.gz
+tar xf zfs-2.0.3.tar.gz
+cd zfs-2.0.3/ # Note: Not a git repo.
+sudo apt install dh-autoreconf
+sh autogen.sh
+./configure
+make -s -j$(nproc)
+sudo ldconfig
+# add `/usr/local/sbin/` to user PATH variable.
+sudo reboot
+</code></pre>
+<p>Result</p>
+<pre><code class="language-text">root@orcus:~# zfs --version
+zfs-2.0.3-1
+zfs-kmod-2.0.3-1
+root@orcus:~# 
+</code></pre>
+<p>Prepare <code>/dev/sda</code> and create the <code>send</code> pool. (Was previously the <code>recv</code> pool.)</p>
+<pre><code class="language-text">hdparm --user-master u --security-set-pass Eins /dev/sda
+hdparm --security-erase Eins /dev/sda
+dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d41628a33
+zfs load-key -a
+chmod a+rwx /mnt/send/
+</code></pre>
+<p>Pull in repo for scripts.</p>
+<pre><code class="language-text">git clone https://github.com/HankB/provoke_ZFS_corruption.git
+cd provoke_ZFS_corruption
+vim populate_pool.sh # change pool name &quot;pool=send&quot;
+sudo ./populate_pool.sh # and killed when the pool hit 60%
+</code></pre>
+<pre><code class="language-text">hdparm --user-master u --security-set-pass Eins /dev/sdb
+hdparm --security-erase Eins /dev/sdb
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d40878f8e
+chmod a+rwx /mnt/recv/
+</code></pre>
+<pre><code class="language-text">user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+</code></pre>
+<p><code>syncoid</code> unintentionally run as <code>root</code>. Hopefully that will not be an issue for further testing.</p>
+<pre><code class="language-text">root@orcus:/etc/sanoid# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 12795.53
+user 426.10
+sys 33351.88
+root@orcus:/etc/sanoid#
+</code></pre>
+<pre><code class="language-text">hbarta@orcus:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 9.23
+user 2.62
+sys 4.92
+hbarta@orcus:~$ 
+</code></pre>
+<p>Ran as normal user w/ no issue. Kick off first stir</p>
+<pre><code class="language-text">vim stir_pool.sh # Fix start directory for find command
+sudo chown -R $USER:$USER /mnt/send 
+./stir_pool.sh
+</code></pre>
+<p>Now loop</p>
+<pre><code class="language-text">while(:)
+do
+    date +%Y-%m-%d-%H%M
+    /home/$user/provoke_ZFS_corruption/stir_pool.sh 2&gt;/dev/null
+    sleep 750
+done &gt;&gt;stir.txt
+</code></pre>
+<pre><code class="language-text">while(:)
+do
+    date +%Y-%m-%d-%H%M
+    time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+    zpool status send
+    echo
+    sleep 750
+done &gt;&gt;syncoid.txt 2&gt;&amp;1
+</code></pre>
+<p>Testing under way at 2025-01-15-2014. And interrupting briefly to resume testing in a <code>tmux</code> session should it be necessary to restart the remote host at some point.</p>
+<pre><code class="language-text">sudo apt install tmux
+tmux new -s syncoid
+tmux new -s stir
+tmux new -s dmesg
+</code></pre>
+<h2 id="2025-01-24-kernel-418-zfs-203-no-errors">2025-01-24 kernel 4.18 ZFS 2.0.3 no errors</h2>
+<p>972 passes through the loop. </p>
+<pre><code class="language-text">hbarta@orcus:~$ zfs --version
+zfs-2.0.3-1
+zfs-kmod-2.0.3-1
+hbarta@orcus:~$ uname -a
+Linux orcus 4.19.0-27-amd64 #1 SMP Debian 4.19.316-1 (2024-06-25) x86_64 GNU/Linux
+hbarta@orcus:~$ 
+hbarta@orcus:~$ grep errors: provoke_ZFS_corruption/syncoid.txt|wc -l
+972
+hbarta@orcus:~$ 
+</code></pre>
+<p>Time to try kernel 5.10 which was the combo in the original report. 5.10 is already in the Buster repo. It apppears that this is the oldest version:</p>
+<pre><code class="language-text">root@orcus:/etc/apt/sources.list.d# cd
+root@orcus:~# apt search linux-image-5.10.0-0.deb10.24-amd64
+Sorting... Done
+Full Text Search... Done
+linux-headers-5.10.0-0.deb10.24-amd64/oldoldstable 5.10.179-5~deb10u1 amd64
+  Header files for Linux 5.10.0-0.deb10.24-amd64
+
+linux-image-5.10.0-0.deb10.24-amd64/oldoldstable 5.10.179-5~deb10u1 amd64
+  Linux 5.10 for 64-bit PCs (signed)
+
+linux-image-5.10.0-0.deb10.24-amd64-dbg/oldoldstable 5.10.179-5~deb10u1 amd64
+  Debug symbols for linux-image-5.10.0-0.deb10.24-amd64
+
+linux-image-5.10.0-0.deb10.24-amd64-unsigned/oldoldstable 5.10.179-5~deb10u1 amd64
+  Linux 5.10 for 64-bit PCs
+
+root@orcus:~# 
+</code></pre>
+<p>Installing <code>linux-image-5.10.0-0.deb10.24-amd64</code> and <code>linux-headers-5.10.0-0.deb10.24-amd64</code></p>
+<p>Minor issues:</p>
+<ul>
+<li>Ethernet interfaces renamed to <code>eth0</code> and <code>eth1</code> - needed to tweak <code>/etc/network/interfaces</code> to get Ethernet working. <code>systemctl restart networking</code> did not work but <code>ifup eth1</code> brought it on line.</li>
+<li>Modules not built. Repeating following reboot.</li>
+</ul>
+<pre><code class="language-text">hdparm --user-master u --security-set-pass Eins /dev/sda
+hdparm --security-erase Eins /dev/sda
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d40878f8e
+chmod a+rwx /mnt/recv/
+</code></pre>
+<h2 id="2025-02-02-kernel-510-zfs-213-no-errors">2025-02-02 kernel 5.10 ZFS 2.1.3 no errors</h2>
+<p>Testing about 10 days and over 1100 <code>syncoid</code> loops. Time to evaluate this approach with the hope of getting faster and more reliable results.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

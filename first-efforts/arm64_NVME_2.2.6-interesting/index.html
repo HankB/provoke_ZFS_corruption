@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>arm64 NVME 2.2.6 interesting - Provoke ZFS corruption</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Methodology <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../methodology/" class="dropdown-item">methodology</a>
+</li>
+                                    
+<li>
+    <a href="../../methodology/setup_2025-02-03/" class="dropdown-item">First methodology exploration</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../X86_trial_2/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../arm64_NVME_2.2.6-uninteresting/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<pre><code class="language-text">Sending incremental io_tank@syncoid_io_2024-12-23:18:36:36-GMT-06:00 ... syncoid_io_2024-12-23:18:51:41-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.9KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-23:18:36:37-GMT-06:00 ... syncoid_io_2024-12-23:18:51:42-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.8KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test@syncoid_io_2024-12-23:18:36:39-GMT-06:00 ... syncoid_io_2024-12-23:18:51:44-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.8KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-23:18:36:40-GMT-06:00 ... syncoid_io_2024-12-23:18:51:45-GMT-06:00 (~ 2.5 MB):
+1.83MiB 0:00:00 [7.03MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-23:18:36:42-GMT-06:00 ... syncoid_io_2024-12-23:18:51:47-GMT-06:00 (~ 1.9 MB):
+1.42MiB 0:00:00 [5.87MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-23:18:36:44-GMT-06:00 ... syncoid_io_2024-12-23:18:51:49-GMT-06:00 (~ 2.5 MB):
+1.81MiB 0:00:00 [6.54MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-23:18:36:45-GMT-06:00 ... syncoid_io_2024-12-23:18:51:50-GMT-06:00 (~ 2.9 MB):
+2.19MiB 0:00:00 [7.30MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_2@syncoid_io_2024-12-23:18:36:47-GMT-06:00 ... syncoid_io_2024-12-23:18:51:52-GMT-06:00 (~ 2.7 MB):
+2.07MiB 0:00:00 [7.11MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_3@syncoid_io_2024-12-23:18:36:49-GMT-06:00 ... syncoid_io_2024-12-23:18:51:54-GMT-06:00 (~ 2.5 MB):
+1.79MiB 0:00:00 [7.77MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_1@syncoid_io_2024-12-23:18:36:51-GMT-06:00 ... syncoid_io_2024-12-23:18:51:56-GMT-06:00 (~ 2.4 MB):
+1.82MiB 0:00:00 [6.53MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_0@syncoid_io_2024-12-23:18:36:52-GMT-06:00 ... syncoid_io_2024-12-23:18:51:57-GMT-06:00 (~ 2.9 MB):
+1.94MiB 0:00:00 [8.99MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_1@syncoid_io_2024-12-23:18:36:54-GMT-06:00 ... syncoid_io_2024-12-23:18:51:59-GMT-06:00 (~ 3.2 MB):
+2.32MiB 0:00:00 [7.85MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_2@syncoid_io_2024-12-23:18:36:56-GMT-06:00 ... syncoid_io_2024-12-23:18:52:01-GMT-06:00 (~ 2.3 MB):
+1.79MiB 0:00:00 [6.06MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_3@syncoid_io_2024-12-23:18:36:57-GMT-06:00 ... syncoid_io_2024-12-23:18:52:02-GMT-06:00 (~ 2.9 MB):
+2.07MiB 0:00:00 [8.17MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_2@syncoid_io_2024-12-23:18:36:59-GMT-06:00 ... syncoid_io_2024-12-23:18:52:04-GMT-06:00 (~ 2.8 MB):
+2.07MiB 0:00:00 [7.42MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_0@syncoid_io_2024-12-23:18:37:01-GMT-06:00 ... syncoid_io_2024-12-23:18:52:06-GMT-06:00 (~ 3.3 MB):
+2.57MiB 0:00:00 [7.42MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_1@syncoid_io_2024-12-23:18:37:02-GMT-06:00 ... syncoid_io_2024-12-23:18:52:08-GMT-06:00 (~ 2.6 MB):
+1.92MiB 0:00:00 [7.27MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_2@syncoid_io_2024-12-23:18:37:04-GMT-06:00 ... syncoid_io_2024-12-23:18:52:09-GMT-06:00 (~ 2.4 MB):
+1.79MiB 0:00:00 [6.50MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_3@syncoid_io_2024-12-23:18:37:06-GMT-06:00 ... syncoid_io_2024-12-23:18:52:11-GMT-06:00 (~ 3.3 MB):
+2.45MiB 0:00:00 [8.41MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_3@syncoid_io_2024-12-23:18:37:07-GMT-06:00 ... syncoid_io_2024-12-23:18:52:13-GMT-06:00 (~ 3.0 MB):
+2.16MiB 0:00:00 [8.33MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_0@syncoid_io_2024-12-23:18:37:09-GMT-06:00 ... syncoid_io_2024-12-23:18:52:15-GMT-06:00 (~ 2.5 MB):
+1.95MiB 0:00:00 [6.52MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_1@syncoid_io_2024-12-23:18:37:11-GMT-06:00 ... syncoid_io_2024-12-23:18:52:16-GMT-06:00 (~ 3.0 MB):
+2.19MiB 0:00:00 [7.27MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_2@syncoid_io_2024-12-23:18:37:13-GMT-06:00 ... syncoid_io_2024-12-23:18:52:18-GMT-06:00 (~ 2.8 MB):
+2.19MiB 0:00:00 [7.07MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_3@syncoid_io_2024-12-23:18:37:14-GMT-06:00 ... syncoid_io_2024-12-23:18:52:20-GMT-06:00 (~ 2.3 MB):
+1.79MiB 0:00:00 [5.99MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_1@syncoid_io_2024-12-23:18:37:16-GMT-06:00 ... syncoid_io_2024-12-23:18:52:22-GMT-06:00 (~ 2.7 MB):
+2.07MiB 0:00:00 [7.27MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_0@syncoid_io_2024-12-23:18:37:18-GMT-06:00 ... syncoid_io_2024-12-23:18:52:23-GMT-06:00 (~ 3.0 MB):
+2.17MiB 0:00:00 [7.63MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_0@syncoid_io_2024-12-23:18:37:20-GMT-06:00 ... syncoid_io_2024-12-23:18:52:25-GMT-06:00 (~ 2.6 MB):
+1.81MiB 0:00:00 [7.48MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_1@syncoid_io_2024-12-23:18:37:21-GMT-06:00 ... syncoid_io_2024-12-23:18:52:27-GMT-06:00 (~ 3.3 MB):
+2.32MiB 0:00:00 [8.97MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_2@syncoid_io_2024-12-23:18:37:23-GMT-06:00 ... syncoid_io_2024-12-23:18:52:28-GMT-06:00 (~ 2.7 MB):
+1.93MiB 0:00:00 [7.62MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_3@syncoid_io_2024-12-23:18:37:25-GMT-06:00 ... syncoid_io_2024-12-23:18:52:30-GMT-06:00 (~ 2.9 MB):
+1.95MiB 0:00:00 [9.02MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_1/l1_1@syncoid_io_2024-12-23:18:37:26-GMT-06:00 ... syncoid_io_2024-12-23:18:52:32-GMT-06:00 (~ 3.4 MB):
+2.45MiB 0:00:00 [9.15MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_0@syncoid_io_2024-12-23:18:37:28-GMT-06:00 ... syncoid_io_2024-12-23:18:52:34-GMT-06:00 (~ 2.8 MB):
+1.94MiB 0:00:00 [8.21MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_1@syncoid_io_2024-12-23:18:37:30-GMT-06:00 ... syncoid_io_2024-12-23:18:52:35-GMT-06:00 (~ 2.2 MB):
+1.44MiB 0:00:00 [6.90MiB/s] [=================================================================&gt;                                  ] 66%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_2@syncoid_io_2024-12-23:18:37:31-GMT-06:00 ... syncoid_io_2024-12-23:18:52:37-GMT-06:00 (~ 2.5 MB):
+1.82MiB 0:00:00 [7.07MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_3@syncoid_io_2024-12-23:18:37:33-GMT-06:00 ... syncoid_io_2024-12-23:18:52:39-GMT-06:00 (~ 2.5 MB):
+2.07MiB 0:00:00 [5.56MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_1/l1_2@syncoid_io_2024-12-23:18:37:35-GMT-06:00 ... syncoid_io_2024-12-23:18:52:40-GMT-06:00 (~ 1.9 MB):
+1.56MiB 0:00:00 [5.07MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_0@syncoid_io_2024-12-23:18:37:36-GMT-06:00 ... syncoid_io_2024-12-23:18:52:42-GMT-06:00 (~ 2.9 MB):
+2.14MiB 0:00:00 [7.60MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_1@syncoid_io_2024-12-23:18:37:38-GMT-06:00 ... syncoid_io_2024-12-23:18:52:44-GMT-06:00 (~ 2.1 MB):
+1.57MiB 0:00:00 [5.83MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_2@syncoid_io_2024-12-23:18:37:40-GMT-06:00 ... syncoid_io_2024-12-23:18:52:46-GMT-06:00 (~ 3.3 MB):
+2.54MiB 0:00:00 [7.73MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_3@syncoid_io_2024-12-23:18:37:41-GMT-06:00 ... syncoid_io_2024-12-23:18:52:47-GMT-06:00 (~ 2.2 MB):
+1.56MiB 0:00:00 [6.21MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_3@syncoid_io_2024-12-23:18:37:43-GMT-06:00 ... syncoid_io_2024-12-23:18:52:49-GMT-06:00 (~ 2.1 MB):
+1.56MiB 0:00:00 [6.02MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_0@syncoid_io_2024-12-23:18:37:45-GMT-06:00 ... syncoid_io_2024-12-23:18:52:51-GMT-06:00 (~ 2.9 MB):
+2.20MiB 0:00:00 [7.48MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_1@syncoid_io_2024-12-23:18:37:46-GMT-06:00 ... syncoid_io_2024-12-23:18:52:53-GMT-06:00 (~ 2.6 MB):
+1.94MiB 0:00:00 [6.54MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_2@syncoid_io_2024-12-23:18:37:48-GMT-06:00 ... syncoid_io_2024-12-23:18:52:54-GMT-06:00 (~ 2.2 MB):
+1.69MiB 0:00:00 [5.72MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_3@syncoid_io_2024-12-23:18:37:50-GMT-06:00 ... syncoid_io_2024-12-23:18:52:56-GMT-06:00 (~ 2.7 MB):
+2.04MiB 0:00:00 [6.82MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_2@syncoid_io_2024-12-23:18:37:51-GMT-06:00 ... syncoid_io_2024-12-23:18:52:58-GMT-06:00 (~ 2.9 MB):
+2.07MiB 0:00:00 [8.04MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_0@syncoid_io_2024-12-23:18:37:53-GMT-06:00 ... syncoid_io_2024-12-23:18:52:59-GMT-06:00 (~ 3.6 MB):
+2.82MiB 0:00:00 [7.55MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_0@syncoid_io_2024-12-23:18:37:55-GMT-06:00 ... syncoid_io_2024-12-23:18:53:01-GMT-06:00 (~ 2.9 MB):
+2.05MiB 0:00:00 [7.36MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_1@syncoid_io_2024-12-23:18:37:56-GMT-06:00 ... syncoid_io_2024-12-23:18:53:03-GMT-06:00 (~ 2.5 MB):
+1.94MiB 0:00:00 [6.53MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_2@syncoid_io_2024-12-23:18:37:58-GMT-06:00 ... syncoid_io_2024-12-23:18:53:05-GMT-06:00 (~ 2.6 MB):
+1.94MiB 0:00:00 [6.57MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_3@syncoid_io_2024-12-23:18:38:00-GMT-06:00 ... syncoid_io_2024-12-23:18:53:06-GMT-06:00 (~ 3.0 MB):
+2.07MiB 0:00:00 [8.97MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_2/l1_1@syncoid_io_2024-12-23:18:38:02-GMT-06:00 ... syncoid_io_2024-12-23:18:53:08-GMT-06:00 (~ 2.7 MB):
+2.05MiB 0:00:00 [7.56MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_0@syncoid_io_2024-12-23:18:38:04-GMT-06:00 ... syncoid_io_2024-12-23:18:53:10-GMT-06:00 (~ 2.8 MB):
+2.06MiB 0:00:00 [7.68MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_1@syncoid_io_2024-12-23:18:38:06-GMT-06:00 ... syncoid_io_2024-12-23:18:53:11-GMT-06:00 (~ 2.5 MB):
+1.93MiB 0:00:00 [6.66MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_2@syncoid_io_2024-12-23:18:38:08-GMT-06:00 ... syncoid_io_2024-12-23:18:53:13-GMT-06:00 (~ 2.8 MB):
+2.20MiB 0:00:00 [6.47MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_3@syncoid_io_2024-12-23:18:38:10-GMT-06:00 ... syncoid_io_2024-12-23:18:53:15-GMT-06:00 (~ 2.0 MB):
+1.57MiB 0:00:00 [5.48MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_2/l1_2@syncoid_io_2024-12-23:18:38:12-GMT-06:00 ... syncoid_io_2024-12-23:18:53:17-GMT-06:00 (~ 3.3 MB):
+2.52MiB 0:00:00 [8.11MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_0@syncoid_io_2024-12-23:18:38:14-GMT-06:00 ... syncoid_io_2024-12-23:18:53:18-GMT-06:00 (~ 2.0 MB):
+1.54MiB 0:00:00 [5.63MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_1@syncoid_io_2024-12-23:18:38:15-GMT-06:00 ... syncoid_io_2024-12-23:18:53:20-GMT-06:00 (~ 2.3 MB):
+1.70MiB 0:00:00 [6.01MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_2@syncoid_io_2024-12-23:18:38:17-GMT-06:00 ... syncoid_io_2024-12-23:18:53:22-GMT-06:00 (~ 2.2 MB):
+1.67MiB 0:00:00 [5.82MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_3@syncoid_io_2024-12-23:18:38:19-GMT-06:00 ... syncoid_io_2024-12-23:18:53:24-GMT-06:00 (~ 3.2 MB):
+2.41MiB 0:00:00 [8.05MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_3@syncoid_io_2024-12-23:18:38:21-GMT-06:00 ... syncoid_io_2024-12-23:18:53:25-GMT-06:00 (~ 2.9 MB):
+2.04MiB 0:00:00 [8.47MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_0@syncoid_io_2024-12-23:18:38:23-GMT-06:00 ... syncoid_io_2024-12-23:18:53:27-GMT-06:00 (~ 2.7 MB):
+2.07MiB 0:00:00 [6.72MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_1@syncoid_io_2024-12-23:18:38:25-GMT-06:00 ... syncoid_io_2024-12-23:18:53:29-GMT-06:00 (~ 3.0 MB):
+2.19MiB 0:00:00 [7.78MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_2@syncoid_io_2024-12-23:18:38:27-GMT-06:00 ... syncoid_io_2024-12-23:18:53:30-GMT-06:00 (~ 2.8 MB):
+2.07MiB 0:00:00 [7.21MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_3@syncoid_io_2024-12-23:18:38:29-GMT-06:00 ... syncoid_io_2024-12-23:18:53:32-GMT-06:00 (~ 2.6 MB):
+1.82MiB 0:00:00 [7.85MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_3@syncoid_io_2024-12-23:18:38:31-GMT-06:00 ... syncoid_io_2024-12-23:18:53:34-GMT-06:00 (~ 3.5 MB):
+2.57MiB 0:00:00 [8.42MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_0@syncoid_io_2024-12-23:18:38:32-GMT-06:00 ... syncoid_io_2024-12-23:18:53:36-GMT-06:00 (~ 2.3 MB):
+1.57MiB 0:00:00 [7.04MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_0@syncoid_io_2024-12-23:18:38:34-GMT-06:00 ... syncoid_io_2024-12-23:18:53:37-GMT-06:00 (~ 2.6 MB):
+1.94MiB 0:00:00 [6.73MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_1@syncoid_io_2024-12-23:18:38:36-GMT-06:00 ... syncoid_io_2024-12-23:18:53:39-GMT-06:00 (~ 3.1 MB):
+2.44MiB 0:00:00 [6.86MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_2@syncoid_io_2024-12-23:18:38:37-GMT-06:00 ... syncoid_io_2024-12-23:18:53:41-GMT-06:00 (~ 3.5 MB):
+2.44MiB 0:00:00 [9.95MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_3@syncoid_io_2024-12-23:18:38:39-GMT-06:00 ... syncoid_io_2024-12-23:18:53:42-GMT-06:00 (~ 2.2 MB):
+1.67MiB 0:00:00 [5.91MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_1@syncoid_io_2024-12-23:18:38:41-GMT-06:00 ... syncoid_io_2024-12-23:18:53:44-GMT-06:00 (~ 2.7 MB):
+2.05MiB 0:00:00 [6.98MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_0@syncoid_io_2024-12-23:18:38:42-GMT-06:00 ... syncoid_io_2024-12-23:18:53:46-GMT-06:00 (~ 3.1 MB):
+2.32MiB 0:00:00 [7.73MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_1@syncoid_io_2024-12-23:18:38:45-GMT-06:00 ... syncoid_io_2024-12-23:18:53:47-GMT-06:00 (~ 3.1 MB):
+2.19MiB 0:00:00 [8.47MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_2@syncoid_io_2024-12-23:18:38:47-GMT-06:00 ... syncoid_io_2024-12-23:18:53:49-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [5.37MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_3@syncoid_io_2024-12-23:18:38:49-GMT-06:00 ... syncoid_io_2024-12-23:18:53:51-GMT-06:00 (~ 1.8 MB):
+1.29MiB 0:00:00 [5.65MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_2@syncoid_io_2024-12-23:18:38:51-GMT-06:00 ... syncoid_io_2024-12-23:18:53:52-GMT-06:00 (~ 1.3 MB):
+ 952KiB 0:00:00 [4.62MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_0@syncoid_io_2024-12-23:18:38:53-GMT-06:00 ... syncoid_io_2024-12-23:18:53:54-GMT-06:00 (~ 1.0 MB):
+ 812KiB 0:00:00 [3.61MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_1@syncoid_io_2024-12-23:18:38:55-GMT-06:00 ... syncoid_io_2024-12-23:18:53:56-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [6.19MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_2@syncoid_io_2024-12-23:18:38:57-GMT-06:00 ... syncoid_io_2024-12-23:18:53:57-GMT-06:00 (~ 1.1 MB):
+warning: cannot send 'io_tank/test/l0_3/l1_2/l2_2@syncoid_io_2024-12-23:18:53:57-GMT-06:00': Input/output error
+1.22KiB 0:00:00 [9.02KiB/s] [&gt;                                                                                                   ]  0%            
+cannot receive incremental stream: checksum mismatch or incomplete stream.
+Partially received snapshot is saved.
+A resuming stream can be generated on the sending system by running:
+    zfs send -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1735001499 io ' zfs send  -I '&quot;'&quot;'io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;'@'&quot;'&quot;'syncoid_io_2024-12-23:18:38:57-GMT-06:00'&quot;'&quot;' '&quot;'&quot;'io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;'@'&quot;'&quot;'syncoid_io_2024-12-23:18:53:57-GMT-06:00'&quot;'&quot;' | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 1108016 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1735001499 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;' 2&gt;&amp;1' failed: 256 at /sbin/syncoid line 817.
+Sending incremental io_tank/test/l0_3/l1_2/l2_3@syncoid_io_2024-12-23:18:38:59-GMT-06:00 ... syncoid_io_2024-12-23:18:53:58-GMT-06:00 (~ 1.2 MB):
+ 944KiB 0:00:00 [4.28MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_3@syncoid_io_2024-12-23:18:39:00-GMT-06:00 ... syncoid_io_2024-12-23:18:54:00-GMT-06:00 (~ 1.1 MB):
+ 946KiB 0:00:00 [3.73MiB/s] [===================================================================================&gt;                ] 84%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_0@syncoid_io_2024-12-23:18:39:02-GMT-06:00 ... syncoid_io_2024-12-23:18:54:02-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [5.33MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_1@syncoid_io_2024-12-23:18:39:04-GMT-06:00 ... syncoid_io_2024-12-23:18:54:03-GMT-06:00 (~ 1.9 MB):
+1.43MiB 0:00:00 [5.56MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_2@syncoid_io_2024-12-23:18:39:05-GMT-06:00 ... syncoid_io_2024-12-23:18:54:05-GMT-06:00 (~ 1.4 MB):
+ 953KiB 0:00:00 [5.35MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_3@syncoid_io_2024-12-23:18:39:07-GMT-06:00 ... syncoid_io_2024-12-23:18:54:07-GMT-06:00 (~ 981 KB):
+ 695KiB 0:00:00 [3.73MiB/s] [=====================================================================&gt;                              ] 70%            
+real 149.42
+user 21.88
+sys 24.16
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:20:57 with 0 errors on Mon Dec 23 11:08:15 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 1 data errors, use '-v' for a list
+
+
+Sending incremental io_tank@syncoid_io_2024-12-23:18:51:41-GMT-06:00 ... syncoid_io_2024-12-23:19:06:40-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.1KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-23:18:51:42-GMT-06:00 ... syncoid_io_2024-12-23:19:06:41-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.9KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test@syncoid_io_2024-12-23:18:51:44-GMT-06:00 ... syncoid_io_2024-12-23:19:06:43-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.1KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-23:18:51:45-GMT-06:00 ... syncoid_io_2024-12-23:19:06:44-GMT-06:00 (~ 1.5 MB):
+1.04MiB 0:00:00 [5.08MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-23:18:51:47-GMT-06:00 ... syncoid_io_2024-12-23:19:06:46-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [5.68MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-23:18:51:49-GMT-06:00 ... syncoid_io_2024-12-23:19:06:48-GMT-06:00 (~ 1.2 MB):
+ 945KiB 0:00:00 [4.01MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-23:18:51:50-GMT-06:00 ... syncoid_io_2024-12-23:19:06:49-GMT-06:00 (~ 1.0 MB):
+ 810KiB 0:00:00 [3.63MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_2@syncoid_io_2024-12-23:18:51:52-GMT-06:00 ... syncoid_io_2024-12-23:19:06:51-GMT-06:00 (~ 1.2 MB):
+ 814KiB 0:00:00 [4.33MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_3@syncoid_io_2024-12-23:18:51:54-GMT-06:00 ... syncoid_io_2024-12-23:19:06:52-GMT-06:00 (~ 1.2 MB):
+ 955KiB 0:00:00 [4.09MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_1@syncoid_io_2024-12-23:18:51:56-GMT-06:00 ... syncoid_io_2024-12-23:19:06:54-GMT-06:00 (~ 1.3 MB):
+ 948KiB 0:00:00 [4.66MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_0@syncoid_io_2024-12-23:18:51:57-GMT-06:00 ... syncoid_io_2024-12-23:19:06:56-GMT-06:00 (~ 1.8 MB):
+1.19MiB 0:00:00 [6.53MiB/s] [===============================================================&gt;                                    ] 64%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_1@syncoid_io_2024-12-23:18:51:59-GMT-06:00 ... syncoid_io_2024-12-23:19:06:57-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.16MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_2@syncoid_io_2024-12-23:18:52:01-GMT-06:00 ... syncoid_io_2024-12-23:19:06:59-GMT-06:00 (~ 1.2 MB):
+ 909KiB 0:00:00 [4.05MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_3@syncoid_io_2024-12-23:18:52:02-GMT-06:00 ... syncoid_io_2024-12-23:19:07:01-GMT-06:00 (~ 1.3 MB):
+1015KiB 0:00:00 [4.23MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_0/l1_2@syncoid_io_2024-12-23:18:52:04-GMT-06:00 ... syncoid_io_2024-12-23:19:07:02-GMT-06:00 (~ 1.5 MB):
+1.17MiB 0:00:00 [4.50MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_0@syncoid_io_2024-12-23:18:52:06-GMT-06:00 ... syncoid_io_2024-12-23:19:07:04-GMT-06:00 (~ 1.1 MB):
+ 813KiB 0:00:00 [3.97MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_1@syncoid_io_2024-12-23:18:52:08-GMT-06:00 ... syncoid_io_2024-12-23:19:07:06-GMT-06:00 (~ 1.6 MB):
+1.17MiB 0:00:00 [4.77MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_2@syncoid_io_2024-12-23:18:52:09-GMT-06:00 ... syncoid_io_2024-12-23:19:07:08-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [5.08MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_3@syncoid_io_2024-12-23:18:52:11-GMT-06:00 ... syncoid_io_2024-12-23:19:07:09-GMT-06:00 (~ 1.8 MB):
+1.28MiB 0:00:00 [5.88MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_3@syncoid_io_2024-12-23:18:52:13-GMT-06:00 ... syncoid_io_2024-12-23:19:07:11-GMT-06:00 (~ 1.0 MB):
+ 690KiB 0:00:00 [4.11MiB/s] [=================================================================&gt;                                  ] 66%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_0@syncoid_io_2024-12-23:18:52:15-GMT-06:00 ... syncoid_io_2024-12-23:19:07:13-GMT-06:00 (~ 1.7 MB):
+1.19MiB 0:00:00 [5.49MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_1@syncoid_io_2024-12-23:18:52:16-GMT-06:00 ... syncoid_io_2024-12-23:19:07:14-GMT-06:00 (~ 1.2 MB):
+ 947KiB 0:00:00 [3.89MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_2@syncoid_io_2024-12-23:18:52:18-GMT-06:00 ... syncoid_io_2024-12-23:19:07:16-GMT-06:00 (~ 1.4 MB):
+1.07MiB 0:00:00 [4.57MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_3@syncoid_io_2024-12-23:18:52:20-GMT-06:00 ... syncoid_io_2024-12-23:19:07:18-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.25MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1@syncoid_io_2024-12-23:18:52:22-GMT-06:00 ... syncoid_io_2024-12-23:19:07:19-GMT-06:00 (~ 1.4 MB):
+1.04MiB 0:00:00 [4.64MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_0@syncoid_io_2024-12-23:18:52:23-GMT-06:00 ... syncoid_io_2024-12-23:19:07:21-GMT-06:00 (~ 897 KB):
+ 663KiB 0:00:00 [3.44MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_0@syncoid_io_2024-12-23:18:52:25-GMT-06:00 ... syncoid_io_2024-12-23:19:07:22-GMT-06:00 (~ 1.1 MB):
+ 944KiB 0:00:00 [3.82MiB/s] [==================================================================================&gt;                 ] 83%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_1@syncoid_io_2024-12-23:18:52:27-GMT-06:00 ... syncoid_io_2024-12-23:19:07:24-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.21MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_2@syncoid_io_2024-12-23:18:52:28-GMT-06:00 ... syncoid_io_2024-12-23:19:07:26-GMT-06:00 (~ 1.3 MB):
+1.06MiB 0:00:00 [4.27MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_3@syncoid_io_2024-12-23:18:52:30-GMT-06:00 ... syncoid_io_2024-12-23:19:07:27-GMT-06:00 (~ 1.2 MB):
+ 951KiB 0:00:00 [4.16MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_1@syncoid_io_2024-12-23:18:52:32-GMT-06:00 ... syncoid_io_2024-12-23:19:07:29-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [4.98MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_0@syncoid_io_2024-12-23:18:52:34-GMT-06:00 ... syncoid_io_2024-12-23:19:07:30-GMT-06:00 (~ 1.3 MB):
+ 910KiB 0:00:00 [4.54MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_1@syncoid_io_2024-12-23:18:52:35-GMT-06:00 ... syncoid_io_2024-12-23:19:07:32-GMT-06:00 (~ 1.2 MB):
+ 824KiB 0:00:00 [4.16MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_2@syncoid_io_2024-12-23:18:52:37-GMT-06:00 ... syncoid_io_2024-12-23:19:07:34-GMT-06:00 (~ 1.9 MB):
+1.44MiB 0:00:00 [5.70MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_3@syncoid_io_2024-12-23:18:52:39-GMT-06:00 ... syncoid_io_2024-12-23:19:07:35-GMT-06:00 (~ 989 KB):
+ 817KiB 0:00:00 [3.42MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_1/l1_2@syncoid_io_2024-12-23:18:52:40-GMT-06:00 ... syncoid_io_2024-12-23:19:07:37-GMT-06:00 (~ 1.4 MB):
+1.03MiB 0:00:00 [4.95MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_0@syncoid_io_2024-12-23:18:52:42-GMT-06:00 ... syncoid_io_2024-12-23:19:07:39-GMT-06:00 (~ 1.4 MB):
+ 953KiB 0:00:00 [4.84MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_1@syncoid_io_2024-12-23:18:52:44-GMT-06:00 ... syncoid_io_2024-12-23:19:07:40-GMT-06:00 (~ 1.2 MB):
+ 944KiB 0:00:00 [4.14MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_2@syncoid_io_2024-12-23:18:52:46-GMT-06:00 ... syncoid_io_2024-12-23:19:07:42-GMT-06:00 (~ 1.6 MB):
+1.17MiB 0:00:00 [5.23MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_3@syncoid_io_2024-12-23:18:52:47-GMT-06:00 ... syncoid_io_2024-12-23:19:07:44-GMT-06:00 (~ 1.9 MB):
+1.29MiB 0:00:00 [6.67MiB/s] [=================================================================&gt;                                  ] 66%            
+Sending incremental io_tank/test/l0_1/l1_3@syncoid_io_2024-12-23:18:52:49-GMT-06:00 ... syncoid_io_2024-12-23:19:07:45-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.63MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_0@syncoid_io_2024-12-23:18:52:51-GMT-06:00 ... syncoid_io_2024-12-23:19:07:47-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [5.56MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_1@syncoid_io_2024-12-23:18:52:53-GMT-06:00 ... syncoid_io_2024-12-23:19:07:49-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [5.11MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_2@syncoid_io_2024-12-23:18:52:54-GMT-06:00 ... syncoid_io_2024-12-23:19:07:50-GMT-06:00 (~ 1.3 MB):
+ 920KiB 0:00:00 [4.49MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_3@syncoid_io_2024-12-23:18:52:56-GMT-06:00 ... syncoid_io_2024-12-23:19:07:52-GMT-06:00 (~ 1.3 MB):
+ 942KiB 0:00:00 [4.26MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2@syncoid_io_2024-12-23:18:52:58-GMT-06:00 ... syncoid_io_2024-12-23:19:07:54-GMT-06:00 (~ 1.4 MB):
+1.02MiB 0:00:00 [4.88MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_0@syncoid_io_2024-12-23:18:52:59-GMT-06:00 ... syncoid_io_2024-12-23:19:07:55-GMT-06:00 (~ 1.7 MB):
+1.28MiB 0:00:00 [5.03MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_0@syncoid_io_2024-12-23:18:53:01-GMT-06:00 ... syncoid_io_2024-12-23:19:07:57-GMT-06:00 (~ 1.5 MB):
+1.18MiB 0:00:00 [4.51MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_1@syncoid_io_2024-12-23:18:53:03-GMT-06:00 ... syncoid_io_2024-12-23:19:07:59-GMT-06:00 (~ 1.8 MB):
+1.32MiB 0:00:00 [5.74MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_2@syncoid_io_2024-12-23:18:53:05-GMT-06:00 ... syncoid_io_2024-12-23:19:08:00-GMT-06:00 (~ 1.3 MB):
+ 947KiB 0:00:00 [4.34MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_3@syncoid_io_2024-12-23:18:53:06-GMT-06:00 ... syncoid_io_2024-12-23:19:08:02-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.45MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_2/l1_1@syncoid_io_2024-12-23:18:53:08-GMT-06:00 ... syncoid_io_2024-12-23:19:08:04-GMT-06:00 (~ 1.1 MB):
+ 809KiB 0:00:00 [4.07MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_0@syncoid_io_2024-12-23:18:53:10-GMT-06:00 ... syncoid_io_2024-12-23:19:08:05-GMT-06:00 (~ 1.8 MB):
+1.42MiB 0:00:00 [5.06MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_1@syncoid_io_2024-12-23:18:53:11-GMT-06:00 ... syncoid_io_2024-12-23:19:08:07-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [4.76MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_2@syncoid_io_2024-12-23:18:53:13-GMT-06:00 ... syncoid_io_2024-12-23:19:08:09-GMT-06:00 (~ 1.5 MB):
+1.18MiB 0:00:00 [4.64MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_3@syncoid_io_2024-12-23:18:53:15-GMT-06:00 ... syncoid_io_2024-12-23:19:08:11-GMT-06:00 (~ 1.3 MB):
+ 952KiB 0:00:00 [4.58MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_2@syncoid_io_2024-12-23:18:53:17-GMT-06:00 ... syncoid_io_2024-12-23:19:08:12-GMT-06:00 (~ 1.3 MB):
+1.04MiB 0:00:00 [4.40MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_0@syncoid_io_2024-12-23:18:53:18-GMT-06:00 ... syncoid_io_2024-12-23:19:08:14-GMT-06:00 (~ 1.4 MB):
+ 947KiB 0:00:00 [4.98MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_1@syncoid_io_2024-12-23:18:53:20-GMT-06:00 ... syncoid_io_2024-12-23:19:08:15-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.72MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_2@syncoid_io_2024-12-23:18:53:22-GMT-06:00 ... syncoid_io_2024-12-23:19:08:17-GMT-06:00 (~ 1.2 MB):
+ 946KiB 0:00:00 [4.29MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_3@syncoid_io_2024-12-23:18:53:24-GMT-06:00 ... syncoid_io_2024-12-23:19:08:19-GMT-06:00 (~ 2.0 MB):
+1.31MiB 0:00:00 [6.74MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_2/l1_3@syncoid_io_2024-12-23:18:53:25-GMT-06:00 ... syncoid_io_2024-12-23:19:08:21-GMT-06:00 (~ 937 KB):
+ 781KiB 0:00:00 [3.33MiB/s] [==================================================================================&gt;                 ] 83%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_0@syncoid_io_2024-12-23:18:53:27-GMT-06:00 ... syncoid_io_2024-12-23:19:08:22-GMT-06:00 (~ 1.3 MB):
+ 926KiB 0:00:00 [4.52MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_1@syncoid_io_2024-12-23:18:53:29-GMT-06:00 ... syncoid_io_2024-12-23:19:08:24-GMT-06:00 (~ 1.9 MB):
+1.44MiB 0:00:00 [5.45MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_2@syncoid_io_2024-12-23:18:53:30-GMT-06:00 ... syncoid_io_2024-12-23:19:08:26-GMT-06:00 (~ 1.2 MB):
+ 954KiB 0:00:00 [4.11MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_3@syncoid_io_2024-12-23:18:53:32-GMT-06:00 ... syncoid_io_2024-12-23:19:08:27-GMT-06:00 (~ 1.5 MB):
+1.18MiB 0:00:00 [4.50MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_3@syncoid_io_2024-12-23:18:53:34-GMT-06:00 ... syncoid_io_2024-12-23:19:08:29-GMT-06:00 (~ 1.5 MB):
+1.18MiB 0:00:00 [4.74MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_3/l1_0@syncoid_io_2024-12-23:18:53:36-GMT-06:00 ... syncoid_io_2024-12-23:19:08:31-GMT-06:00 (~ 865 KB):
+ 655KiB 0:00:00 [3.33MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_0@syncoid_io_2024-12-23:18:53:37-GMT-06:00 ... syncoid_io_2024-12-23:19:08:32-GMT-06:00 (~ 1.6 MB):
+1.17MiB 0:00:00 [5.06MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_1@syncoid_io_2024-12-23:18:53:39-GMT-06:00 ... syncoid_io_2024-12-23:19:08:34-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [4.84MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_2@syncoid_io_2024-12-23:18:53:41-GMT-06:00 ... syncoid_io_2024-12-23:19:08:36-GMT-06:00 (~ 1.8 MB):
+1.19MiB 0:00:00 [6.53MiB/s] [===============================================================&gt;                                    ] 64%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_3@syncoid_io_2024-12-23:18:53:42-GMT-06:00 ... syncoid_io_2024-12-23:19:08:37-GMT-06:00 (~ 1.4 MB):
+ 966KiB 0:00:00 [5.36MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_3/l1_1@syncoid_io_2024-12-23:18:53:44-GMT-06:00 ... syncoid_io_2024-12-23:19:08:39-GMT-06:00 (~ 1.9 MB):
+1.44MiB 0:00:00 [5.34MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_0@syncoid_io_2024-12-23:18:53:46-GMT-06:00 ... syncoid_io_2024-12-23:19:08:41-GMT-06:00 (~ 1.7 MB):
+1.29MiB 0:00:00 [5.09MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_1@syncoid_io_2024-12-23:18:53:47-GMT-06:00 ... syncoid_io_2024-12-23:19:08:42-GMT-06:00 (~ 1.1 MB):
+ 808KiB 0:00:00 [3.92MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_2@syncoid_io_2024-12-23:18:53:49-GMT-06:00 ... syncoid_io_2024-12-23:19:08:44-GMT-06:00 (~ 1.5 MB):
+1.04MiB 0:00:00 [5.02MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_3@syncoid_io_2024-12-23:18:53:51-GMT-06:00 ... syncoid_io_2024-12-23:19:08:46-GMT-06:00 (~ 1.3 MB):
+ 947KiB 0:00:00 [4.36MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_2@syncoid_io_2024-12-23:18:53:52-GMT-06:00 ... syncoid_io_2024-12-23:19:08:48-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.79MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_0@syncoid_io_2024-12-23:18:53:54-GMT-06:00 ... syncoid_io_2024-12-23:19:08:49-GMT-06:00 (~ 1.1 MB):
+ 810KiB 0:00:00 [3.93MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_1@syncoid_io_2024-12-23:18:53:56-GMT-06:00 ... syncoid_io_2024-12-23:19:08:51-GMT-06:00 (~ 1.0 MB):
+ 802KiB 0:00:00 [3.77MiB/s] [============================================================================&gt;                       ] 77%            
+Resuming interrupted zfs send/receive from io_tank/test/l0_3/l1_2/l2_2 to ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2 (~ 1.1 MB remaining):
+warning: cannot send 'io_tank/test/l0_3/l1_2/l2_2@syncoid_io_2024-12-23:18:53:57-GMT-06:00': Input/output error
+ 408 B 0:00:00 [2.60KiB/s] [&gt;                                                                                                    ]  0%            
+cannot receive resume stream: checksum mismatch or incomplete stream.
+Partially received snapshot is saved.
+A resuming stream can be generated on the sending system by running:
+    zfs send -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1735002398 io ' zfs send  -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 1108016 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1735002399 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;' 2&gt;&amp;1' failed: 256 at /sbin/syncoid line 580.
+Sending incremental io_tank/test/l0_3/l1_2/l2_3@syncoid_io_2024-12-23:18:53:58-GMT-06:00 ... syncoid_io_2024-12-23:19:08:53-GMT-06:00 (~ 1.6 MB):
+1.25MiB 0:00:00 [4.87MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_3/l1_3@syncoid_io_2024-12-23:18:54:00-GMT-06:00 ... syncoid_io_2024-12-23:19:08:55-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.29MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_0@syncoid_io_2024-12-23:18:54:02-GMT-06:00 ... syncoid_io_2024-12-23:19:08:56-GMT-06:00 (~ 1.1 MB):
+ 809KiB 0:00:00 [4.21MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_1@syncoid_io_2024-12-23:18:54:03-GMT-06:00 ... syncoid_io_2024-12-23:19:08:58-GMT-06:00 (~ 1.8 MB):
+1.19MiB 0:00:00 [6.10MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_2@syncoid_io_2024-12-23:18:54:05-GMT-06:00 ... syncoid_io_2024-12-23:19:09:00-GMT-06:00 (~ 1.1 MB):
+ 781KiB 0:00:00 [4.19MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_3@syncoid_io_2024-12-23:18:54:07-GMT-06:00 ... syncoid_io_2024-12-23:19:09:01-GMT-06:00 (~ 1.2 MB):
+ 937KiB 0:00:00 [4.19MiB/s] [=========================================================================&gt;                          ] 74%            
+real 144.66
+user 21.12
+sys 23.25
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:20:57 with 0 errors on Mon Dec 23 11:08:15 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 4 data errors, use '-v' for a list
+
+
+Sending incremental io_tank@syncoid_io_2024-12-23:19:06:40-GMT-06:00 ... syncoid_io_2024-12-23:19:21:35-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.1KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-23:19:06:41-GMT-06:00 ... syncoid_io_2024-12-23:19:21:36-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.9KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test@syncoid_io_2024-12-23:19:06:43-GMT-06:00 ... syncoid_io_2024-12-23:19:21:38-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.1KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-23:19:06:44-GMT-06:00 ... syncoid_io_2024-12-23:19:21:39-GMT-06:00 (~ 1.2 MB):
+ 946KiB 0:00:00 [4.43MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-23:19:06:46-GMT-06:00 ... syncoid_io_2024-12-23:19:21:41-GMT-06:00 (~ 901 KB):
+ 683KiB 0:00:00 [3.54MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-23:19:06:48-GMT-06:00 ... syncoid_io_2024-12-23:19:21:42-GMT-06:00 (~ 1.7 MB):
+1.17MiB 0:00:00 [5.66MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-23:19:06:49-GMT-06:00 ... syncoid_io_2024-12-23:19:21:44-GMT-06:00 (~ 1.5 MB):
+1.19MiB 0:00:00 [4.64MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_2@syncoid_io_2024-12-23:19:06:51-GMT-06:00 ... syncoid_io_2024-12-23:19:21:46-GMT-06:00 (~ 965 KB):
+ 681KiB 0:00:00 [3.78MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_3@syncoid_io_2024-12-23:19:06:52-GMT-06:00 ... syncoid_io_2024-12-23:19:21:48-GMT-06:00 (~ 925 KB):
+ 820KiB 0:00:00 [3.34MiB/s] [=======================================================================================&gt;            ] 88%            
+Sending incremental io_tank/test/l0_0/l1_1@syncoid_io_2024-12-23:19:06:54-GMT-06:00 ... syncoid_io_2024-12-23:19:21:49-GMT-06:00 (~ 1.7 MB):
+1.32MiB 0:00:00 [4.96MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_0@syncoid_io_2024-12-23:19:06:56-GMT-06:00 ... syncoid_io_2024-12-23:19:21:51-GMT-06:00 (~ 1.4 MB):
+ 946KiB 0:00:00 [4.88MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_1@syncoid_io_2024-12-23:19:06:57-GMT-06:00 ... syncoid_io_2024-12-23:19:21:53-GMT-06:00 (~ 1.3 MB):
+1.04MiB 0:00:00 [4.38MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_2@syncoid_io_2024-12-23:19:06:59-GMT-06:00 ... syncoid_io_2024-12-23:19:21:54-GMT-06:00 (~ 2.2 MB):
+1.52MiB 0:00:00 [7.35MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_3@syncoid_io_2024-12-23:19:07:01-GMT-06:00 ... syncoid_io_2024-12-23:19:21:56-GMT-06:00 (~ 1.3 MB):
+ 956KiB 0:00:00 [4.64MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_2@syncoid_io_2024-12-23:19:07:02-GMT-06:00 ... syncoid_io_2024-12-23:19:21:58-GMT-06:00 (~ 1.5 MB):
+1.18MiB 0:00:00 [4.66MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_0@syncoid_io_2024-12-23:19:07:04-GMT-06:00 ... syncoid_io_2024-12-23:19:21:59-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [4.82MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_1@syncoid_io_2024-12-23:19:07:06-GMT-06:00 ... syncoid_io_2024-12-23:19:22:01-GMT-06:00 (~ 1.3 MB):
+ 948KiB 0:00:00 [4.57MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_2@syncoid_io_2024-12-23:19:07:08-GMT-06:00 ... syncoid_io_2024-12-23:19:22:03-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [4.71MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_3@syncoid_io_2024-12-23:19:07:09-GMT-06:00 ... syncoid_io_2024-12-23:19:22:04-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.62MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_3@syncoid_io_2024-12-23:19:07:11-GMT-06:00 ... syncoid_io_2024-12-23:19:22:06-GMT-06:00 (~ 1.2 MB):
+ 919KiB 0:00:00 [4.31MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_0@syncoid_io_2024-12-23:19:07:13-GMT-06:00 ... syncoid_io_2024-12-23:19:22:08-GMT-06:00 (~ 1.2 MB):
+ 940KiB 0:00:00 [4.26MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_1@syncoid_io_2024-12-23:19:07:14-GMT-06:00 ... syncoid_io_2024-12-23:19:22:09-GMT-06:00 (~ 1.3 MB):
+ 935KiB 0:00:00 [4.40MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_2@syncoid_io_2024-12-23:19:07:16-GMT-06:00 ... syncoid_io_2024-12-23:19:22:11-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.84MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_3@syncoid_io_2024-12-23:19:07:18-GMT-06:00 ... syncoid_io_2024-12-23:19:22:13-GMT-06:00 (~ 981 KB):
+ 684KiB 0:00:00 [3.58MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1@syncoid_io_2024-12-23:19:07:19-GMT-06:00 ... syncoid_io_2024-12-23:19:22:14-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.10MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_0@syncoid_io_2024-12-23:19:07:21-GMT-06:00 ... syncoid_io_2024-12-23:19:22:16-GMT-06:00 (~ 1.4 MB):
+1.04MiB 0:00:00 [4.43MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_0@syncoid_io_2024-12-23:19:07:22-GMT-06:00 ... syncoid_io_2024-12-23:19:22:18-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [5.14MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_1@syncoid_io_2024-12-23:19:07:24-GMT-06:00 ... syncoid_io_2024-12-23:19:22:19-GMT-06:00 (~ 1.6 MB):
+1.17MiB 0:00:00 [5.02MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_2@syncoid_io_2024-12-23:19:07:26-GMT-06:00 ... syncoid_io_2024-12-23:19:22:21-GMT-06:00 (~ 1.2 MB):
+ 805KiB 0:00:00 [4.26MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_3@syncoid_io_2024-12-23:19:07:27-GMT-06:00 ... syncoid_io_2024-12-23:19:22:23-GMT-06:00 (~ 1.2 MB):
+ 945KiB 0:00:00 [3.93MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_1@syncoid_io_2024-12-23:19:07:29-GMT-06:00 ... syncoid_io_2024-12-23:19:22:24-GMT-06:00 (~ 901 KB):
+ 681KiB 0:00:00 [3.40MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_0@syncoid_io_2024-12-23:19:07:30-GMT-06:00 ... syncoid_io_2024-12-23:19:22:26-GMT-06:00 (~ 1.1 MB):
+ 796KiB 0:00:00 [4.28MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_1@syncoid_io_2024-12-23:19:07:32-GMT-06:00 ... syncoid_io_2024-12-23:19:22:27-GMT-06:00 (~ 1.8 MB):
+1.31MiB 0:00:00 [5.36MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_2@syncoid_io_2024-12-23:19:07:34-GMT-06:00 ... syncoid_io_2024-12-23:19:22:29-GMT-06:00 (~ 1.2 MB):
+ 943KiB 0:00:00 [4.12MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_3@syncoid_io_2024-12-23:19:07:35-GMT-06:00 ... syncoid_io_2024-12-23:19:22:31-GMT-06:00 (~ 1.7 MB):
+1.31MiB 0:00:00 [5.01MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_1/l1_2@syncoid_io_2024-12-23:19:07:37-GMT-06:00 ... syncoid_io_2024-12-23:19:22:32-GMT-06:00 (~ 1.3 MB):
+1.05MiB 0:00:00 [4.05MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_0@syncoid_io_2024-12-23:19:07:39-GMT-06:00 ... syncoid_io_2024-12-23:19:22:34-GMT-06:00 (~ 1.4 MB):
+ 948KiB 0:00:00 [4.95MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_1@syncoid_io_2024-12-23:19:07:40-GMT-06:00 ... syncoid_io_2024-12-23:19:22:36-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [5.53MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_2@syncoid_io_2024-12-23:19:07:42-GMT-06:00 ... syncoid_io_2024-12-23:19:22:37-GMT-06:00 (~ 1.6 MB):
+1.05MiB 0:00:00 [6.07MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_3@syncoid_io_2024-12-23:19:07:44-GMT-06:00 ... syncoid_io_2024-12-23:19:22:39-GMT-06:00 (~ 1.8 MB):
+1.19MiB 0:00:00 [6.00MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_1/l1_3@syncoid_io_2024-12-23:19:07:45-GMT-06:00 ... syncoid_io_2024-12-23:19:22:41-GMT-06:00 (~ 1.2 MB):
+ 948KiB 0:00:00 [4.04MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_0@syncoid_io_2024-12-23:19:07:47-GMT-06:00 ... syncoid_io_2024-12-23:19:22:42-GMT-06:00 (~ 1.2 MB):
+ 828KiB 0:00:00 [4.33MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_1@syncoid_io_2024-12-23:19:07:49-GMT-06:00 ... syncoid_io_2024-12-23:19:22:44-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.46MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_2@syncoid_io_2024-12-23:19:07:50-GMT-06:00 ... syncoid_io_2024-12-23:19:22:45-GMT-06:00 (~ 2.0 MB):
+1.44MiB 0:00:00 [6.07MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_3@syncoid_io_2024-12-23:19:07:52-GMT-06:00 ... syncoid_io_2024-12-23:19:22:47-GMT-06:00 (~ 1.4 MB):
+ 964KiB 0:00:00 [4.93MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_2@syncoid_io_2024-12-23:19:07:54-GMT-06:00 ... syncoid_io_2024-12-23:19:22:49-GMT-06:00 (~ 1.4 MB):
+ 957KiB 0:00:00 [5.02MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_2/l1_0@syncoid_io_2024-12-23:19:07:55-GMT-06:00 ... syncoid_io_2024-12-23:19:22:50-GMT-06:00 (~ 1.8 MB):
+1.41MiB 0:00:00 [5.32MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_0@syncoid_io_2024-12-23:19:07:57-GMT-06:00 ... syncoid_io_2024-12-23:19:22:52-GMT-06:00 (~ 1.6 MB):
+1.17MiB 0:00:00 [5.15MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_1@syncoid_io_2024-12-23:19:07:59-GMT-06:00 ... syncoid_io_2024-12-23:19:22:54-GMT-06:00 (~ 1.3 MB):
+ 961KiB 0:00:00 [4.18MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_2@syncoid_io_2024-12-23:19:08:00-GMT-06:00 ... syncoid_io_2024-12-23:19:22:55-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.40MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_3@syncoid_io_2024-12-23:19:08:02-GMT-06:00 ... syncoid_io_2024-12-23:19:22:57-GMT-06:00 (~ 1.2 MB):
+ 943KiB 0:00:00 [3.92MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_2/l1_1@syncoid_io_2024-12-23:19:08:04-GMT-06:00 ... syncoid_io_2024-12-23:19:22:59-GMT-06:00 (~ 1.2 MB):
+ 815KiB 0:00:00 [4.42MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_0@syncoid_io_2024-12-23:19:08:05-GMT-06:00 ... syncoid_io_2024-12-23:19:23:00-GMT-06:00 (~ 1.3 MB):
+1.06MiB 0:00:00 [4.19MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_1@syncoid_io_2024-12-23:19:08:07-GMT-06:00 ... syncoid_io_2024-12-23:19:23:02-GMT-06:00 (~ 2.0 MB):
+1.31MiB 0:00:00 [6.42MiB/s] [=================================================================&gt;                                  ] 66%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_2@syncoid_io_2024-12-23:19:08:09-GMT-06:00 ... syncoid_io_2024-12-23:19:23:04-GMT-06:00 (~ 1.2 MB):
+ 810KiB 0:00:00 [4.13MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_3@syncoid_io_2024-12-23:19:08:11-GMT-06:00 ... syncoid_io_2024-12-23:19:23:05-GMT-06:00 (~ 1.5 MB):
+1.18MiB 0:00:00 [4.34MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_2/l1_2@syncoid_io_2024-12-23:19:08:12-GMT-06:00 ... syncoid_io_2024-12-23:19:23:07-GMT-06:00 (~ 1.7 MB):
+1.20MiB 0:00:00 [5.56MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_0@syncoid_io_2024-12-23:19:08:14-GMT-06:00 ... syncoid_io_2024-12-23:19:23:09-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.06MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_1@syncoid_io_2024-12-23:19:08:15-GMT-06:00 ... syncoid_io_2024-12-23:19:23:10-GMT-06:00 (~ 1.2 MB):
+ 813KiB 0:00:00 [4.25MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_2@syncoid_io_2024-12-23:19:08:17-GMT-06:00 ... syncoid_io_2024-12-23:19:23:12-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [4.89MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_3@syncoid_io_2024-12-23:19:08:19-GMT-06:00 ... syncoid_io_2024-12-23:19:23:14-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.82MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_3@syncoid_io_2024-12-23:19:08:21-GMT-06:00 ... syncoid_io_2024-12-23:19:23:15-GMT-06:00 (~ 1.2 MB):
+ 936KiB 0:00:00 [4.20MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_0@syncoid_io_2024-12-23:19:08:22-GMT-06:00 ... syncoid_io_2024-12-23:19:23:17-GMT-06:00 (~ 1.5 MB):
+1.04MiB 0:00:00 [5.02MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_1@syncoid_io_2024-12-23:19:08:24-GMT-06:00 ... syncoid_io_2024-12-23:19:23:19-GMT-06:00 (~ 1.3 MB):
+ 946KiB 0:00:00 [4.53MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_2@syncoid_io_2024-12-23:19:08:26-GMT-06:00 ... syncoid_io_2024-12-23:19:23:20-GMT-06:00 (~ 901 KB):
+ 681KiB 0:00:00 [3.33MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_3@syncoid_io_2024-12-23:19:08:27-GMT-06:00 ... syncoid_io_2024-12-23:19:23:22-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.19MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3@syncoid_io_2024-12-23:19:08:29-GMT-06:00 ... syncoid_io_2024-12-23:19:23:23-GMT-06:00 (~ 1.5 MB):
+1.19MiB 0:00:00 [4.76MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_3/l1_0@syncoid_io_2024-12-23:19:08:31-GMT-06:00 ... syncoid_io_2024-12-23:19:23:25-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [5.25MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_0@syncoid_io_2024-12-23:19:08:32-GMT-06:00 ... syncoid_io_2024-12-23:19:23:27-GMT-06:00 (~ 1.1 MB):
+ 828KiB 0:00:00 [3.89MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_1@syncoid_io_2024-12-23:19:08:34-GMT-06:00 ... syncoid_io_2024-12-23:19:23:28-GMT-06:00 (~ 1.1 MB):
+ 830KiB 0:00:00 [4.00MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_2@syncoid_io_2024-12-23:19:08:36-GMT-06:00 ... syncoid_io_2024-12-23:19:23:30-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.00MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_3@syncoid_io_2024-12-23:19:08:37-GMT-06:00 ... syncoid_io_2024-12-23:19:23:32-GMT-06:00 (~ 1.4 MB):
+1.04MiB 0:00:00 [4.80MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_1@syncoid_io_2024-12-23:19:08:39-GMT-06:00 ... syncoid_io_2024-12-23:19:23:33-GMT-06:00 (~ 1.3 MB):
+1.07MiB 0:00:00 [4.26MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_0@syncoid_io_2024-12-23:19:08:41-GMT-06:00 ... syncoid_io_2024-12-23:19:23:35-GMT-06:00 (~ 1.3 MB):
+1.03MiB 0:00:00 [4.10MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_1@syncoid_io_2024-12-23:19:08:42-GMT-06:00 ... syncoid_io_2024-12-23:19:23:37-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.75MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_2@syncoid_io_2024-12-23:19:08:44-GMT-06:00 ... syncoid_io_2024-12-23:19:23:38-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [4.89MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_3@syncoid_io_2024-12-23:19:08:46-GMT-06:00 ... syncoid_io_2024-12-23:19:23:40-GMT-06:00 (~ 1.4 MB):
+1.03MiB 0:00:00 [5.00MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3/l1_2@syncoid_io_2024-12-23:19:08:48-GMT-06:00 ... syncoid_io_2024-12-23:19:23:41-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [5.22MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_0@syncoid_io_2024-12-23:19:08:49-GMT-06:00 ... syncoid_io_2024-12-23:19:23:43-GMT-06:00 (~ 1.3 MB):
+ 944KiB 0:00:00 [4.58MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_1@syncoid_io_2024-12-23:19:08:51-GMT-06:00 ... syncoid_io_2024-12-23:19:23:45-GMT-06:00 (~ 2.0 MB):
+1.30MiB 0:00:00 [7.20MiB/s] [===============================================================&gt;                                    ] 64%            
+Resuming interrupted zfs send/receive from io_tank/test/l0_3/l1_2/l2_2 to ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2 (~ 1.1 MB remaining):
+warning: cannot send 'io_tank/test/l0_3/l1_2/l2_2@syncoid_io_2024-12-23:18:53:57-GMT-06:00': Input/output error
+ 408 B 0:00:00 [2.60KiB/s] [&gt;                                                                                                    ]  0%            
+cannot receive resume stream: checksum mismatch or incomplete stream.
+Partially received snapshot is saved.
+A resuming stream can be generated on the sending system by running:
+    zfs send -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1735003293 io ' zfs send  -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 1108016 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1735003294 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;' 2&gt;&amp;1' failed: 256 at /sbin/syncoid line 580.
+Sending incremental io_tank/test/l0_3/l1_2/l2_3@syncoid_io_2024-12-23:19:08:53-GMT-06:00 ... syncoid_io_2024-12-23:19:23:47-GMT-06:00 (~ 1.2 MB):
+ 947KiB 0:00:00 [4.17MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_3@syncoid_io_2024-12-23:19:08:55-GMT-06:00 ... syncoid_io_2024-12-23:19:23:48-GMT-06:00 (~ 1.1 MB):
+ 952KiB 0:00:00 [3.79MiB/s] [==================================================================================&gt;                 ] 83%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_0@syncoid_io_2024-12-23:19:08:56-GMT-06:00 ... syncoid_io_2024-12-23:19:23:50-GMT-06:00 (~ 1.2 MB):
+ 950KiB 0:00:00 [4.27MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_1@syncoid_io_2024-12-23:19:08:58-GMT-06:00 ... syncoid_io_2024-12-23:19:23:52-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.79MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_2@syncoid_io_2024-12-23:19:09:00-GMT-06:00 ... syncoid_io_2024-12-23:19:23:53-GMT-06:00 (~ 1001 KB):
+ 780KiB 0:00:00 [3.72MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_3@syncoid_io_2024-12-23:19:09:01-GMT-06:00 ... syncoid_io_2024-12-23:19:23:55-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [5.05MiB/s] [==========================================================================&gt;                         ] 75%            
+real 143.71
+user 21.26
+sys 23.42
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:20:57 with 0 errors on Mon Dec 23 11:08:15 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 4 data errors, use '-v' for a list
+
+
+Sending incremental io_tank@syncoid_io_2024-12-23:19:21:35-GMT-06:00 ... syncoid_io_2024-12-23:19:36:28-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.0KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-23:19:21:36-GMT-06:00 ... syncoid_io_2024-12-23:19:36:30-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.2KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test@syncoid_io_2024-12-23:19:21:38-GMT-06:00 ... syncoid_io_2024-12-23:19:36:31-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.6KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-23:19:21:39-GMT-06:00 ... syncoid_io_2024-12-23:19:36:33-GMT-06:00 (~ 1001 KB):
+ 781KiB 0:00:00 [3.69MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-23:19:21:41-GMT-06:00 ... syncoid_io_2024-12-23:19:36:35-GMT-06:00 (~ 1.9 MB):
+1.31MiB 0:00:00 [6.12MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-23:19:21:42-GMT-06:00 ... syncoid_io_2024-12-23:19:36:37-GMT-06:00 (~ 1.1 MB):
+ 809KiB 0:00:00 [3.98MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-23:19:21:44-GMT-06:00 ... syncoid_io_2024-12-23:19:36:38-GMT-06:00 (~ 1.6 MB):
+1.05MiB 0:00:00 [5.61MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_2@syncoid_io_2024-12-23:19:21:46-GMT-06:00 ... syncoid_io_2024-12-23:19:36:40-GMT-06:00 (~ 837 KB):
+ 681KiB 0:00:00 [3.17MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_3@syncoid_io_2024-12-23:19:21:48-GMT-06:00 ... syncoid_io_2024-12-23:19:36:42-GMT-06:00 (~ 981 KB):
+ 688KiB 0:00:00 [3.57MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_1@syncoid_io_2024-12-23:19:21:49-GMT-06:00 ... syncoid_io_2024-12-23:19:36:43-GMT-06:00 (~ 1.2 MB):
+ 963KiB 0:00:00 [4.21MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_0@syncoid_io_2024-12-23:19:21:51-GMT-06:00 ... syncoid_io_2024-12-23:19:36:45-GMT-06:00 (~ 1.8 MB):
+1.31MiB 0:00:00 [5.50MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_1@syncoid_io_2024-12-23:19:21:53-GMT-06:00 ... syncoid_io_2024-12-23:19:36:47-GMT-06:00 (~ 1.6 MB):
+1.17MiB 0:00:00 [5.11MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_2@syncoid_io_2024-12-23:19:21:54-GMT-06:00 ... syncoid_io_2024-12-23:19:36:48-GMT-06:00 (~ 1.8 MB):
+1.30MiB 0:00:00 [5.77MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_3@syncoid_io_2024-12-23:19:21:56-GMT-06:00 ... syncoid_io_2024-12-23:19:36:50-GMT-06:00 (~ 1.1 MB):
+ 815KiB 0:00:00 [3.99MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_2@syncoid_io_2024-12-23:19:21:58-GMT-06:00 ... syncoid_io_2024-12-23:19:36:52-GMT-06:00 (~ 1.8 MB):
+1.31MiB 0:00:00 [5.50MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_0@syncoid_io_2024-12-23:19:21:59-GMT-06:00 ... syncoid_io_2024-12-23:19:36:53-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [5.07MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_1@syncoid_io_2024-12-23:19:22:01-GMT-06:00 ... syncoid_io_2024-12-23:19:36:55-GMT-06:00 (~ 1.3 MB):
+1.05MiB 0:00:00 [4.26MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_2@syncoid_io_2024-12-23:19:22:03-GMT-06:00 ... syncoid_io_2024-12-23:19:36:57-GMT-06:00 (~ 1.1 MB):
+ 819KiB 0:00:00 [3.93MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_3@syncoid_io_2024-12-23:19:22:04-GMT-06:00 ... syncoid_io_2024-12-23:19:36:58-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [5.02MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_3@syncoid_io_2024-12-23:19:22:06-GMT-06:00 ... syncoid_io_2024-12-23:19:37:00-GMT-06:00 (~ 1.7 MB):
+1.16MiB 0:00:00 [5.66MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_0@syncoid_io_2024-12-23:19:22:08-GMT-06:00 ... syncoid_io_2024-12-23:19:37:02-GMT-06:00 (~ 1.5 MB):
+1.17MiB 0:00:00 [4.60MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_1@syncoid_io_2024-12-23:19:22:09-GMT-06:00 ... syncoid_io_2024-12-23:19:37:03-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.86MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_2@syncoid_io_2024-12-23:19:22:11-GMT-06:00 ... syncoid_io_2024-12-23:19:37:05-GMT-06:00 (~ 1.1 MB):
+ 822KiB 0:00:00 [3.95MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_3@syncoid_io_2024-12-23:19:22:13-GMT-06:00 ... syncoid_io_2024-12-23:19:37:07-GMT-06:00 (~ 1.0 MB):
+ 822KiB 0:00:00 [3.60MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1@syncoid_io_2024-12-23:19:22:14-GMT-06:00 ... syncoid_io_2024-12-23:19:37:08-GMT-06:00 (~ 1.8 MB):
+1.32MiB 0:00:00 [5.67MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_0@syncoid_io_2024-12-23:19:22:16-GMT-06:00 ... syncoid_io_2024-12-23:19:37:10-GMT-06:00 (~ 1.2 MB):
+ 939KiB 0:00:00 [4.07MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_0@syncoid_io_2024-12-23:19:22:18-GMT-06:00 ... syncoid_io_2024-12-23:19:37:12-GMT-06:00 (~ 1.2 MB):
+1.06MiB 0:00:00 [3.97MiB/s] [===================================================================================&gt;                ] 84%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_1@syncoid_io_2024-12-23:19:22:19-GMT-06:00 ... syncoid_io_2024-12-23:19:37:13-GMT-06:00 (~ 2.0 MB):
+1.57MiB 0:00:00 [5.39MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_2@syncoid_io_2024-12-23:19:22:21-GMT-06:00 ... syncoid_io_2024-12-23:19:37:15-GMT-06:00 (~ 1.7 MB):
+1.31MiB 0:00:00 [4.85MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_3@syncoid_io_2024-12-23:19:22:23-GMT-06:00 ... syncoid_io_2024-12-23:19:37:17-GMT-06:00 (~ 969 KB):
+ 798KiB 0:00:00 [3.32MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_1/l1_1@syncoid_io_2024-12-23:19:22:24-GMT-06:00 ... syncoid_io_2024-12-23:19:37:18-GMT-06:00 (~ 1.4 MB):
+1.07MiB 0:00:00 [4.70MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_0@syncoid_io_2024-12-23:19:22:26-GMT-06:00 ... syncoid_io_2024-12-23:19:37:20-GMT-06:00 (~ 1.3 MB):
+1.03MiB 0:00:00 [4.45MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_1@syncoid_io_2024-12-23:19:22:27-GMT-06:00 ... syncoid_io_2024-12-23:19:37:22-GMT-06:00 (~ 853 KB):
+ 683KiB 0:00:00 [3.19MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_2@syncoid_io_2024-12-23:19:22:29-GMT-06:00 ... syncoid_io_2024-12-23:19:37:23-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [5.00MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_3@syncoid_io_2024-12-23:19:22:31-GMT-06:00 ... syncoid_io_2024-12-23:19:37:25-GMT-06:00 (~ 1.7 MB):
+1.31MiB 0:00:00 [5.10MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_1/l1_2@syncoid_io_2024-12-23:19:22:32-GMT-06:00 ... syncoid_io_2024-12-23:19:37:27-GMT-06:00 (~ 1.3 MB):
+ 959KiB 0:00:00 [4.53MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_0@syncoid_io_2024-12-23:19:22:34-GMT-06:00 ... syncoid_io_2024-12-23:19:37:28-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [4.91MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_1@syncoid_io_2024-12-23:19:22:36-GMT-06:00 ... syncoid_io_2024-12-23:19:37:30-GMT-06:00 (~ 1.4 MB):
+1.15MiB 0:00:00 [4.30MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_2@syncoid_io_2024-12-23:19:22:37-GMT-06:00 ... syncoid_io_2024-12-23:19:37:32-GMT-06:00 (~ 1.9 MB):
+1.44MiB 0:00:00 [5.44MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_3@syncoid_io_2024-12-23:19:22:39-GMT-06:00 ... syncoid_io_2024-12-23:19:37:34-GMT-06:00 (~ 1.5 MB):
+1.07MiB 0:00:00 [5.17MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_3@syncoid_io_2024-12-23:19:22:41-GMT-06:00 ... syncoid_io_2024-12-23:19:37:35-GMT-06:00 (~ 1.1 MB):
+ 827KiB 0:00:00 [4.06MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_0@syncoid_io_2024-12-23:19:22:42-GMT-06:00 ... syncoid_io_2024-12-23:19:37:37-GMT-06:00 (~ 1.1 MB):
+ 949KiB 0:00:00 [3.80MiB/s] [===================================================================================&gt;                ] 84%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_1@syncoid_io_2024-12-23:19:22:44-GMT-06:00 ... syncoid_io_2024-12-23:19:37:39-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [4.79MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_2@syncoid_io_2024-12-23:19:22:45-GMT-06:00 ... syncoid_io_2024-12-23:19:37:40-GMT-06:00 (~ 1.3 MB):
+ 947KiB 0:00:00 [4.49MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_3@syncoid_io_2024-12-23:19:22:47-GMT-06:00 ... syncoid_io_2024-12-23:19:37:42-GMT-06:00 (~ 1.0 MB):
+ 832KiB 0:00:00 [3.57MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2@syncoid_io_2024-12-23:19:22:49-GMT-06:00 ... syncoid_io_2024-12-23:19:37:44-GMT-06:00 (~ 1.3 MB):
+1.04MiB 0:00:00 [4.18MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_2/l1_0@syncoid_io_2024-12-23:19:22:50-GMT-06:00 ... syncoid_io_2024-12-23:19:37:45-GMT-06:00 (~ 1.6 MB):
+1.17MiB 0:00:00 [5.08MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_0@syncoid_io_2024-12-23:19:22:52-GMT-06:00 ... syncoid_io_2024-12-23:19:37:47-GMT-06:00 (~ 1.3 MB):
+1.06MiB 0:00:00 [4.21MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_1@syncoid_io_2024-12-23:19:22:54-GMT-06:00 ... syncoid_io_2024-12-23:19:37:49-GMT-06:00 (~ 1.8 MB):
+1.18MiB 0:00:00 [6.51MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_2@syncoid_io_2024-12-23:19:22:55-GMT-06:00 ... syncoid_io_2024-12-23:19:37:50-GMT-06:00 (~ 1.2 MB):
+ 960KiB 0:00:00 [4.01MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_3@syncoid_io_2024-12-23:19:22:57-GMT-06:00 ... syncoid_io_2024-12-23:19:37:52-GMT-06:00 (~ 1.4 MB):
+1.03MiB 0:00:00 [4.83MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_1@syncoid_io_2024-12-23:19:22:59-GMT-06:00 ... syncoid_io_2024-12-23:19:37:54-GMT-06:00 (~ 1.3 MB):
+ 943KiB 0:00:00 [4.58MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_0@syncoid_io_2024-12-23:19:23:00-GMT-06:00 ... syncoid_io_2024-12-23:19:37:55-GMT-06:00 (~ 1.6 MB):
+1.14MiB 0:00:00 [5.21MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_1@syncoid_io_2024-12-23:19:23:02-GMT-06:00 ... syncoid_io_2024-12-23:19:37:57-GMT-06:00 (~ 1.4 MB):
+1.04MiB 0:00:00 [4.64MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_2@syncoid_io_2024-12-23:19:23:04-GMT-06:00 ... syncoid_io_2024-12-23:19:37:59-GMT-06:00 (~ 1.3 MB):
+ 821KiB 0:00:00 [5.12MiB/s] [=============================================================&gt;                                      ] 62%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_3@syncoid_io_2024-12-23:19:23:05-GMT-06:00 ... syncoid_io_2024-12-23:19:38:00-GMT-06:00 (~ 989 KB):
+ 810KiB 0:00:00 [2.94MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_2/l1_2@syncoid_io_2024-12-23:19:23:07-GMT-06:00 ... syncoid_io_2024-12-23:19:38:02-GMT-06:00 (~ 1.2 MB):
+ 836KiB 0:00:00 [4.46MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_0@syncoid_io_2024-12-23:19:23:09-GMT-06:00 ... syncoid_io_2024-12-23:19:38:04-GMT-06:00 (~ 1.4 MB):
+1.03MiB 0:00:00 [4.71MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_1@syncoid_io_2024-12-23:19:23:10-GMT-06:00 ... syncoid_io_2024-12-23:19:38:05-GMT-06:00 (~ 1.5 MB):
+1.16MiB 0:00:00 [4.67MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_2@syncoid_io_2024-12-23:19:23:12-GMT-06:00 ... syncoid_io_2024-12-23:19:38:07-GMT-06:00 (~ 1.7 MB):
+1.17MiB 0:00:00 [5.32MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_3@syncoid_io_2024-12-23:19:23:14-GMT-06:00 ... syncoid_io_2024-12-23:19:38:09-GMT-06:00 (~ 1.1 MB):
+ 821KiB 0:00:00 [3.86MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_3@syncoid_io_2024-12-23:19:23:15-GMT-06:00 ... syncoid_io_2024-12-23:19:38:10-GMT-06:00 (~ 1.3 MB):
+ 936KiB 0:00:00 [4.61MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_0@syncoid_io_2024-12-23:19:23:17-GMT-06:00 ... syncoid_io_2024-12-23:19:38:12-GMT-06:00 (~ 1.2 MB):
+ 816KiB 0:00:00 [4.11MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_1@syncoid_io_2024-12-23:19:23:19-GMT-06:00 ... syncoid_io_2024-12-23:19:38:14-GMT-06:00 (~ 1.3 MB):
+ 946KiB 0:00:00 [4.36MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_2@syncoid_io_2024-12-23:19:23:20-GMT-06:00 ... syncoid_io_2024-12-23:19:38:15-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.71MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_3@syncoid_io_2024-12-23:19:23:22-GMT-06:00 ... syncoid_io_2024-12-23:19:38:17-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [5.11MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3@syncoid_io_2024-12-23:19:23:23-GMT-06:00 ... syncoid_io_2024-12-23:19:38:19-GMT-06:00 (~ 2.2 MB):
+1.56MiB 0:00:00 [6.41MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_3/l1_0@syncoid_io_2024-12-23:19:23:25-GMT-06:00 ... syncoid_io_2024-12-23:19:38:20-GMT-06:00 (~ 909 KB):
+ 558KiB 0:00:00 [3.66MiB/s] [============================================================&gt;                                       ] 61%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_0@syncoid_io_2024-12-23:19:23:27-GMT-06:00 ... syncoid_io_2024-12-23:19:38:22-GMT-06:00 (~ 1.4 MB):
+1.02MiB 0:00:00 [4.70MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_1@syncoid_io_2024-12-23:19:23:28-GMT-06:00 ... syncoid_io_2024-12-23:19:38:23-GMT-06:00 (~ 1.4 MB):
+ 945KiB 0:00:00 [4.74MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_2@syncoid_io_2024-12-23:19:23:30-GMT-06:00 ... syncoid_io_2024-12-23:19:38:25-GMT-06:00 (~ 1.3 MB):
+ 949KiB 0:00:00 [4.56MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_3@syncoid_io_2024-12-23:19:23:32-GMT-06:00 ... syncoid_io_2024-12-23:19:38:27-GMT-06:00 (~ 1.2 MB):
+1013KiB 0:00:00 [3.96MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_3/l1_1@syncoid_io_2024-12-23:19:23:33-GMT-06:00 ... syncoid_io_2024-12-23:19:38:28-GMT-06:00 (~ 1.2 MB):
+ 949KiB 0:00:00 [4.20MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_0@syncoid_io_2024-12-23:19:23:35-GMT-06:00 ... syncoid_io_2024-12-23:19:38:30-GMT-06:00 (~ 1.4 MB):
+1.04MiB 0:00:00 [4.76MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_1@syncoid_io_2024-12-23:19:23:37-GMT-06:00 ... syncoid_io_2024-12-23:19:38:32-GMT-06:00 (~ 1.3 MB):
+1.05MiB 0:00:00 [4.14MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_2@syncoid_io_2024-12-23:19:23:38-GMT-06:00 ... syncoid_io_2024-12-23:19:38:33-GMT-06:00 (~ 1.1 MB):
+ 938KiB 0:00:00 [3.69MiB/s] [==================================================================================&gt;                 ] 83%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_3@syncoid_io_2024-12-23:19:23:40-GMT-06:00 ... syncoid_io_2024-12-23:19:38:35-GMT-06:00 (~ 2.0 MB):
+1.44MiB 0:00:00 [6.10MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3/l1_2@syncoid_io_2024-12-23:19:23:41-GMT-06:00 ... syncoid_io_2024-12-23:19:38:37-GMT-06:00 (~ 1.0 MB):
+ 817KiB 0:00:00 [3.72MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_0@syncoid_io_2024-12-23:19:23:43-GMT-06:00 ... syncoid_io_2024-12-23:19:38:38-GMT-06:00 (~ 1.8 MB):
+1.31MiB 0:00:00 [5.15MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_1@syncoid_io_2024-12-23:19:23:45-GMT-06:00 ... syncoid_io_2024-12-23:19:38:40-GMT-06:00 (~ 1.3 MB):
+ 950KiB 0:00:00 [4.47MiB/s] [=======================================================================&gt;                            ] 72%            
+Resuming interrupted zfs send/receive from io_tank/test/l0_3/l1_2/l2_2 to ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2 (~ 1.1 MB remaining):
+warning: cannot send 'io_tank/test/l0_3/l1_2/l2_2@syncoid_io_2024-12-23:18:53:57-GMT-06:00': Input/output error
+ 408 B 0:00:00 [2.55KiB/s] [&gt;                                                                                                    ]  0%            
+cannot receive resume stream: checksum mismatch or incomplete stream.
+Partially received snapshot is saved.
+A resuming stream can be generated on the sending system by running:
+    zfs send -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1735004187 io ' zfs send  -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 1108016 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1735004187 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;' 2&gt;&amp;1' failed: 256 at /sbin/syncoid line 580.
+Sending incremental io_tank/test/l0_3/l1_2/l2_3@syncoid_io_2024-12-23:19:23:47-GMT-06:00 ... syncoid_io_2024-12-23:19:38:42-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [5.12MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3/l1_3@syncoid_io_2024-12-23:19:23:48-GMT-06:00 ... syncoid_io_2024-12-23:19:38:44-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [6.11MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_0@syncoid_io_2024-12-23:19:23:50-GMT-06:00 ... syncoid_io_2024-12-23:19:38:45-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.62MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_1@syncoid_io_2024-12-23:19:23:52-GMT-06:00 ... syncoid_io_2024-12-23:19:38:47-GMT-06:00 (~ 1.3 MB):
+1.03MiB 0:00:00 [4.42MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_2@syncoid_io_2024-12-23:19:23:53-GMT-06:00 ... syncoid_io_2024-12-23:19:38:48-GMT-06:00 (~ 1.1 MB):
+ 924KiB 0:00:00 [3.79MiB/s] [==================================================================================&gt;                 ] 83%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_3@syncoid_io_2024-12-23:19:23:55-GMT-06:00 ... syncoid_io_2024-12-23:19:38:50-GMT-06:00 (~ 1.0 MB):
+ 824KiB 0:00:00 [3.73MiB/s] [============================================================================&gt;                       ] 77%            
+real 145.01
+user 21.06
+sys 23.58
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:20:57 with 0 errors on Mon Dec 23 11:08:15 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 4 data errors, use '-v' for a list
+
+
+Sending incremental io_tank@syncoid_io_2024-12-23:19:36:28-GMT-06:00 ... syncoid_io_2024-12-23:19:51:23-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.1KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-23:19:36:30-GMT-06:00 ... syncoid_io_2024-12-23:19:51:25-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.0KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test@syncoid_io_2024-12-23:19:36:31-GMT-06:00 ... syncoid_io_2024-12-23:19:51:27-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-23:19:36:33-GMT-06:00 ... syncoid_io_2024-12-23:19:51:28-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.79MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-23:19:36:35-GMT-06:00 ... syncoid_io_2024-12-23:19:51:30-GMT-06:00 (~ 1.1 MB):
+ 928KiB 0:00:00 [3.74MiB/s] [==================================================================================&gt;                 ] 83%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-23:19:36:37-GMT-06:00 ... syncoid_io_2024-12-23:19:51:31-GMT-06:00 (~ 1.1 MB):
+ 809KiB 0:00:00 [4.39MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-23:19:36:38-GMT-06:00 ... syncoid_io_2024-12-23:19:51:33-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [5.42MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_2@syncoid_io_2024-12-23:19:36:40-GMT-06:00 ... syncoid_io_2024-12-23:19:51:35-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [4.85MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_3@syncoid_io_2024-12-23:19:36:42-GMT-06:00 ... syncoid_io_2024-12-23:19:51:36-GMT-06:00 (~ 1.2 MB):
+ 958KiB 0:00:00 [4.22MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_1@syncoid_io_2024-12-23:19:36:43-GMT-06:00 ... syncoid_io_2024-12-23:19:51:38-GMT-06:00 (~ 1.9 MB):
+1.45MiB 0:00:00 [5.19MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_0@syncoid_io_2024-12-23:19:36:45-GMT-06:00 ... syncoid_io_2024-12-23:19:51:40-GMT-06:00 (~ 1.2 MB):
+1.06MiB 0:00:00 [3.94MiB/s] [===================================================================================&gt;                ] 84%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_1@syncoid_io_2024-12-23:19:36:47-GMT-06:00 ... syncoid_io_2024-12-23:19:51:41-GMT-06:00 (~ 1.1 MB):
+ 812KiB 0:00:00 [3.77MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_2@syncoid_io_2024-12-23:19:36:48-GMT-06:00 ... syncoid_io_2024-12-23:19:51:43-GMT-06:00 (~ 1.7 MB):
+1.31MiB 0:00:00 [4.94MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_3@syncoid_io_2024-12-23:19:36:50-GMT-06:00 ... syncoid_io_2024-12-23:19:51:45-GMT-06:00 (~ 1.9 MB):
+1.43MiB 0:00:00 [5.67MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_2@syncoid_io_2024-12-23:19:36:52-GMT-06:00 ... syncoid_io_2024-12-23:19:51:46-GMT-06:00 (~ 1.5 MB):
+1.18MiB 0:00:00 [4.85MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_0@syncoid_io_2024-12-23:19:36:53-GMT-06:00 ... syncoid_io_2024-12-23:19:51:48-GMT-06:00 (~ 1.2 MB):
+ 940KiB 0:00:00 [4.34MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_1@syncoid_io_2024-12-23:19:36:55-GMT-06:00 ... syncoid_io_2024-12-23:19:51:50-GMT-06:00 (~ 1.3 MB):
+1.02MiB 0:00:00 [4.36MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_2@syncoid_io_2024-12-23:19:36:57-GMT-06:00 ... syncoid_io_2024-12-23:19:51:51-GMT-06:00 (~ 1.6 MB):
+1.06MiB 0:00:00 [5.30MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_3@syncoid_io_2024-12-23:19:36:58-GMT-06:00 ... syncoid_io_2024-12-23:19:51:53-GMT-06:00 (~ 1.3 MB):
+ 935KiB 0:00:00 [4.56MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_3@syncoid_io_2024-12-23:19:37:00-GMT-06:00 ... syncoid_io_2024-12-23:19:51:54-GMT-06:00 (~ 1.3 MB):
+1.06MiB 0:00:00 [4.07MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_0@syncoid_io_2024-12-23:19:37:02-GMT-06:00 ... syncoid_io_2024-12-23:19:51:56-GMT-06:00 (~ 1.4 MB):
+1.19MiB 0:00:00 [4.25MiB/s] [==================================================================================&gt;                 ] 83%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_1@syncoid_io_2024-12-23:19:37:03-GMT-06:00 ... syncoid_io_2024-12-23:19:51:58-GMT-06:00 (~ 1.6 MB):
+1.19MiB 0:00:00 [4.73MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_2@syncoid_io_2024-12-23:19:37:05-GMT-06:00 ... syncoid_io_2024-12-23:19:51:59-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [5.44MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_3@syncoid_io_2024-12-23:19:37:07-GMT-06:00 ... syncoid_io_2024-12-23:19:52:01-GMT-06:00 (~ 1.4 MB):
+ 950KiB 0:00:00 [5.34MiB/s] [=================================================================&gt;                                  ] 66%            
+Sending incremental io_tank/test/l0_1@syncoid_io_2024-12-23:19:37:08-GMT-06:00 ... syncoid_io_2024-12-23:19:52:03-GMT-06:00 (~ 1.6 MB):
+1.07MiB 0:00:00 [5.69MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_0@syncoid_io_2024-12-23:19:37:10-GMT-06:00 ... syncoid_io_2024-12-23:19:52:04-GMT-06:00 (~ 1.3 MB):
+1.04MiB 0:00:00 [4.22MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_0@syncoid_io_2024-12-23:19:37:12-GMT-06:00 ... syncoid_io_2024-12-23:19:52:06-GMT-06:00 (~ 1.3 MB):
+1.03MiB 0:00:00 [4.42MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_1@syncoid_io_2024-12-23:19:37:13-GMT-06:00 ... syncoid_io_2024-12-23:19:52:07-GMT-06:00 (~ 989 KB):
+ 817KiB 0:00:00 [3.51MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_2@syncoid_io_2024-12-23:19:37:15-GMT-06:00 ... syncoid_io_2024-12-23:19:52:09-GMT-06:00 (~ 1.4 MB):
+ 950KiB 0:00:00 [4.87MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_3@syncoid_io_2024-12-23:19:37:17-GMT-06:00 ... syncoid_io_2024-12-23:19:52:11-GMT-06:00 (~ 1.9 MB):
+1.31MiB 0:00:00 [6.21MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1/l1_1@syncoid_io_2024-12-23:19:37:18-GMT-06:00 ... syncoid_io_2024-12-23:19:52:12-GMT-06:00 (~ 1.1 MB):
+ 809KiB 0:00:00 [3.98MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_0@syncoid_io_2024-12-23:19:37:20-GMT-06:00 ... syncoid_io_2024-12-23:19:52:14-GMT-06:00 (~ 2.0 MB):
+1.44MiB 0:00:00 [6.39MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_1@syncoid_io_2024-12-23:19:37:22-GMT-06:00 ... syncoid_io_2024-12-23:19:52:15-GMT-06:00 (~ 1.2 MB):
+ 820KiB 0:00:00 [4.33MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_2@syncoid_io_2024-12-23:19:37:23-GMT-06:00 ... syncoid_io_2024-12-23:19:52:17-GMT-06:00 (~ 1.4 MB):
+ 945KiB 0:00:00 [4.89MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_3@syncoid_io_2024-12-23:19:37:25-GMT-06:00 ... syncoid_io_2024-12-23:19:52:19-GMT-06:00 (~ 941 KB):
+ 826KiB 0:00:00 [3.33MiB/s] [======================================================================================&gt;             ] 87%            
+Sending incremental io_tank/test/l0_1/l1_2@syncoid_io_2024-12-23:19:37:27-GMT-06:00 ... syncoid_io_2024-12-23:19:52:20-GMT-06:00 (~ 1.1 MB):
+ 805KiB 0:00:00 [4.41MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_0@syncoid_io_2024-12-23:19:37:28-GMT-06:00 ... syncoid_io_2024-12-23:19:52:22-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [5.68MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_1@syncoid_io_2024-12-23:19:37:30-GMT-06:00 ... syncoid_io_2024-12-23:19:52:24-GMT-06:00 (~ 1.3 MB):
+ 944KiB 0:00:00 [4.54MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_2@syncoid_io_2024-12-23:19:37:32-GMT-06:00 ... syncoid_io_2024-12-23:19:52:25-GMT-06:00 (~ 1.2 MB):
+ 933KiB 0:00:00 [4.27MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_3@syncoid_io_2024-12-23:19:37:34-GMT-06:00 ... syncoid_io_2024-12-23:19:52:27-GMT-06:00 (~ 1.3 MB):
+ 944KiB 0:00:00 [4.55MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_3@syncoid_io_2024-12-23:19:37:35-GMT-06:00 ... syncoid_io_2024-12-23:19:52:29-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.78MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_0@syncoid_io_2024-12-23:19:37:37-GMT-06:00 ... syncoid_io_2024-12-23:19:52:30-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.88MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_1@syncoid_io_2024-12-23:19:37:39-GMT-06:00 ... syncoid_io_2024-12-23:19:52:32-GMT-06:00 (~ 1.4 MB):
+ 944KiB 0:00:00 [4.91MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_2@syncoid_io_2024-12-23:19:37:40-GMT-06:00 ... syncoid_io_2024-12-23:19:52:34-GMT-06:00 (~ 1.3 MB):
+ 818KiB 0:00:00 [5.13MiB/s] [=============================================================&gt;                                      ] 62%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_3@syncoid_io_2024-12-23:19:37:42-GMT-06:00 ... syncoid_io_2024-12-23:19:52:35-GMT-06:00 (~ 1.0 MB):
+ 819KiB 0:00:00 [3.53MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2@syncoid_io_2024-12-23:19:37:44-GMT-06:00 ... syncoid_io_2024-12-23:19:52:37-GMT-06:00 (~ 1.4 MB):
+1.05MiB 0:00:00 [4.63MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_0@syncoid_io_2024-12-23:19:37:45-GMT-06:00 ... syncoid_io_2024-12-23:19:52:39-GMT-06:00 (~ 2.0 MB):
+1.44MiB 0:00:00 [5.65MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_0@syncoid_io_2024-12-23:19:37:47-GMT-06:00 ... syncoid_io_2024-12-23:19:52:40-GMT-06:00 (~ 1.2 MB):
+ 809KiB 0:00:00 [4.66MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_1@syncoid_io_2024-12-23:19:37:49-GMT-06:00 ... syncoid_io_2024-12-23:19:52:42-GMT-06:00 (~ 2.0 MB):
+1.43MiB 0:00:00 [5.79MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_2@syncoid_io_2024-12-23:19:37:50-GMT-06:00 ... syncoid_io_2024-12-23:19:52:44-GMT-06:00 (~ 1.7 MB):
+1.30MiB 0:00:00 [5.17MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_3@syncoid_io_2024-12-23:19:37:52-GMT-06:00 ... syncoid_io_2024-12-23:19:52:45-GMT-06:00 (~ 1.0 MB):
+ 690KiB 0:00:00 [3.92MiB/s] [=================================================================&gt;                                  ] 66%            
+Sending incremental io_tank/test/l0_2/l1_1@syncoid_io_2024-12-23:19:37:54-GMT-06:00 ... syncoid_io_2024-12-23:19:52:47-GMT-06:00 (~ 1.6 MB):
+1.06MiB 0:00:00 [5.48MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_0@syncoid_io_2024-12-23:19:37:55-GMT-06:00 ... syncoid_io_2024-12-23:19:52:48-GMT-06:00 (~ 2.0 MB):
+1.43MiB 0:00:00 [5.65MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_1@syncoid_io_2024-12-23:19:37:57-GMT-06:00 ... syncoid_io_2024-12-23:19:52:50-GMT-06:00 (~ 1.3 MB):
+1.04MiB 0:00:00 [4.24MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_2@syncoid_io_2024-12-23:19:37:59-GMT-06:00 ... syncoid_io_2024-12-23:19:52:52-GMT-06:00 (~ 1.2 MB):
+ 943KiB 0:00:00 [4.26MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_3@syncoid_io_2024-12-23:19:38:00-GMT-06:00 ... syncoid_io_2024-12-23:19:52:54-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [5.39MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_2@syncoid_io_2024-12-23:19:38:02-GMT-06:00 ... syncoid_io_2024-12-23:19:52:55-GMT-06:00 (~ 1.4 MB):
+1.07MiB 0:00:00 [4.50MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_0@syncoid_io_2024-12-23:19:38:04-GMT-06:00 ... syncoid_io_2024-12-23:19:52:57-GMT-06:00 (~ 1.1 MB):
+ 813KiB 0:00:00 [4.04MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_1@syncoid_io_2024-12-23:19:38:05-GMT-06:00 ... syncoid_io_2024-12-23:19:52:58-GMT-06:00 (~ 1.1 MB):
+ 811KiB 0:00:00 [4.05MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_2@syncoid_io_2024-12-23:19:38:07-GMT-06:00 ... syncoid_io_2024-12-23:19:53:00-GMT-06:00 (~ 1.9 MB):
+1.41MiB 0:00:00 [5.91MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_3@syncoid_io_2024-12-23:19:38:09-GMT-06:00 ... syncoid_io_2024-12-23:19:53:02-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.36MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_2/l1_3@syncoid_io_2024-12-23:19:38:10-GMT-06:00 ... syncoid_io_2024-12-23:19:53:03-GMT-06:00 (~ 1.6 MB):
+1.05MiB 0:00:00 [6.05MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_0@syncoid_io_2024-12-23:19:38:12-GMT-06:00 ... syncoid_io_2024-12-23:19:53:05-GMT-06:00 (~ 1.3 MB):
+ 960KiB 0:00:00 [4.61MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_1@syncoid_io_2024-12-23:19:38:14-GMT-06:00 ... syncoid_io_2024-12-23:19:53:07-GMT-06:00 (~ 1.0 MB):
+ 809KiB 0:00:00 [3.48MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_2@syncoid_io_2024-12-23:19:38:15-GMT-06:00 ... syncoid_io_2024-12-23:19:53:08-GMT-06:00 (~ 1.3 MB):
+ 942KiB 0:00:00 [4.51MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_3@syncoid_io_2024-12-23:19:38:17-GMT-06:00 ... syncoid_io_2024-12-23:19:53:10-GMT-06:00 (~ 1.2 MB):
+ 829KiB 0:00:00 [4.69MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_3@syncoid_io_2024-12-23:19:38:19-GMT-06:00 ... syncoid_io_2024-12-23:19:53:12-GMT-06:00 (~ 1.2 MB):
+ 814KiB 0:00:00 [4.39MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_3/l1_0@syncoid_io_2024-12-23:19:38:20-GMT-06:00 ... syncoid_io_2024-12-23:19:53:13-GMT-06:00 (~ 2.0 MB):
+1.54MiB 0:00:00 [5.81MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_0@syncoid_io_2024-12-23:19:38:22-GMT-06:00 ... syncoid_io_2024-12-23:19:53:15-GMT-06:00 (~ 1.8 MB):
+1.32MiB 0:00:00 [5.79MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_1@syncoid_io_2024-12-23:19:38:23-GMT-06:00 ... syncoid_io_2024-12-23:19:53:17-GMT-06:00 (~ 1.3 MB):
+ 958KiB 0:00:00 [4.44MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_2@syncoid_io_2024-12-23:19:38:25-GMT-06:00 ... syncoid_io_2024-12-23:19:53:18-GMT-06:00 (~ 1.1 MB):
+ 911KiB 0:00:00 [3.91MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_3@syncoid_io_2024-12-23:19:38:27-GMT-06:00 ... syncoid_io_2024-12-23:19:53:20-GMT-06:00 (~ 1.3 MB):
+1.03MiB 0:00:00 [4.50MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_3/l1_1@syncoid_io_2024-12-23:19:38:28-GMT-06:00 ... syncoid_io_2024-12-23:19:53:22-GMT-06:00 (~ 1.6 MB):
+1.06MiB 0:00:00 [6.16MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_0@syncoid_io_2024-12-23:19:38:30-GMT-06:00 ... syncoid_io_2024-12-23:19:53:23-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [5.23MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_1@syncoid_io_2024-12-23:19:38:32-GMT-06:00 ... syncoid_io_2024-12-23:19:53:25-GMT-06:00 (~ 1.5 MB):
+1.17MiB 0:00:00 [4.31MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_2@syncoid_io_2024-12-23:19:38:33-GMT-06:00 ... syncoid_io_2024-12-23:19:53:26-GMT-06:00 (~ 1.2 MB):
+ 949KiB 0:00:00 [4.18MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_3@syncoid_io_2024-12-23:19:38:35-GMT-06:00 ... syncoid_io_2024-12-23:19:53:28-GMT-06:00 (~ 1.8 MB):
+1.31MiB 0:00:00 [5.36MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_2@syncoid_io_2024-12-23:19:38:37-GMT-06:00 ... syncoid_io_2024-12-23:19:53:30-GMT-06:00 (~ 1.2 MB):
+ 816KiB 0:00:00 [4.29MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_0@syncoid_io_2024-12-23:19:38:38-GMT-06:00 ... syncoid_io_2024-12-23:19:53:31-GMT-06:00 (~ 1.5 MB):
+1.17MiB 0:00:00 [4.74MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_1@syncoid_io_2024-12-23:19:38:40-GMT-06:00 ... syncoid_io_2024-12-23:19:53:33-GMT-06:00 (~ 1.5 MB):
+1.05MiB 0:00:00 [5.52MiB/s] [==================================================================&gt;                                 ] 67%            
+Resuming interrupted zfs send/receive from io_tank/test/l0_3/l1_2/l2_2 to ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2 (~ 1.1 MB remaining):
+warning: cannot send 'io_tank/test/l0_3/l1_2/l2_2@syncoid_io_2024-12-23:18:53:57-GMT-06:00': Input/output error
+ 408 B 0:00:00 [2.60KiB/s] [&gt;                                                                                                    ]  0%            
+cannot receive resume stream: checksum mismatch or incomplete stream.
+Partially received snapshot is saved.
+A resuming stream can be generated on the sending system by running:
+    zfs send -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1735005082 io ' zfs send  -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 1108016 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1735005082 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;' 2&gt;&amp;1' failed: 256 at /sbin/syncoid line 580.
+Sending incremental io_tank/test/l0_3/l1_2/l2_3@syncoid_io_2024-12-23:19:38:42-GMT-06:00 ... syncoid_io_2024-12-23:19:53:35-GMT-06:00 (~ 1.7 MB):
+1.05MiB 0:00:00 [6.59MiB/s] [=============================================================&gt;                                      ] 62%            
+Sending incremental io_tank/test/l0_3/l1_3@syncoid_io_2024-12-23:19:38:44-GMT-06:00 ... syncoid_io_2024-12-23:19:53:37-GMT-06:00 (~ 1.0 MB):
+ 688KiB 0:00:00 [4.05MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_0@syncoid_io_2024-12-23:19:38:45-GMT-06:00 ... syncoid_io_2024-12-23:19:53:38-GMT-06:00 (~ 1.4 MB):
+ 959KiB 0:00:00 [4.81MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_1@syncoid_io_2024-12-23:19:38:47-GMT-06:00 ... syncoid_io_2024-12-23:19:53:40-GMT-06:00 (~ 1.5 MB):
+1.27MiB 0:00:00 [4.19MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_2@syncoid_io_2024-12-23:19:38:48-GMT-06:00 ... syncoid_io_2024-12-23:19:53:42-GMT-06:00 (~ 1.2 MB):
+ 797KiB 0:00:00 [4.60MiB/s] [================================================================&gt;                                   ] 65%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_3@syncoid_io_2024-12-23:19:38:50-GMT-06:00 ... syncoid_io_2024-12-23:19:53:43-GMT-06:00 (~ 1.7 MB):
+1.18MiB 0:00:00 [5.81MiB/s] [====================================================================&gt;                               ] 69%            
+real 143.05
+user 21.28
+sys 23.30
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:20:57 with 0 errors on Mon Dec 23 11:08:15 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 4 data errors, use '-v' for a list
+
+
+Sending incremental io_tank@syncoid_io_2024-12-23:19:51:23-GMT-06:00 ... syncoid_io_2024-12-23:20:06:17-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [13.1KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/Programming@syncoid_io_2024-12-23:19:51:25-GMT-06:00 ... syncoid_io_2024-12-23:20:06:18-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.6KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test@syncoid_io_2024-12-23:19:51:27-GMT-06:00 ... syncoid_io_2024-12-23:20:06:20-GMT-06:00 (~ 4 KB):
+1.52KiB 0:00:00 [12.7KiB/s] [=====================================&gt;                                                              ] 38%            
+Sending incremental io_tank/test/l0_0@syncoid_io_2024-12-23:19:51:28-GMT-06:00 ... syncoid_io_2024-12-23:20:06:21-GMT-06:00 (~ 2.0 MB):
+1.44MiB 0:00:00 [5.53MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_0@syncoid_io_2024-12-23:19:51:30-GMT-06:00 ... syncoid_io_2024-12-23:20:06:23-GMT-06:00 (~ 1.2 MB):
+ 930KiB 0:00:00 [4.56MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_0@syncoid_io_2024-12-23:19:51:31-GMT-06:00 ... syncoid_io_2024-12-23:20:06:24-GMT-06:00 (~ 1.2 MB):
+ 931KiB 0:00:00 [4.12MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_1@syncoid_io_2024-12-23:19:51:33-GMT-06:00 ... syncoid_io_2024-12-23:20:06:26-GMT-06:00 (~ 1.6 MB):
+1.18MiB 0:00:00 [5.12MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_2@syncoid_io_2024-12-23:19:51:35-GMT-06:00 ... syncoid_io_2024-12-23:20:06:28-GMT-06:00 (~ 1.4 MB):
+ 950KiB 0:00:00 [4.70MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_0/l1_0/l2_3@syncoid_io_2024-12-23:19:51:36-GMT-06:00 ... syncoid_io_2024-12-23:20:06:30-GMT-06:00 (~ 1.1 MB):
+ 779KiB 0:00:00 [4.05MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_0/l1_1@syncoid_io_2024-12-23:19:51:38-GMT-06:00 ... syncoid_io_2024-12-23:20:06:31-GMT-06:00 (~ 981 KB):
+ 688KiB 0:00:00 [3.74MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_0@syncoid_io_2024-12-23:19:51:40-GMT-06:00 ... syncoid_io_2024-12-23:20:06:33-GMT-06:00 (~ 1.7 MB):
+1.30MiB 0:00:00 [4.92MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_1@syncoid_io_2024-12-23:19:51:41-GMT-06:00 ... syncoid_io_2024-12-23:20:06:34-GMT-06:00 (~ 1.8 MB):
+1.43MiB 0:00:00 [5.12MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_2@syncoid_io_2024-12-23:19:51:43-GMT-06:00 ... syncoid_io_2024-12-23:20:06:36-GMT-06:00 (~ 1.4 MB):
+1.07MiB 0:00:00 [4.76MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_0/l1_1/l2_3@syncoid_io_2024-12-23:19:51:45-GMT-06:00 ... syncoid_io_2024-12-23:20:06:38-GMT-06:00 (~ 1.8 MB):
+1.29MiB 0:00:00 [5.50MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_2@syncoid_io_2024-12-23:19:51:46-GMT-06:00 ... syncoid_io_2024-12-23:20:06:39-GMT-06:00 (~ 665 KB):
+ 525KiB 0:00:00 [2.72MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_0@syncoid_io_2024-12-23:19:51:48-GMT-06:00 ... syncoid_io_2024-12-23:20:06:41-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [4.88MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_1@syncoid_io_2024-12-23:19:51:50-GMT-06:00 ... syncoid_io_2024-12-23:20:06:43-GMT-06:00 (~ 1.3 MB):
+ 950KiB 0:00:00 [4.43MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_2@syncoid_io_2024-12-23:19:51:51-GMT-06:00 ... syncoid_io_2024-12-23:20:06:44-GMT-06:00 (~ 1.5 MB):
+1.06MiB 0:00:00 [4.69MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_0/l1_2/l2_3@syncoid_io_2024-12-23:19:51:53-GMT-06:00 ... syncoid_io_2024-12-23:20:06:46-GMT-06:00 (~ 1.8 MB):
+1.19MiB 0:00:00 [6.03MiB/s] [==================================================================&gt;                                 ] 67%            
+Sending incremental io_tank/test/l0_0/l1_3@syncoid_io_2024-12-23:19:51:54-GMT-06:00 ... syncoid_io_2024-12-23:20:06:48-GMT-06:00 (~ 989 KB):
+ 809KiB 0:00:00 [3.44MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_0@syncoid_io_2024-12-23:19:51:56-GMT-06:00 ... syncoid_io_2024-12-23:20:06:49-GMT-06:00 (~ 1.4 MB):
+1.06MiB 0:00:00 [4.47MiB/s] [=============================================================================&gt;                      ] 78%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_1@syncoid_io_2024-12-23:19:51:58-GMT-06:00 ... syncoid_io_2024-12-23:20:06:51-GMT-06:00 (~ 1.6 MB):
+1.30MiB 0:00:00 [4.80MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_2@syncoid_io_2024-12-23:19:51:59-GMT-06:00 ... syncoid_io_2024-12-23:20:06:53-GMT-06:00 (~ 1.1 MB):
+ 822KiB 0:00:00 [4.05MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_0/l1_3/l2_3@syncoid_io_2024-12-23:19:52:01-GMT-06:00 ... syncoid_io_2024-12-23:20:06:54-GMT-06:00 (~ 1.4 MB):
+1.03MiB 0:00:00 [5.16MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_1@syncoid_io_2024-12-23:19:52:03-GMT-06:00 ... syncoid_io_2024-12-23:20:06:56-GMT-06:00 (~ 1.4 MB):
+1.14MiB 0:00:00 [4.57MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_1/l1_0@syncoid_io_2024-12-23:19:52:04-GMT-06:00 ... syncoid_io_2024-12-23:20:06:58-GMT-06:00 (~ 1.4 MB):
+1.04MiB 0:00:00 [4.50MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_0@syncoid_io_2024-12-23:19:52:06-GMT-06:00 ... syncoid_io_2024-12-23:20:06:59-GMT-06:00 (~ 1.4 MB):
+ 950KiB 0:00:00 [4.88MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_1@syncoid_io_2024-12-23:19:52:07-GMT-06:00 ... syncoid_io_2024-12-23:20:07:01-GMT-06:00 (~ 1.3 MB):
+ 965KiB 0:00:00 [4.50MiB/s] [======================================================================&gt;                             ] 71%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_2@syncoid_io_2024-12-23:19:52:09-GMT-06:00 ... syncoid_io_2024-12-23:20:07:02-GMT-06:00 (~ 1.4 MB):
+1.04MiB 0:00:00 [4.76MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_0/l2_3@syncoid_io_2024-12-23:19:52:11-GMT-06:00 ... syncoid_io_2024-12-23:20:07:04-GMT-06:00 (~ 1.1 MB):
+ 816KiB 0:00:00 [4.00MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_1@syncoid_io_2024-12-23:19:52:12-GMT-06:00 ... syncoid_io_2024-12-23:20:07:06-GMT-06:00 (~ 1.7 MB):
+1.31MiB 0:00:00 [4.90MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_0@syncoid_io_2024-12-23:19:52:14-GMT-06:00 ... syncoid_io_2024-12-23:20:07:07-GMT-06:00 (~ 1.2 MB):
+ 950KiB 0:00:00 [4.25MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_1@syncoid_io_2024-12-23:19:52:15-GMT-06:00 ... syncoid_io_2024-12-23:20:07:09-GMT-06:00 (~ 1.6 MB):
+1.15MiB 0:00:00 [5.45MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_2@syncoid_io_2024-12-23:19:52:17-GMT-06:00 ... syncoid_io_2024-12-23:20:07:11-GMT-06:00 (~ 1.8 MB):
+1.32MiB 0:00:00 [5.40MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_1/l1_1/l2_3@syncoid_io_2024-12-23:19:52:19-GMT-06:00 ... syncoid_io_2024-12-23:20:07:12-GMT-06:00 (~ 1.0 MB):
+ 816KiB 0:00:00 [3.53MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_1/l1_2@syncoid_io_2024-12-23:19:52:20-GMT-06:00 ... syncoid_io_2024-12-23:20:07:14-GMT-06:00 (~ 1.2 MB):
+ 956KiB 0:00:00 [2.65MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_0@syncoid_io_2024-12-23:19:52:22-GMT-06:00 ... syncoid_io_2024-12-23:20:07:16-GMT-06:00 (~ 1.3 MB):
+1.04MiB 0:00:00 [2.22MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_1@syncoid_io_2024-12-23:19:52:24-GMT-06:00 ... syncoid_io_2024-12-23:20:07:18-GMT-06:00 (~ 1.2 MB):
+ 822KiB 0:00:00 [1.66MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_2@syncoid_io_2024-12-23:19:52:25-GMT-06:00 ... syncoid_io_2024-12-23:20:07:20-GMT-06:00 (~ 2.5 MB):
+1.82MiB 0:00:00 [3.14MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_2/l2_3@syncoid_io_2024-12-23:19:52:27-GMT-06:00 ... syncoid_io_2024-12-23:20:07:23-GMT-06:00 (~ 2.5 MB):
+1.81MiB 0:00:00 [6.69MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_3@syncoid_io_2024-12-23:19:52:29-GMT-06:00 ... syncoid_io_2024-12-23:20:07:25-GMT-06:00 (~ 2.8 MB):
+2.06MiB 0:00:00 [7.60MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_0@syncoid_io_2024-12-23:19:52:30-GMT-06:00 ... syncoid_io_2024-12-23:20:07:26-GMT-06:00 (~ 3.0 MB):
+2.32MiB 0:00:00 [7.66MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_1@syncoid_io_2024-12-23:19:52:32-GMT-06:00 ... syncoid_io_2024-12-23:20:07:28-GMT-06:00 (~ 3.0 MB):
+2.19MiB 0:00:00 [8.36MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_2@syncoid_io_2024-12-23:19:52:34-GMT-06:00 ... syncoid_io_2024-12-23:20:07:30-GMT-06:00 (~ 2.4 MB):
+1.81MiB 0:00:00 [6.24MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_1/l1_3/l2_3@syncoid_io_2024-12-23:19:52:35-GMT-06:00 ... syncoid_io_2024-12-23:20:07:32-GMT-06:00 (~ 2.9 MB):
+2.07MiB 0:00:00 [8.14MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2@syncoid_io_2024-12-23:19:52:37-GMT-06:00 ... syncoid_io_2024-12-23:20:07:33-GMT-06:00 (~ 2.1 MB):
+1.53MiB 0:00:00 [5.91MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_0@syncoid_io_2024-12-23:19:52:39-GMT-06:00 ... syncoid_io_2024-12-23:20:07:35-GMT-06:00 (~ 3.0 MB):
+2.20MiB 0:00:00 [8.26MiB/s] [=======================================================================&gt;                            ] 72%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_0@syncoid_io_2024-12-23:19:52:40-GMT-06:00 ... syncoid_io_2024-12-23:20:07:37-GMT-06:00 (~ 2.7 MB):
+2.19MiB 0:00:00 [6.71MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_1@syncoid_io_2024-12-23:19:52:42-GMT-06:00 ... syncoid_io_2024-12-23:20:07:38-GMT-06:00 (~ 2.2 MB):
+1.66MiB 0:00:00 [5.83MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_2@syncoid_io_2024-12-23:19:52:44-GMT-06:00 ... syncoid_io_2024-12-23:20:07:40-GMT-06:00 (~ 3.4 MB):
+2.57MiB 0:00:00 [8.04MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_0/l2_3@syncoid_io_2024-12-23:19:52:45-GMT-06:00 ... syncoid_io_2024-12-23:20:07:42-GMT-06:00 (~ 2.8 MB):
+2.07MiB 0:00:00 [7.41MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_1@syncoid_io_2024-12-23:19:52:47-GMT-06:00 ... syncoid_io_2024-12-23:20:07:44-GMT-06:00 (~ 2.9 MB):
+2.20MiB 0:00:00 [7.22MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_0@syncoid_io_2024-12-23:19:52:48-GMT-06:00 ... syncoid_io_2024-12-23:20:07:45-GMT-06:00 (~ 2.7 MB):
+2.05MiB 0:00:00 [6.84MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_1@syncoid_io_2024-12-23:19:52:50-GMT-06:00 ... syncoid_io_2024-12-23:20:07:47-GMT-06:00 (~ 2.0 MB):
+1.55MiB 0:00:00 [5.61MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_2@syncoid_io_2024-12-23:19:52:52-GMT-06:00 ... syncoid_io_2024-12-23:20:07:49-GMT-06:00 (~ 2.4 MB):
+1.82MiB 0:00:00 [5.89MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_2/l1_1/l2_3@syncoid_io_2024-12-23:19:52:54-GMT-06:00 ... syncoid_io_2024-12-23:20:07:50-GMT-06:00 (~ 2.8 MB):
+2.17MiB 0:00:00 [7.20MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_2/l1_2@syncoid_io_2024-12-23:19:52:55-GMT-06:00 ... syncoid_io_2024-12-23:20:07:52-GMT-06:00 (~ 2.2 MB):
+1.64MiB 0:00:00 [5.91MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_0@syncoid_io_2024-12-23:19:52:57-GMT-06:00 ... syncoid_io_2024-12-23:20:07:54-GMT-06:00 (~ 2.3 MB):
+1.67MiB 0:00:00 [6.20MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_1@syncoid_io_2024-12-23:19:52:58-GMT-06:00 ... syncoid_io_2024-12-23:20:07:56-GMT-06:00 (~ 3.1 MB):
+2.54MiB 0:00:00 [7.13MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_2@syncoid_io_2024-12-23:19:53:00-GMT-06:00 ... syncoid_io_2024-12-23:20:07:57-GMT-06:00 (~ 2.8 MB):
+1.95MiB 0:00:00 [7.99MiB/s] [====================================================================&gt;                               ] 69%            
+Sending incremental io_tank/test/l0_2/l1_2/l2_3@syncoid_io_2024-12-23:19:53:02-GMT-06:00 ... syncoid_io_2024-12-23:20:07:59-GMT-06:00 (~ 2.9 MB):
+2.17MiB 0:00:00 [7.25MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_2/l1_3@syncoid_io_2024-12-23:19:53:03-GMT-06:00 ... syncoid_io_2024-12-23:20:08:01-GMT-06:00 (~ 2.8 MB):
+2.07MiB 0:00:00 [7.86MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_0@syncoid_io_2024-12-23:19:53:05-GMT-06:00 ... syncoid_io_2024-12-23:20:08:02-GMT-06:00 (~ 3.0 MB):
+2.20MiB 0:00:00 [7.59MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_1@syncoid_io_2024-12-23:19:53:07-GMT-06:00 ... syncoid_io_2024-12-23:20:08:04-GMT-06:00 (~ 2.8 MB):
+2.07MiB 0:00:00 [7.87MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_2@syncoid_io_2024-12-23:19:53:08-GMT-06:00 ... syncoid_io_2024-12-23:20:08:06-GMT-06:00 (~ 2.6 MB):
+1.81MiB 0:00:00 [7.27MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_2/l1_3/l2_3@syncoid_io_2024-12-23:19:53:10-GMT-06:00 ... syncoid_io_2024-12-23:20:08:08-GMT-06:00 (~ 3.1 MB):
+2.20MiB 0:00:00 [8.52MiB/s] [=====================================================================&gt;                              ] 70%            
+Sending incremental io_tank/test/l0_3@syncoid_io_2024-12-23:19:53:12-GMT-06:00 ... syncoid_io_2024-12-23:20:08:09-GMT-06:00 (~ 2.3 MB):
+1.69MiB 0:00:00 [6.19MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_0@syncoid_io_2024-12-23:19:53:13-GMT-06:00 ... syncoid_io_2024-12-23:20:08:11-GMT-06:00 (~ 2.5 MB):
+2.05MiB 0:00:00 [6.32MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_0@syncoid_io_2024-12-23:19:53:15-GMT-06:00 ... syncoid_io_2024-12-23:20:08:13-GMT-06:00 (~ 3.1 MB):
+2.31MiB 0:00:00 [7.67MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_1@syncoid_io_2024-12-23:19:53:17-GMT-06:00 ... syncoid_io_2024-12-23:20:08:14-GMT-06:00 (~ 2.6 MB):
+1.95MiB 0:00:00 [6.99MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_2@syncoid_io_2024-12-23:19:53:18-GMT-06:00 ... syncoid_io_2024-12-23:20:08:16-GMT-06:00 (~ 2.9 MB):
+2.16MiB 0:00:00 [7.52MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_0/l2_3@syncoid_io_2024-12-23:19:53:20-GMT-06:00 ... syncoid_io_2024-12-23:20:08:18-GMT-06:00 (~ 2.5 MB):
+1.92MiB 0:00:00 [6.63MiB/s] [==========================================================================&gt;                         ] 75%            
+Sending incremental io_tank/test/l0_3/l1_1@syncoid_io_2024-12-23:19:53:22-GMT-06:00 ... syncoid_io_2024-12-23:20:08:19-GMT-06:00 (~ 2.8 MB):
+2.05MiB 0:00:00 [7.13MiB/s] [========================================================================&gt;                           ] 73%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_0@syncoid_io_2024-12-23:19:53:23-GMT-06:00 ... syncoid_io_2024-12-23:20:08:21-GMT-06:00 (~ 2.5 MB):
+1.82MiB 0:00:00 [6.72MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_1@syncoid_io_2024-12-23:19:53:25-GMT-06:00 ... syncoid_io_2024-12-23:20:08:23-GMT-06:00 (~ 2.8 MB):
+1.94MiB 0:00:00 [8.30MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_2@syncoid_io_2024-12-23:19:53:26-GMT-06:00 ... syncoid_io_2024-12-23:20:08:24-GMT-06:00 (~ 2.8 MB):
+2.07MiB 0:00:00 [7.14MiB/s] [=========================================================================&gt;                          ] 74%            
+Sending incremental io_tank/test/l0_3/l1_1/l2_3@syncoid_io_2024-12-23:19:53:28-GMT-06:00 ... syncoid_io_2024-12-23:20:08:26-GMT-06:00 (~ 2.1 MB):
+1.41MiB 0:00:00 [6.41MiB/s] [===================================================================&gt;                                ] 68%            
+Sending incremental io_tank/test/l0_3/l1_2@syncoid_io_2024-12-23:19:53:30-GMT-06:00 ... syncoid_io_2024-12-23:20:08:28-GMT-06:00 (~ 2.5 MB):
+1.92MiB 0:00:00 [6.52MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_0@syncoid_io_2024-12-23:19:53:31-GMT-06:00 ... syncoid_io_2024-12-23:20:08:29-GMT-06:00 (~ 2.0 MB):
+1.57MiB 0:00:00 [5.23MiB/s] [==============================================================================&gt;                     ] 79%            
+Sending incremental io_tank/test/l0_3/l1_2/l2_1@syncoid_io_2024-12-23:19:53:33-GMT-06:00 ... syncoid_io_2024-12-23:20:08:31-GMT-06:00 (~ 2.8 MB):
+2.06MiB 0:00:00 [7.21MiB/s] [=========================================================================&gt;                          ] 74%            
+Resuming interrupted zfs send/receive from io_tank/test/l0_3/l1_2/l2_2 to ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2 (~ 1.1 MB remaining):
+warning: cannot send 'io_tank/test/l0_3/l1_2/l2_2@syncoid_io_2024-12-23:18:53:57-GMT-06:00': Input/output error
+ 408 B 0:00:00 [2.58KiB/s] [&gt;                                                                                                    ]  0%            
+cannot receive resume stream: checksum mismatch or incomplete stream.
+Partially received snapshot is saved.
+A resuming stream can be generated on the sending system by running:
+    zfs send -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e
+CRITICAL ERROR: ssh     -S /tmp/syncoid-io-1735005975 io ' zfs send  -t 1-11da694afc-118-789c636064000310a501c49c50360710a715e5e7a69766a63040c1e9abfec755e64d6c5200b2d991d4e52765a5269740f82080219f96569c5ac2000720793624f9a4ca92d46206547964fd25f91057bc7979e8b2eadb1ac90424794eb07c5e626e2a0343667e7c49625eb63ed0b412fd1c837863fd1cc37823fd1ca3782387e2cabce4fccc9478a01a230323135d43235d23632b430b2b53632b53735d77df105d03332b0303981b00f1f62e6e | lzop  | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null' | lzop -dfc | pv -p -t -e -r -b -s 1108016 | lzop  | mbuffer -q -s 128k -m 16M 2&gt;/dev/null | ssh     -S /tmp/syncoid-olive-1735005975 olive ' mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | lzop -dfc |  zfs receive  -s -F '&quot;'&quot;'ST8TB-ZA20HR7B/io-backup/io_tank/test/l0_3/l1_2/l2_2'&quot;'&quot;' 2&gt;&amp;1' failed: 256 at /sbin/syncoid line 580.
+Sending incremental io_tank/test/l0_3/l1_2/l2_3@syncoid_io_2024-12-23:19:53:35-GMT-06:00 ... syncoid_io_2024-12-23:20:08:33-GMT-06:00 (~ 2.0 MB):
+1.66MiB 0:00:00 [5.10MiB/s] [=================================================================================&gt;                  ] 82%            
+Sending incremental io_tank/test/l0_3/l1_3@syncoid_io_2024-12-23:19:53:37-GMT-06:00 ... syncoid_io_2024-12-23:20:08:35-GMT-06:00 (~ 3.0 MB):
+2.29MiB 0:00:00 [7.59MiB/s] [===========================================================================&gt;                        ] 76%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_0@syncoid_io_2024-12-23:19:53:38-GMT-06:00 ... syncoid_io_2024-12-23:20:08:36-GMT-06:00 (~ 2.2 MB):
+1.82MiB 0:00:00 [5.81MiB/s] [===============================================================================&gt;                    ] 80%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_1@syncoid_io_2024-12-23:19:53:40-GMT-06:00 ... syncoid_io_2024-12-23:20:08:38-GMT-06:00 (~ 1.8 MB):
+1.49MiB 0:00:00 [4.95MiB/s] [================================================================================&gt;                   ] 81%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_2@syncoid_io_2024-12-23:19:53:42-GMT-06:00 ... syncoid_io_2024-12-23:20:08:40-GMT-06:00 (~ 2.5 MB):
+1.95MiB 0:00:00 [6.59MiB/s] [============================================================================&gt;                       ] 77%            
+Sending incremental io_tank/test/l0_3/l1_3/l2_3@syncoid_io_2024-12-23:19:53:43-GMT-06:00 ... syncoid_io_2024-12-23:20:08:41-GMT-06:00 (~ 2.8 MB):
+1.94MiB 0:00:00 [8.28MiB/s] [===================================================================&gt;                                ] 68%            
+real 148.12
+user 21.31
+sys 24.04
+  pool: io_tank
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:20:57 with 0 errors on Mon Dec 23 11:08:15 2024
+config:
+
+        NAME                                               STATE     READ WRITE CKSUM
+        io_tank                                            ONLINE       0     0     0
+          nvme-eui.0000000001000000e4d25c8051695501-part3  ONLINE       0     0     0
+
+errors: 4 data errors, use '-v' for a list
+
+
+^C
+hbarta@io:~$ 
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
