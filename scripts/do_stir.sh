@@ -1,3 +1,12 @@
 #!/bin/bash
+set -x
+start=$(/bin/date  +%Y-%m-%d-%H%M)
+start_s=$(/bin/date +%s)
 
-/bin/time -p /home/hbarta/bin/stir_pool.sh >/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).stir_pools.txt 2>&1
+/bin/time -p /home/hbarta/bin/stir_pool.sh >"/home/hbarta/logs/$start.stir_pools.txt" 2>&1
+
+finish_s=$(/bin/date +%s)
+elapsed=$((finish_s-start_s))
+zpool status send >>"/home/hbarta/logs/$start.stir_pools.txt" 2>&1
+mv "/home/hbarta/logs/$start.stir_pools.txt" \
+    "/home/hbarta/logs/$start.stir_pools.$elapsed.txt"

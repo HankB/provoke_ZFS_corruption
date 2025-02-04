@@ -250,3 +250,7 @@ hbarta@orcus:~$
 # m h  dom mon dow   command
 3 */6 * * * /sbin/zpool scrub send recv
 ```
+
+## 2025-02-04 pausing to enhance scripts
+
+Adding `zpool status` to output and elapsed time to log file name.
