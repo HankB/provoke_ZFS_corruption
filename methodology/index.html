@@ -104,10 +104,29 @@
 <li>
     <a href="./" class="dropdown-item active">methodology</a>
 </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tests <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
                                     
 <li>
-    <a href="setup_2025-02-03/" class="dropdown-item">First methodology exploration</a>
+    <a href="../tests/" class="dropdown-item">Tests</a>
 </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 03 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../tests/2025-02-03_methodology/results/" class="dropdown-item">2025-02-03 Results</a>
+</li>
+            
+<li>
+    <a href="../tests/2025-02-03_methodology/setup/" class="dropdown-item">2025-02-03 Setup</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                         </ul>
@@ -124,7 +143,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="setup_2025-02-03/" class="nav-link">
+                                <a rel="next" href="../tests/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -167,7 +186,24 @@
 <li>The first priority is to explore the test methodology to see if results can be achieved in less time.</li>
 <li>The second priority is to standardize the testing procedure and recording policies to provide more reliable results in a manner that is easier to view (IOW, It's hard find the details of stuff I did weeks ago!)</li>
 <li>To facilitate the previous, The notes will be organized such that they can be processed using <code>mkdocs</code>.</li>
-</ol></div>
+</ol>
+<h3 id="organization">Organization</h3>
+<p>"Test cases" will be listed in the README in <code>.../provoke_ZFS_corruption/docs/tests</code> and will include </p>
+<ul>
+<li>date started</li>
+<li>date completed</li>
+<li>results</li>
+<li>link to test_setup description</li>
+<li>ZFS version or commit hash (and whether or not from backports, release, etc.)</li>
+<li>OS variant (e.g. Buster, Bullseye, Bookworm)</li>
+<li>kernel version (and whether or not from backports.)</li>
+</ul>
+<p>Each "test case" will have a set of files in it's own directory named starting with the date in ISO-8601 format (e.g. <code>2025-02-03_test</code>)</p>
+<ul>
+<li><code>setup.md</code> Commands required to set up the test and kick it off along with any relevant results. The markdown title will include the date string and "setup" (e.g. <code># 2025-02-03 Setup</code>, first line in the file.)</li>
+<li><code>results.md</code> Copies of text from the screen for anything that might be worthy of later review. <code>results.md</code> and <code>setup.md</code> sho0uld link to each other.</li>
+<li><code>[anything else useful]</code> as the sitruation warrants.</li>
+</ul></div>
             </div>
         </div>
 

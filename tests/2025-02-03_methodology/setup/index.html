@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>2025-02-03 Setup - Provoke ZFS corruption</title>
+        <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../../.." class="nav-link">Blog version of provoke_ZFS_corruption</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../first-efforts/" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Methodology <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../methodology/" class="dropdown-item">methodology</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tests <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../" class="dropdown-item">Tests</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 03 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../results/" class="dropdown-item">2025-02-03 Results</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active">2025-02-03 Setup</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../results/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#2025-02-03-setup" class="nav-link">2025-02-03 Setup</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-02-03-initial-setup" class="nav-link">2025-02-03 initial setup</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="2025-02-03-setup">2025-02-03 Setup</h1>
+<h2 id="2025-02-03-initial-setup">2025-02-03 initial setup</h2>
+<ol>
+<li>Install using Netinst media for Debian 12.7.0.</li>
+<li>Remap MAC address.</li>
+<li>Add <code>contrib</code> to <code>sources.list</code></li>
+<li>Update/upgrade: "All packages are up to date." (Netinst benefit)</li>
+<li>Reboot.</li>
+<li>Install useful utilities</li>
+</ol>
+<pre><code class="language-text">apt install -y vim git linux-headers-$(uname -r) lzop pv mbuffer sanoid tree smartmontools lm-sensors parted shellcheck tmux time
+</code></pre>
+<ol>
+<li>Install ZFS per instructions at <a href="https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/index.html">https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/index.html</a> (except no <code>backports</code>)</li>
+</ol>
+<pre><code class="language-text">apt install dpkg-dev linux-headers-generic linux-image-generic
+apt install zfs-dkms zfsutils-linux
+</code></pre>
+<p>Resulting versions</p>
+<pre><code class="language-text">root@orcus:~# zfs --version
+zfs-2.1.11-1+deb12u1
+zfs-kmod-2.1.11-1+deb12u1
+root@orcus:~# uname -a
+Linux orcus 6.1.0-30-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.124-1 (2025-01-12) x86_64 GNU/Linux
+root@orcus:~# 
+</code></pre>
+<ol>
+<li>Generate SSH key and add to my Githgub account. Clone <code>git@github.com:HankB/provoke_ZFS_corruption.git</code> in HOME dir.</li>
+<li>Use <code>hdparm</code> to secure erase Samsung SSDs (<code>/dev/sda</code>, <code>/dev/sdb</code>). </li>
+<li>Run <code>partprobe</code> and ID the WWN for <code>/dev/sda</code></li>
+</ol>
+<pre><code class="language-text">root@orcus:~# ls -l /dev/disk/by-id|grep sda
+lrwxrwxrwx 1 root root  9 Feb  3 16:05 ata-Samsung_SSD_850_EVO_500GB_S21HNXAGC35770F -&gt; ../../sda
+lrwxrwxrwx 1 root root  9 Feb  3 16:05 wwn-0x5002538d40878f8e -&gt; ../../sda
+root@orcus:~# 
+</code></pre>
+<ol>
+<li>Create the 'send' pool.</li>
+</ol>
+<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d40878f8e
+zfs load-key -a
+chmod a+rwx /mnt/send/
+</code></pre>
+<pre><code class="language-text">root@orcus:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+send   464G   564K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orcus:~# 
+</code></pre>
+<p>From Google AI - random printable character (To use in <code>stir_pool.sh</code>)</p>
+<pre><code class="language-text">tr -dc '[:print:]' &lt; /dev/urandom | head -c 1
+</code></pre>
+<pre><code class="language-text">root@orcus:~# /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+</code></pre>
+<p>Killed with pool at 73%. </p>
+<pre><code class="language-text">hbarta@orcus:~$ find /mnt/send/ -type f | wc -l
+7003
+hbarta@orcus:~$ find /mnt/send/ -type d | wc -l
+46
+hbarta@orcus:~$ zfs list -rH send|wc -l
+46
+hbarta@orcus:~$ 
+</code></pre>
+<p>Compared to my "problem child" - it has a <em>lot</em> more files. Let's rework this to produce more smaller files.</p>
+<pre><code class="language-text">hbarta@rocinante:~$ zfs list -r rpool | wc -l
+26
+hbarta@rocinante:~$ sudo find / -type f | wc -l
+[sudo] password for hbarta: 
+find: ‘/run/user/1000/doc’: Permission denied
+2318567
+hbarta@rocinante:~$ 
+</code></pre>
+<p>NB: Host is emitting an overtemperature alarm with the processor that does not have a fan hitting 95°C. OPening the case and placing a small desk fan directed toward it is keeping it within limits. Result after some tweaking (and killing the process) is</p>
+<pre><code class="language-text">hbarta@orcus:~/provoke_ZFS_corruption/scripts$ zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+send   464G   335G   129G        -         -     1%    72%  1.00x    ONLINE  -
+hbarta@orcus:~/provoke_ZFS_corruption/scripts$ find /mnt/send -type f | wc -l
+67738
+hbarta@orcus:~/provoke_ZFS_corruption/scripts$ find /mnt/send -type d | wc -l
+45
+hbarta@orcus:~/provoke_ZFS_corruption/scripts$ 
+</code></pre>
+<p>That seems more appropriate for further testing. Next set up <code>sanoid</code> (as root).</p>
+<pre><code class="language-text">mkdir /etc/sanoid
+cp /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/
+vim /etc/sanoid/sanoid.conf
+sanoid --cron --verbose # test config
+</code></pre>
+<pre><code class="language-text">[send/test]
+        use_template = production
+        frequently = 10
+        recursive = zfs
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-text">root@orcus:~# zfs list -t snap -r|wc -l
+177
+root@orcus:~# 
+</code></pre>
+<p>Create the <code>recv</code> pool, set <code>allow</code> and run the first <code>syncoid</code> as root to allow filesystems to be mounted.</p>
+<pre><code class="language-text">root@orcus:~# ls -l /dev/disk/by-id|grep sdb
+lrwxrwxrwx 1 root root  9 Feb  3 16:05 ata-Samsung_SSD_850_EVO_500GB_S2RANB0HA37864N -&gt; ../../sdb
+lrwxrwxrwx 1 root root  9 Feb  3 16:05 wwn-0x5002538d41628a33 -&gt; ../../sdb
+root@orcus:~# 
+</code></pre>
+<pre><code class="language-text">zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d41628a33
+chmod a+rwx /mnt/recv/
+
+user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+</code></pre>
+<p>Part way through the first <code>syncoid</code> run</p>
+<pre><code class="language-text">hbarta@orcus:~$ zpool status
+  pool: recv
+ state: ONLINE
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        recv                      ONLINE       0     0     0
+          wwn-0x5002538d41628a33  ONLINE       0     0     0
+
+errors: No known data errors
+
+  pool: send
+ state: ONLINE
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        send                      ONLINE       0     0     0
+          wwn-0x5002538d40878f8e  ONLINE       0     0     0
+
+errors: No known data errors
+hbarta@orcus:~$ zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   193G   271G        -         -     0%    41%  1.00x    ONLINE  -
+send   464G   335G   129G        -         -     1%    72%  1.00x    ONLINE  -
+hbarta@orcus:~$ 
+</code></pre>
+<p>Thoughts on speeding up results.</p>
+<ul>
+<li>Probably need less time between executions than 750s.</li>
+<li><code>sanoid</code> and <code>syncoid</code> should be run at slightly different intervals so the 'overlap' shifts around and there are times where there is no overlay. Can <code>sanoid</code> be scheduled more often?</li>
+<li>The pool should be stirred more often - perhaps continuously.</li>
+<li>Daily (or more often) scrubs should be automated.</li>
+</ul>
+<p>After the first syncoid pass, times will be taken for a stir and <code>syncoid</code> runs to establish basic timing.</p>
+<p>Also need to add the <code>sbin</code> directories to the user path. And link the script <code>stir_pool.sh</code> to <code>~/bin/stir_pool.sh</code></p>
+<pre><code class="language-text">ln provoke_ZFS_corruption/scripts/stir_pool.sh bin
+</code></pre>
+<p>Therre is not an order of magnitude between the time it takes to stir the pool and the resulting time for the <code>syncoid</code> pass to complete, but they are sufficiently different to introduce skew between them. Rather than scheduling at fixed interval;s (e.g. <code>cron</code>) it seems to make more sense to allow a matching delay between and allow the difference in execution time to provide the skew. Or is that a good idea. Could some effect between the stir and the <code>syncoid</code> operation cause them to sync up? With that thought it seems to make more sense to schedule them using <code>cron</code> and make the skew intentional. Output will be redirected to time stamp named files in <code>~/logs</code>. The <code>syncoid</code> process will run every 6 minutes and the <code>stir_pool.sh</code> every 7. These intervals will allow these processes to skew with <code>sanoid</code> which runs every 15 minutes.</p>
+<pre><code class="language-text">/bin/time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).syncoid.txt 2&gt;&amp;1
+</code></pre>
+<pre><code class="language-text">/bin/time -p /home/hbarta/bin/stir_pool.sh &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).stir_pools.txt 2&gt;&amp;1
+</code></pre>
+<p>Perhaps an enhancement would be to create another dataset. Crontab for now is</p>
+<pre><code class="language-text"># m h  dom mon dow   command
+*/6 * * * * /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).syncoid.txt 2&gt;&amp;1
+*/7 * * * * /bin/time -p /home/hbarta/bin/stir_pool.sh &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).stir_pools.txt 2&gt;&amp;1
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../../js/base.js" defer></script>
+        <script src="../../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
