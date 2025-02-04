@@ -244,4 +244,9 @@ hbarta@orcus:~$ do_syncoid.sh
 hbarta@orcus:~$ 
 ```
 
+`crontab` entry for scrubs 4x daily. I wonder if this will result in overlapped `syncoid` or stir runs.
 
+```text
+# m h  dom mon dow   command
+3 */6 * * * /sbin/zpool scrub send recv
+```
