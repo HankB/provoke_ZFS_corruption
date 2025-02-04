@@ -1,5 +1,7 @@
 # 2025-02-03 Results
 
+[Setup](./setup.md)
+
 ## First `syncoid` pass
 
 ```text

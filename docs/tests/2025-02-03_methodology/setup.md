@@ -1,5 +1,8 @@
 # 2025-02-03 Setup
 
+* [Results](./results.md)
+* [Additional information](./additional.md)
+
 ## 2025-02-03 initial setup
 
 1. Install using Netinst media for Debian 12.7.0.
@@ -10,7 +13,7 @@
 1. Install useful utilities
 
 ```text
-apt install -y vim git linux-headers-$(uname -r) lzop pv mbuffer sanoid tree smartmontools lm-sensors parted shellcheck tmux time
+apt install -y vim git linux-headers-$(uname -r) lzop pv mbuffer sanoid tree smartmontools lm-sensors parted shellcheck tmux time mkdocs lshw
 ```
 
 7. Install ZFS per instructions at <https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/index.html> (except no `backports`)
@@ -224,3 +227,21 @@ Perhaps an enhancement would be to create another dataset. Crontab for now is
 */6 * * * * /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test >/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).syncoid.txt 2>&1
 */7 * * * * /bin/time -p /home/hbarta/bin/stir_pool.sh >/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).stir_pools.txt 2>&1
 ```
+
+`cron` entries seem not to be running. Encapsulate in `bash` scripts and link to `~/bin`. After they are confirmed to work, edit `crontab` accorcingly.
+
+```text
+hbarta@orcus:~$ ln provoke_ZFS_corruption/scripts/do_stir.sh bin
+hbarta@orcus:~$ ln provoke_ZFS_corruption/scripts/do_syncoid.sh bin
+hbarta@orcus:~$ chmod +x provoke_ZFS_corruption/scripts/do_syncoid.sh provoke_ZFS_corruption/scripts/do_stir.sh
+hbarta@orcus:~$ ls -l bin
+total 12
+-rwxr-xr-x 2 hbarta hbarta  124 Feb  3 22:11 do_stir.sh
+-rwxr-xr-x 2 hbarta hbarta  162 Feb  3 22:12 do_syncoid.sh
+-rwxr-xr-x 2 hbarta hbarta 1186 Feb  3 19:00 stir_pool.sh
+hbarta@orcus:~$ do_stir.sh
+hbarta@orcus:~$ do_syncoid.sh
+hbarta@orcus:~$ 
+```
+
+
