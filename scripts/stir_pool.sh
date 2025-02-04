@@ -13,17 +13,19 @@ set -o nounset
 skip_range=20                   # skip 0-20 files and modify 
 
 # Modify files. There are many ways to do this
-# but the first cut will just replace a random character in the file.
+# but the first cut will just replace a random character in the file
+# with another random character.
 modify_file() {
     file_len=$(stat --printf="%s" "$1")
     offset=$((RANDOM % "$file_len"))
-    echo x | dd of=file bs=1 count=1 seek=$offset conv=notrunc of="$1"
+    tr -dc '[:print:]' < /dev/urandom | head -c 1  | \
+        dd of=file bs=1 count=1 seek=$offset conv=notrunc of="$1" || true
 }
 
 # following solution found at 
 # https://stackoverflow.com/questions/23356779/how-can-i-store-the-find-command-results-as-an-array-in-bash
 
-mapfile -d $'\0' file_list < <(find /mnt/io_tank/test -type f -print0)
+mapfile -d $'\0' file_list < <(find /mnt/send/test -type f -print0)
 echo
 echo ${#file_list[*]} files
 
