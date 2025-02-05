@@ -123,6 +123,10 @@
 </li>
             
 <li>
+    <a href="../data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
     <a href="../results/" class="dropdown-item">2025-02-03 Results</a>
 </li>
             
@@ -175,6 +179,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-04-pausing-to-enhance-scripts" class="nav-link">2025-02-04 pausing to enhance scripts</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -186,6 +194,7 @@
 <ul>
 <li><a href="../results/">Results</a></li>
 <li><a href="../additional/">Additional information</a></li>
+<li><a href="../data/">data</a></li>
 </ul>
 <h2 id="2025-02-03-initial-setup">2025-02-03 initial setup</h2>
 <ol>
@@ -376,7 +385,9 @@ hbarta@orcus:~$
 <p><code>crontab</code> entry for scrubs 4x daily. I wonder if this will result in overlapped <code>syncoid</code> or stir runs.</p>
 <pre><code class="language-text"># m h  dom mon dow   command
 3 */6 * * * /sbin/zpool scrub send recv
-</code></pre></div>
+</code></pre>
+<h2 id="2025-02-04-pausing-to-enhance-scripts">2025-02-04 pausing to enhance scripts</h2>
+<p>Adding <code>zpool status</code> to output and elapsed time to log file name.</p></div>
             </div>
         </div>
 
