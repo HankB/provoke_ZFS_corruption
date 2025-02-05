@@ -190,7 +190,7 @@ sys 2515.21
 root@orcus:~# 
 ```
 
-## 2025-02-03 full log file list
+## 2025-02-04 full log file list
 
 Filenames are `<timestamp>.operation.<elapsed time>.txt` and earlier files did not include the elapsed time.
 
@@ -577,7 +577,7 @@ total 86440
 hbarta@orcus:~/logs$ 
 ```
 
-## 2025-02-03 list of all syncoid logs
+## 2025-02-04 list of all syncoid logs
 
 ```text
 hbarta@orcus:~/logs$ ls -l *syncoid*

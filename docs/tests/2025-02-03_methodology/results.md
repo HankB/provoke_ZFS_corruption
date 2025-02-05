@@ -13,7 +13,7 @@ sys 2515.21
 root@orcus:~# 
 ```
 
-[Full log of syncoid first pass](./data.md#2025-02-03-first-syncoid)
+[Full log of syncoid first pass](./data.md#2025-02-04-first-syncoid)
 
 ### second pass
 
@@ -118,9 +118,9 @@ config:
 errors: 1 data errors, use '-v' for a list
 ```
 
-[Full flie list](./data.md#2025-02-03-full-log-file-list)
+[Full flie list](./data.md#2025-02-04-full-log-file-list)
 
-[List of all syncoid logs](./data.md#2025-02-03-list-of-all-syncoid-logs)
+[List of all syncoid logs](./data.md#2025-02-04-list-of-all-syncoid-logs)
 
 There were a total of 197 syncoid runs and corruption was first noted on the 175th pass. The number cascaded on subsequent passes.
 
