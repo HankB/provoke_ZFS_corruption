@@ -13,7 +13,7 @@ sys 2515.21
 root@orcus:~# 
 ```
 
-[Full log of syncoid first pass](./data/#2025-02-03-first-syncoid)
+[Full log of syncoid first pass](./data.md#2025-02-03-first-syncoid)
 
 ### second pass
 
