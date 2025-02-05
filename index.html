@@ -98,21 +98,8 @@
                                 </ul>
                             </li>
                             <li class="dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Methodology <b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    
-<li>
-    <a href="methodology/" class="dropdown-item">methodology</a>
-</li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tests <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    
-<li>
-    <a href="tests/" class="dropdown-item">Tests</a>
-</li>
                                     
   <li class="dropdown-submenu">
     <a href="#" class="dropdown-item">2025 02 03 methodology</a>
@@ -132,6 +119,16 @@
             
 <li>
     <a href="tests/2025-02-03_methodology/setup/" class="dropdown-item">2025-02-03 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 05 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="tests/2025-02-05_methodology/setup/" class="dropdown-item">Setup</a>
 </li>
     </ul>
   </li>
@@ -191,6 +188,40 @@
 <li>Github: <a href="https://github.com/HankB/provoke_ZFS_corruption/tree/main">https://github.com/HankB/provoke_ZFS_corruption/tree/main</a></li>
 <li>Blog: <a href="https://HankB.github.io/provoke_ZFS_corruption/">https://HankB.github.io/provoke_ZFS_corruption/</a></li>
 </ul>
+<p>Directory of tests starting with preliminary exploration.</p>
+<table>
+<thead>
+<tr>
+<th>started</th>
+<th>completed</th>
+<th>results</th>
+<th>ZFS ver</th>
+<th>OS</th>
+<th>kernel ver</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2025-02-03</td>
+<td>2025-02-04</td>
+<td><a href="tests/2025-02-03_methodology/results/">corruption</a></td>
+<td>zfs-2.1.11-1+deb12u1</td>
+<td>Debian 12</td>
+<td>6.1.0-30-amd64</td>
+<td>methodology exploration</td>
+</tr>
+<tr>
+<td>2025-02-05</td>
+<td></td>
+<td><a href="tests/2025-02-05_methodology/setup/">in progress</a></td>
+<td>zfs-2.1.11-1+deb12u1</td>
+<td>Debian 12</td>
+<td>6.1.0-30-amd64</td>
+<td>methodology exploration</td>
+</tr>
+</tbody>
+</table>
 <h2 id="2025-02-04-process-improvements">2025-02-04 process improvements</h2>
 <p>These have worked, producing corruption in less than a day. This should shorten testing time and also proves that the H/W in use will produce corruption using current Debian kernel and ZFS. <a href="tests/2025-02-03_methodology/results/">More details</a></p></div>
             </div>
@@ -273,5 +304,5 @@
 
 <!--
 MkDocs version : 1.4.2
-Build Date UTC : 2025-02-05 04:54:42.756246+00:00
+Build Date UTC : 2025-02-05 15:48:27.825426+00:00
 -->
