@@ -6,187 +6,14 @@
 
 ```text
 root@orcus:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
-INFO: Sending oldest full snapshot send/test@autosnap_2025-02-03_19:46:23_monthly (~ 87 KB) to new target filesystem:
-49.3KiB 0:00:00 [1.99MiB/s] [=====================================================>                                            ] 56%            
-INFO: Updating new target filesystem with incremental send/test@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:19:52:17-GMT-06:00 (~ 4 KB):
-3.35KiB 0:00:00 [80.6KiB/s] [================================================================================>                 ] 83%            
-INFO: Sending oldest full snapshot send/test/l0_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.3 GB) to new target filesystem:
-15.3GiB 0:01:18 [ 199MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:19:52:17-GMT-06:00 (~ 4 KB):
-3.35KiB 0:00:00 [78.1KiB/s] [================================================================================>                 ] 83%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_0@autosnap_2025-02-03_19:46:23_monthly (~ 14.9 GB) to new target filesystem:
-14.9GiB 0:01:17 [ 196MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:19:53:36-GMT-06:00 (~ 4 KB):
-3.35KiB 0:00:00 [74.2KiB/s] [================================================================================>                 ] 83%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.4 GB) to new target filesystem:
-15.4GiB 0:01:19 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_0/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:19:54:54-GMT-06:00 (~ 4 KB):
-3.35KiB 0:00:00 [70.7KiB/s] [================================================================================>                 ] 83%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.8 GB) to new target filesystem:
-15.8GiB 0:01:21 [ 199MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_0/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:19:56:15-GMT-06:00 (~ 4 KB):
-3.35KiB 0:00:00 [75.5KiB/s] [================================================================================>                 ] 83%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.1 GB) to new target filesystem:
-15.1GiB 0:01:18 [ 196MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_0/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:19:57:37-GMT-06:00 (~ 4 KB):
-3.35KiB 0:00:00 [82.2KiB/s] [================================================================================>                 ] 83%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.8 GB) to new target filesystem:
-15.8GiB 0:01:21 [ 198MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_0/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:19:58:57-GMT-06:00 (~ 4 KB):
-3.35KiB 0:00:00 [75.9KiB/s] [================================================================================>                 ] 83%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.2 GB) to new target filesystem:
-15.2GiB 0:01:19 [ 195MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:00:19-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [90.1KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.6 GB) to new target filesystem:
-15.6GiB 0:01:20 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_1/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:01:39-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [98.3KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.3 GB) to new target filesystem:
-15.3GiB 0:01:18 [ 200MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_1/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:03:00-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [80.6KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.9 GB) to new target filesystem:
-15.9GiB 0:01:23 [ 194MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_1/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:04:20-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [84.0KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.6 GB) to new target filesystem:
-15.6GiB 0:01:22 [ 193MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_1/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:05:44-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [71.6KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_2@autosnap_2025-02-03_19:46:23_monthly (~ 16.0 GB) to new target filesystem:
-16.0GiB 0:01:23 [ 195MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:07:07-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [81.3KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.5 GB) to new target filesystem:
-15.5GiB 0:01:20 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_2/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:08:32-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [79.4KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.3 GB) to new target filesystem:
-15.3GiB 0:01:19 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_2/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:09:53-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [97.0KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.5 GB) to new target filesystem:
-15.5GiB 0:01:20 [ 196MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_2/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:11:13-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [96.7KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.2 GB) to new target filesystem:
-15.2GiB 0:01:20 [ 193MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_2/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:12:34-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [80.8KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.6 GB) to new target filesystem:
-15.6GiB 0:01:20 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:13:56-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [ 111KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.6 GB) to new target filesystem:
-15.6GiB 0:01:21 [ 194MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_3/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:15:17-GMT-06:00 (~ 4 KB):
-4.57KiB 0:00:00 [81.5KiB/s] [=================================================================================================] 114%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.5 GB) to new target filesystem:
-15.5GiB 0:01:21 [ 195MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_3/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:16:40-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [94.8KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.5 GB) to new target filesystem:
-15.5GiB 0:01:22 [ 192MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_3/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:18:02-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [86.6KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.3 GB) to new target filesystem:
-15.3GiB 0:01:19 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_0/l1_3/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:19:25-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [84.7KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.1 GB) to new target filesystem:
-15.2GiB 0:01:19 [ 194MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:20:45-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [ 127KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.0 GB) to new target filesystem:
-15.0GiB 0:01:19 [ 193MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:22:06-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [96.0KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.2 GB) to new target filesystem:
-15.2GiB 0:01:18 [ 198MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_0/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:23:25-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [88.2KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.7 GB) to new target filesystem:
-15.7GiB 0:01:22 [ 195MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_0/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:24:45-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [84.8KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.4 GB) to new target filesystem:
-15.4GiB 0:01:20 [ 196MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_0/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:26:08-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [89.0KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.8 GB) to new target filesystem:
-15.8GiB 0:01:22 [ 195MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_0/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:27:29-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [77.5KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.2 GB) to new target filesystem:
-15.2GiB 0:01:18 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:28:52-GMT-06:00 (~ 4 KB):
-5.18KiB 0:00:00 [  99KiB/s] [=================================================================================================] 121%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.4 GB) to new target filesystem:
-15.4GiB 0:01:19 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_1/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:30:12-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [98.3KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.1 GB) to new target filesystem:
-15.1GiB 0:01:19 [ 194MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_1/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:31:33-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [93.1KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.6 GB) to new target filesystem:
-15.6GiB 0:01:20 [ 198MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_1/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:32:53-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [92.2KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.4 GB) to new target filesystem:
-15.4GiB 0:01:19 [ 198MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_1/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:34:14-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [82.4KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.2 GB) to new target filesystem:
-15.2GiB 0:01:19 [ 194MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:35:34-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [86.6KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_2/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.5 GB) to new target filesystem:
-15.5GiB 0:01:22 [ 193MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_2/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:36:55-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [90.4KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_2/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.6 GB) to new target filesystem:
-15.6GiB 0:01:19 [ 200MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_2/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:38:18-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [88.1KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_2/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.2 GB) to new target filesystem:
-15.2GiB 0:01:19 [ 195MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_2/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:39:38-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [98.2KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_2/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.3 GB) to new target filesystem:
-15.3GiB 0:01:19 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_2/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:40:58-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [ 100KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.3 GB) to new target filesystem:
-15.3GiB 0:01:19 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:42:19-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [96.5KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_3/l2_0@autosnap_2025-02-03_19:46:23_monthly (~ 15.8 GB) to new target filesystem:
-15.8GiB 0:01:22 [ 195MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_3/l2_0@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:43:39-GMT-06:00 (~ 4 KB):
-5.79KiB 0:00:00 [99.2KiB/s] [=================================================================================================] 118%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_3/l2_1@autosnap_2025-02-03_19:46:23_monthly (~ 15.2 GB) to new target filesystem:
-15.2GiB 0:01:20 [ 193MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_3/l2_1@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:45:02-GMT-06:00 (~ 5 KB):
-6.40KiB 0:00:00 [97.0KiB/s] [=================================================================================================] 116%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_3/l2_2@autosnap_2025-02-03_19:46:23_monthly (~ 15.5 GB) to new target filesystem:
-15.5GiB 0:01:20 [ 197MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_3/l2_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:46:24-GMT-06:00 (~ 5 KB):
-6.40KiB 0:00:00 [98.7KiB/s] [=================================================================================================] 116%            
-INFO: Sending oldest full snapshot send/test/l0_1/l1_3/l2_3@autosnap_2025-02-03_19:46:23_monthly (~ 15.7 GB) to new target filesystem:
-15.7GiB 0:02:19 [ 115MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_1/l1_3/l2_3@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:47:45-GMT-06:00 (~ 5 KB):
-6.40KiB 0:00:00 [96.7KiB/s] [=================================================================================================] 116%            
-INFO: Sending oldest full snapshot send/test/l0_2@autosnap_2025-02-03_19:46:23_monthly (~ 5.1 GB) to new target filesystem:
-5.14GiB 0:02:48 [31.2MiB/s] [================================================================================================>] 100%            
-INFO: Updating new target filesystem with incremental send/test/l0_2@autosnap_2025-02-03_19:46:23_monthly ... syncoid_orcus_2025-02-03:20:50:05-GMT-06:00 (~ 5 KB):
-6.40KiB 0:00:00 [ 113KiB/s] [=================================================================================================] 116%            
+...
 real 3638.23
 user 50.31
 sys 2515.21
 root@orcus:~# 
 ```
+
+[Full log of syncoid first pass](./data/#2025-02-03-first-syncoid)
 
 ### second pass
 
@@ -254,4 +81,91 @@ Observations:
 * It takes about 90s to stir the pool.
 * `syncoid` takes about 50s following a single stir and 82s following two stir passes.
 
+## 2025-02-04 errors produced
 
+The first log to report errors is `2025-02-04-1618.syncoid.59.txt` and it also reports
+
+```text
+ending incremental send/test/l0_1/l1_1/l2_1@syncoid_orcus_2025-02-04:16:12:41-GMT-06:00 ... syncoid_orcus_2025-02-04:16:18:43-GMT-06:00 (~ 20.8 MB):
+warning: cannot send 'send/test/l0_1/l1_1/l2_1@autosnap_2025-02-04_22:15:50_frequently': Invalid argument
+cannot receive incremental stream: most recent snapshot of recv/test/l0_1/l1_1/l2_1 does not
+match incremental source
+CRITICAL ERROR:  zfs send  -I 'send/test/l0_1/l1_1/l2_1'@'syncoid_orcus_2025-02-04:16:12:41-GMT-06:00' 'send/test/l0_1/l1_1/l2_1'@'syncoid_orcus_2025-02-04:16:18:43-GMT-06:00' | mbuffer  -q -s 128k -m 16M 2>/dev/null | pv -p -t -e -r -b -s 21847088 |  zfs receive  -s -F 'recv/test/l0_1/l1_1/l2_1' 2>&1 failed: 256 at /sbin/syncoid line 817.
+Sending incremental send/test/l0_1/l1_1/l2_2@syncoid_orcus_2025-02-04:16:12:43-GMT-06:00 ... syncoid_orcus_2025-02-04:16:18:43-GMT-06:00 (~ 21.8 MB):
+```
+
+And full status was 
+
+```text
+eal 59.00
+user 4.86
+sys 19.78
+errors: List of errors unavailable: permission denied
+  pool: send
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
+  scan: scrub repaired 0B in 00:16:15 with 0 errors on Tue Feb  4 12:19:17 2025
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        send                      ONLINE       0     0     0
+          wwn-0x5002538d40878f8e  ONLINE       0     0     0
+
+errors: 1 data errors, use '-v' for a list
+```
+
+[Full flie list](./data.md#2025-02-03-full-log-file-list)
+
+[List of all syncoid logs](./data.md#2025-02-03-list-of-all-syncoid-logs)
+
+There were a total of 197 syncoid runs and corruption was first noted on the 175th pass. The number cascaded on subsequent passes.
+
+```text
+hbarta@orcus:~/logs$ grep "use '-v'" *syncoid*
+2025-02-04-1618.syncoid.59.txt:errors: 1 data errors, use '-v' for a list
+2025-02-04-1624.syncoid.53.txt:errors: 34 data errors, use '-v' for a list
+2025-02-04-1630.syncoid.25.txt:errors: 74 data errors, use '-v' for a list
+2025-02-04-1636.syncoid.28.txt:errors: 452 data errors, use '-v' for a list
+2025-02-04-1642.syncoid.22.txt:errors: 974 data errors, use '-v' for a list
+2025-02-04-1648.syncoid.25.txt:errors: 1130 data errors, use '-v' for a list
+2025-02-04-1654.syncoid.25.txt:errors: 1215 data errors, use '-v' for a list
+2025-02-04-1700.syncoid.26.txt:errors: 1227 data errors, use '-v' for a list
+2025-02-04-1706.syncoid.24.txt:errors: 1229 data errors, use '-v' for a list
+2025-02-04-1712.syncoid.25.txt:errors: 1231 data errors, use '-v' for a list
+2025-02-04-1718.syncoid.24.txt:errors: 1232 data errors, use '-v' for a list
+2025-02-04-1724.syncoid.24.txt:errors: 1233 data errors, use '-v' for a list
+2025-02-04-1730.syncoid.23.txt:errors: 1264 data errors, use '-v' for a list
+2025-02-04-1736.syncoid.25.txt:errors: 1295 data errors, use '-v' for a list
+2025-02-04-1742.syncoid.24.txt:errors: 1295 data errors, use '-v' for a list
+2025-02-04-1748.syncoid.25.txt:errors: 1296 data errors, use '-v' for a list
+2025-02-04-1754.syncoid.25.txt:errors: 1296 data errors, use '-v' for a list
+2025-02-04-1800.syncoid.26.txt:errors: 1297 data errors, use '-v' for a list
+hbarta@orcus:~/logs$ 
+```
+
+Log files around the time of the first detected corruption were:
+
+```text
+-rw-r--r-- 1 hbarta hbarta 499171 Feb  4 16:07 2025-02-04-1607.stir_pools.57.txt
+-rw-r--r-- 1 hbarta hbarta   6851 Feb  4 16:12 2025-02-04-1612.syncoid.58.txt
+-rw-r--r-- 1 hbarta hbarta 491105 Feb  4 16:14 2025-02-04-1614.stir_pools.58.txt
+-rw-r--r-- 1 hbarta hbarta   7762 Feb  4 16:19 2025-02-04-1618.syncoid.59.txt               <<< first corruption
+-rw-r--r-- 1 hbarta hbarta 495515 Feb  4 16:22 2025-02-04-1621.stir_pools.59.txt
+-rw-r--r-- 1 hbarta hbarta  10028 Feb  4 16:24 2025-02-04-1624.syncoid.53.txt
+-rw-r--r-- 1 hbarta hbarta 493205 Feb  4 16:29 2025-02-04-1628.stir_pools.59.txt
+```
+
+Observations:
+
+* Previous stir started at 1614 and lasted about a minute.
+* Problem `syncoid` started at 1618, 4 minutes past the stir.
+* Previous scrub completed at 12:19:17 and was the last scrub performed. These were scheduled 4x daily.
+* `sanoid` runs on fifteen minute schedule and would have completed well before these operations (including the previous `syncoid`) completed. The closest timing overlay was the stir at 1614 completing 2 seconds before sanoid ran. It seems likely that caches might still be in flight to the HDD.
+* Testing began at 2140 the previous day and the first corruption was noted at 1614. This is a vast improvement over "a couple days."
+
+
+All operations including `syncoid`, `sanoid`, stir and scrub were halted as soon as corruption was noticed.
