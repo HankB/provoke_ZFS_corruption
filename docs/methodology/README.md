@@ -27,4 +27,4 @@ Each "test case" will have a set of files in it's own directory named starting w
 
 * `setup.md` Commands required to set up the test and kick it off along with any relevant results. The markdown title will include the date string and "setup" (e.g. `# 2025-02-03 Setup`, first line in the file.)
 * `results.md` Copies of text from the screen for anything that might be worthy of later review. `results.md` and `setup.md` sho0uld link to each other.
-* `[anything else useful]` as the sitruation warrants.
+* `[anything else useful]` as the situation warrants.
