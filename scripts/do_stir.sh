@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 start=$(/bin/date  +%Y-%m-%d-%H%M)
 start_s=$(/bin/date +%s)
 
