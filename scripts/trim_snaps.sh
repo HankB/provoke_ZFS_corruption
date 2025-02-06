@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Trim the snapshots created by thrash_zfs.sh and thrash_stir.sh
 # e.g. not touching those created by syncoid.
