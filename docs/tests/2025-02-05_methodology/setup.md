@@ -99,4 +99,47 @@ Tests kicked off on 2025-02-05 aboutr 1815.
 
 ## 2025-02-06 no corruption yet
 
-Serial "thrashing" with 655 passes. Now working on scripts to decouple and run some operations in parallel. Will recreate the pools, clear the logs and restart using the same OS install. `stir` and `snapshot` will go in one script and `syncoid` in another. The `send` pool now has nearly 12K snapshots so a third script will be provided to trim snapshots as this might also be a part of the pattern.
+Serial "thrashing" with 655 passes. Now working on scripts to decouple and run some operations in parallel. Will recreate the pools, clear the logs and restart using the same OS install. `stir` and `snapshot` will go in one script and `syncoid` in another. The `send` pool now has nearly 12K snapshots so a third script will be provided to trim snapshots as this might also be a part of the pattern. Also seeing that pools are now at 90% capacity. Reducing snapshots to 100 for each filesystem brings pool capacity on `recv` down to 70% - 10% higher than the fresh pool. That seems reasonable.
+
+Recreate pools as above. Killed populate at 63%. Kicking off the first syncoid now (1130).
+
+```text
+root@orcus:/home/hbarta# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 4221.88
+user 44.40
+sys 2279.22
+root@orcus:/home/hbarta# 
+```
+
+And as a user
+
+```text
+hbarta@orcus:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 12.41
+user 3.51
+sys 6.12
+hbarta@orcus:~$ 
+```
+
+Enabling scrub in root `cron`.
+
+```text
+3 */3 * * * /sbin/zpool scrub send recv
+```
+
+Starting 3 tmux sessions to run the following commands
+
+```text
+thrash_stir.sh
+thrash_syncoid.sh
+do_trim_snaps.sh # (looping every 60s)
+```
+
+Thrashing kicked off about 1330. Ran wrong commands and had to reboot. To get things back up
+
+```text
+zfs load-key -a
+zfs mount -a
+```
