@@ -6,7 +6,7 @@
 
 
 retain_count=100
-pool=recv
+pool=send
 
 start=$(/bin/date  +%Y-%m-%d-%H%M)
 start_s=$(/bin/date +%s)
