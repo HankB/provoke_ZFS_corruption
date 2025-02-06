@@ -14,7 +14,7 @@ start_s=$(/bin/date +%s)
 for fs in $(zfs list -r -H -o name "$pool")
 do  
     # count snaps
-    count=$(zfs list -t snap $fs|wc -l)
+    count=$(zfs list -t snap "$fs"|wc -l)
 
     delete_count=$(( count-retain_count))
 
@@ -24,7 +24,7 @@ do
         for snap in $(zfs list -t snap -H -o name "$fs" | sort | head -"$delete_count")
         do
             echo "deleting $snap"
-            zfs destroy $snap
+            zfs destroy "$snap"
         done
     else
         echo "deleting none from $fs"

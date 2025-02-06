@@ -8,6 +8,7 @@ do
     # check for halt condition
     if [ -e /home/hbarta/logs/halt_test.txt ]
     then
+        echo "halting on corruption detected"
         exit
     fi
 
@@ -15,25 +16,28 @@ do
     time -p do_stir.sh
 
     # And check for corruption
-    # shellcheck disable=SC2012
-    # shellcheck disable=SC2046
-    if ( grep -q "use '-v' for a list" $(ls -t /home/hbarta/logs/*stir_pools*|tail ) )
-    then
-        date +%Y-%m-%d-%H%M >>/home/hbarta/logs/halt_test.txt
-        exit
-    fi
+    for log in $(find /home/hbarta/logs -type f|sort|tail)
+    do
+        if ( grep -q "use '-v' for a list" "$log" )
+        then
+            echo "corruption detected in $log"
+            date +%Y-%m-%d-%H%M >>/home/hbarta/logs/halt_test.txt
+            exit
+        fi
+    done
 
-    zfs snap -r send@$(date +%s).$(date +%Y-%m-%d-%H%M)
+    zfs snap -r send@"$(date +%s).$(date +%Y-%m-%d-%H%M)"
     do_syncoid.sh
     
     # And check for corruption
-    # shellcheck disable=SC2012
-    # shellcheck disable=SC2046
-    if ( grep -q "use '-v' for a list" $(ls -t /home/hbarta/logs/*syncoid*|tail ) )
-    then
-        date +%Y-%m-%d-%H%M >>/home/hbarta/logs/halt_test.txt
-        exit
-    fi
-
+    for log in $(find /home/hbarta/logs -type f|sort|tail)
+    do
+        if ( grep -q "use '-v' for a list" "$log" )
+        then
+            echo "corruption detected in $log"
+            date +%Y-%m-%d-%H%M >>/home/hbarta/logs/halt_test.txt
+            exit
+        fi
+    done
 
 done
