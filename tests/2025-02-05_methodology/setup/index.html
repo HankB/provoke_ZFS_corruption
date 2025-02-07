@@ -131,6 +131,14 @@
     <ul class="dropdown-menu">
             
 <li>
+    <a href="../data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../results/" class="dropdown-item">results</a>
+</li>
+            
+<li>
     <a href="./" class="dropdown-item active">2025-02-05 Setup</a>
 </li>
     </ul>
@@ -146,7 +154,7 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-02-03_methodology/setup/" class="nav-link">
+                                <a rel="prev" href="../results/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
@@ -175,6 +183,18 @@
             
             <li class="nav-item" data-level="1"><a href="#2025-02-05-setup" class="nav-link">2025-02-05 Setup</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-02-05-plan" class="nav-link">2025-02-05 Plan</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-05-recreate-pools" class="nav-link">2025-02-05 recreate pools</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-06-no-corruption-yet" class="nav-link">2025-02-06 no corruption yet</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -183,7 +203,115 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="2025-02-05-setup">2025-02-05 Setup</h1>
-<p>Continue exploration of methodology. Results from 2025-02-03 tests prove that this H/W setup can reproduce the issue and can do more in less time with increased activity.</p></div>
+<ul>
+<li><a href="../results/">Results</a></li>
+</ul>
+<p>Continue exploration of methodology. Results from 2025-02-03 tests prove that this H/W setup can reproduce the issue and can do more in less time with increased activity.</p>
+<h2 id="2025-02-05-plan">2025-02-05 Plan</h2>
+<p>The previous test identified a possible scenario whereby creating snapshots immediately following a stir resulted in corruption in the following send. Suggestions at <a href="https://github.com/openzfs/zfs/issues/12014#issuecomment-2636245924">https://github.com/openzfs/zfs/issues/12014#issuecomment-2636245924</a> indicated that it may not be necessary to use <code>sanoid</code> and <code>syncoid</code> to provoke the issue. This test will explore that option. Scripts and operation will be modified to:</p>
+<ul>
+<li>Run continuously. Initially the stir -&gt; snapshot -&gt; send actions will be executed serially but a further refinement could be to run some in parallel.</li>
+<li>Detect the first sign of corruption and halt testing operations.</li>
+<li>ZFS send and snapshot operations will be executed directly.</li>
+<li>The existing setup including 6.1 kernel and 2.1.11 will be reused as it has proven to produce corruption. The pools will be destroyed and recreated.</li>
+</ul>
+<p>Recording versions</p>
+<pre><code class="language-text">root@orcus:~# zfs --version
+zfs-2.1.11-1+deb12u1
+zfs-kmod-2.1.11-1+deb12u1
+root@orcus:~# uname -a
+Linux orcus 6.1.0-30-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.124-1 (2025-01-12) x86_64 GNU/Linux
+root@orcus:~# 
+</code></pre>
+<h2 id="2025-02-05-recreate-pools">2025-02-05 recreate pools</h2>
+<pre><code class="language-text">zpool destroy send
+
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d40878f8e
+zfs load-key -a
+chmod a+rwx /mnt/send/
+</code></pre>
+<p><code>zpool destroy send</code> has been running about 10 minutes and with <code>top</code> reporting ~19% IO wait. Time to reboot, requiring a power cycle to complete. And then no LAN bnecause <code>enp0s7</code> (or whatever) was now <code>eth1</code>. Following reboot <code>send</code> and <code>recv</code> pools were destroyed in &lt;1s.</p>
+<p>Kick off populate operation.</p>
+<pre><code class="language-text">time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+</code></pre>
+<p>And killed when <code>send</code> hit 60% in <code>zpool list</code>.</p>
+<pre><code>root@orcus:/home/hbarta# time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+...
+real 2861.59
+user 77.86
+sys 2752.91
+root@orcus:/home/hbarta# 
+
+root@orcus:~# find /mnt/send -type f | wc -l
+57170
+root@orcus:~# find /mnt/send -type d | wc -l
+38
+root@orcus:~# 
+root@orcus:~# chown hbarta:hbarta -R /mnt/send
+</code></pre>
+<p>Create the <code>recv</code> pool and kick off the first send as root.</p>
+<pre><code class="language-text">zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d41628a33
+chmod a+rwx /mnt/recv/
+
+user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+</code></pre>
+<p>Create new script <code>thrash_zfs.sh</code> to drive ZFS activity. For now it will</p>
+<ul>
+<li>perform the stir</li>
+<li>check for corruption</li>
+<li>take a (ZFS) recursive snapshot</li>
+<li>send recursively to <code>recv</code> using <code>syncoid</code> (*)</li>
+<li>check for corruption</li>
+</ul>
+<p>Sending incrementally to <code>/dev/null</code> is a bit trickier because the previous snapshot needs to be identified. That's left to a future enhancement if desired.</p>
+<p>Tests kicked off on 2025-02-05 aboutr 1815.</p>
+<h2 id="2025-02-06-no-corruption-yet">2025-02-06 no corruption yet</h2>
+<p>Serial "thrashing" with 655 passes. Now working on scripts to decouple and run some operations in parallel. Will recreate the pools, clear the logs and restart using the same OS install. <code>stir</code> and <code>snapshot</code> will go in one script and <code>syncoid</code> in another. The <code>send</code> pool now has nearly 12K snapshots so a third script will be provided to trim snapshots as this might also be a part of the pattern. Also seeing that pools are now at 90% capacity. Reducing snapshots to 100 for each filesystem brings pool capacity on <code>recv</code> down to 70% - 10% higher than the fresh pool. That seems reasonable.</p>
+<p>Recreate pools as above. Killed populate at 63%. Kicking off the first syncoid now (1130).</p>
+<pre><code class="language-text">root@orcus:/home/hbarta# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 4221.88
+user 44.40
+sys 2279.22
+root@orcus:/home/hbarta# 
+</code></pre>
+<p>And as a user</p>
+<pre><code class="language-text">hbarta@orcus:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 12.41
+user 3.51
+sys 6.12
+hbarta@orcus:~$ 
+</code></pre>
+<p>Enabling scrub in root <code>cron</code>.</p>
+<pre><code class="language-text">3 */3 * * * /sbin/zpool scrub send recv
+</code></pre>
+<p>Starting 3 tmux sessions to run the following commands</p>
+<pre><code class="language-text">thrash_stir.sh
+thrash_syncoid.sh
+do_trim_snaps.sh # (looping every 60s)
+</code></pre>
+<p>Thrashing kicked off about 1330. Ran wrong commands and had to reboot. To get things back up</p>
+<pre><code class="language-text">zfs load-key -a
+zfs mount -a
+</code></pre></div>
             </div>
         </div>
 
