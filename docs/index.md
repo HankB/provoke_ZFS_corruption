@@ -9,7 +9,7 @@ Directory of tests starting with preliminary exploration.
 |started|completed|results|ZFS ver|OS|kernel ver|notes|
 |---|---|---|---|---|---|---|
 |2025-02-03|2025-02-04|[corruption](./tests/2025-02-03_methodology/results.md)|zfs-2.1.11-1+deb12u1|Debian 12|6.1.0-30-amd64|methodology exploration|
-|2025-02-05||[in progress](./tests/2025-02-05_methodology/setup.md)|zfs-2.1.11-1+deb12u1|Debian 12|6.1.0-30-amd64|methodology exploration|
+|2025-02-05||[corruption in 15 minutes](./tests/2025-02-05_methodology/results.md)|zfs-2.1.11-1+deb12u1|Debian 12|6.1.0-30-amd64|methodology exploration|
 
 
 ## 2025-02-04 process improvements
