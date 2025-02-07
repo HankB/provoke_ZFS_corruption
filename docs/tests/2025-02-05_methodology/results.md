@@ -11,8 +11,8 @@ zfs-kmod-2.1.11-1+deb12u1
 hbarta@orcus:~$ 
 ```
 
-[Setup](./setup.md)  
-[Data](./data.md)
+* [Setup](./setup.md)  
+* [Data](./data.md)
 
 ## 2025-02-06 corruption produced
 
