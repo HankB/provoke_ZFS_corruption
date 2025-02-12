@@ -1,5 +1,8 @@
 # Linux Repeat Results
 
+* [Data](./data.md)
+* [Setup](./setup.md)
+
 This is with the same configuration used for the two methodology studies - Current Debian and (not from backports) ZFS.
 
 ```text
