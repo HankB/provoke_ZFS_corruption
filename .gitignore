@@ -1,3 +1,5 @@
 # MkDocs artifdacts
 site
 docs/.index.md.swp
+# local storage
+logs
