@@ -12,6 +12,9 @@ Directory of tests starting with preliminary exploration.
 |2025-02-05|2025-02-05|[corruption in 15 minutes](./tests/2025-02-05_methodology/results.md)|zfs-2.1.11-1+deb12u1|Debian 12|6.1.0-30-amd64|methodology exploration|
 |2025-02-07|2025-02-07|[corruption in 10 hours](./tests/2025-02-06_FreeBSD_test/results.md)|zfs-2.3.99-170-FreeBSD_g34205715e|15.0-CURRENT FreeBSD|main-n275087-cdacb12065e4|FreeBSD on Pi 4B|
 |2025-02-11|2025-02-11|[corruption in 2 hours](./tests/2025-02-11_Linux_Repeat/results.md)|zfs-2.1.11-1+deb12u1|Debian 12|6.1.0-30-amd64|repeat methodology exploration, test FreeBSD tweaks|
+|2025-02-12|2025-02-12|[corruption instantly [1]](./tests/2025-02-11_Linux_Buster_5.10_2.0.3/results.md)|zfs-2.0.3-9~bpo10+1|Debian 10|5.10.0-0.deb10.24-amd64|repeat previous tests using new methodology|
+
+* `[1]` Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.
 
 ## 2025-02-04 process improvements
 
