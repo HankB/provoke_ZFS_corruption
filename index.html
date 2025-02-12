@@ -163,6 +163,24 @@
   </li>
                                     
   <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Buster 5.10 2.0.3</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="tests/2025-02-11_Linux_Buster_5.10_2.0.3/data/" class="dropdown-item">Data - Buster 5.10 and 2.0.3 repeat</a>
+</li>
+            
+<li>
+    <a href="tests/2025-02-11_Linux_Buster_5.10_2.0.3/results/" class="dropdown-item">Linux Buster kernel 5.10.0 with ZFS 2.0.3</a>
+</li>
+            
+<li>
+    <a href="tests/2025-02-11_Linux_Buster_5.10_2.0.3/setup/" class="dropdown-item">Setup Buster 5.10 kernel and ZFS 2.0.3</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
     <a href="#" class="dropdown-item">2025 02 11 Linux Repeat</a>
     <ul class="dropdown-menu">
             
@@ -284,14 +302,26 @@
 <tr>
 <td>2025-02-11</td>
 <td>2025-02-11</td>
-<td><a href="tests/2025-02-11_Linux_Repeat/results/">corruption in 2 hopurs</a></td>
+<td><a href="tests/2025-02-11_Linux_Repeat/results/">corruption in 2 hours</a></td>
 <td>zfs-2.1.11-1+deb12u1</td>
 <td>Debian 12</td>
 <td>6.1.0-30-amd64</td>
 <td>repeat methodology exploration, test FreeBSD tweaks</td>
 </tr>
+<tr>
+<td>2025-02-12</td>
+<td>2025-02-12</td>
+<td><a href="tests/2025-02-11_Linux_Buster_5.10_2.0.3/results/">corruption instantly [1]</a></td>
+<td>zfs-2.0.3-9~bpo10+1</td>
+<td>Debian 10</td>
+<td>5.10.0-0.deb10.24-amd64</td>
+<td>repeat previous tests using new methodology</td>
+</tr>
 </tbody>
 </table>
+<ul>
+<li><code>[1]</code> Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.</li>
+</ul>
 <h2 id="2025-02-04-process-improvements">2025-02-04 process improvements</h2>
 <p>These have worked, producing corruption in less than a day. This should shorten testing time and also proves that the H/W in use will produce corruption using current Debian kernel and ZFS. <a href="tests/2025-02-03_methodology/results/">More details</a> In addition, the scripts have been tweaked to work on FreeBSD (with <code>bash</code>) and corruption was produced on a FreeBSD host.</p>
 <h2 id="2025-02-11-test-instructions">2025-02-11 Test instructions</h2>
@@ -392,5 +422,5 @@
 
 <!--
 MkDocs version : 1.4.2
-Build Date UTC : 2025-02-12 02:04:29.750077+00:00
+Build Date UTC : 2025-02-12 22:49:27.919273+00:00
 -->
