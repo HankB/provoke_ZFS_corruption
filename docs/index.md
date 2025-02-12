@@ -14,6 +14,8 @@ Directory of tests starting with preliminary exploration.
 |2025-02-11|2025-02-11|[corruption in 2 hours](./tests/2025-02-11_Linux_Repeat/results.md)|zfs-2.1.11-1+deb12u1|Debian 12|6.1.0-30-amd64|repeat methodology exploration, test FreeBSD tweaks|
 |2025-02-12|2025-02-12|[corruption instantly [1]](./tests/2025-02-11_Linux_Buster_5.10_2.0.3/results.md)|zfs-2.0.3-9~bpo10+1|Debian 10|5.10.0-0.deb10.24-amd64|repeat previous tests using new methodology|
 
+* `[1]` Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.
+
 ## 2025-02-04 process improvements
 
 These have worked, producing corruption in less than a day. This should shorten testing time and also proves that the H/W in use will produce corruption using current Debian kernel and ZFS. [More details](./tests/2025-02-03_methodology/results.md) In addition, the scripts have been tweaked to work on FreeBSD (with `bash`) and corruption was produced on a FreeBSD host.
