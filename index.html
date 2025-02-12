@@ -143,6 +143,42 @@
 </li>
     </ul>
   </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 06 FreeBSD test</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="tests/2025-02-06_FreeBSD_test/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="tests/2025-02-06_FreeBSD_test/results/" class="dropdown-item">FreeBSD test results</a>
+</li>
+            
+<li>
+    <a href="tests/2025-02-06_FreeBSD_test/setup/" class="dropdown-item">2025-02-06 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Repeat</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="tests/2025-02-11_Linux_Repeat/data/" class="dropdown-item">Data</a>
+</li>
+            
+<li>
+    <a href="tests/2025-02-11_Linux_Repeat/results/" class="dropdown-item">Linux Repeat Results</a>
+</li>
+            
+<li>
+    <a href="tests/2025-02-11_Linux_Repeat/setup/" class="dropdown-item">2025-02-11 Setup</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                         </ul>
@@ -184,6 +220,10 @@
             <li class="nav-item" data-level="1"><a href="#blog-version-of-provoke_zfs_corruption" class="nav-link">Blog version of provoke_ZFS_corruption</a>
               <ul class="nav flex-column">
             <li class="nav-item" data-level="2"><a href="#2025-02-04-process-improvements" class="nav-link">2025-02-04 process improvements</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-11-test-instructions" class="nav-link">2025-02-11 Test instructions</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -235,7 +275,25 @@
 </tbody>
 </table>
 <h2 id="2025-02-04-process-improvements">2025-02-04 process improvements</h2>
-<p>These have worked, producing corruption in less than a day. This should shorten testing time and also proves that the H/W in use will produce corruption using current Debian kernel and ZFS. <a href="tests/2025-02-03_methodology/results/">More details</a></p></div>
+<p>These have worked, producing corruption in less than a day. This should shorten testing time and also proves that the H/W in use will produce corruption using current Debian kernel and ZFS. <a href="tests/2025-02-03_methodology/results/">More details</a></p>
+<h2 id="2025-02-11-test-instructions">2025-02-11 Test instructions</h2>
+<p>Configure a host and two pools <code>send</code> and <code>recv</code>. Review the scripts that will be used as my user name <code>hbarta</code> has been hard coded in too many places. (PRs to corract that gratefully accepted.)</p>
+<ol>
+<li>Run the <code>populate_pool.sh</code> script as <code>root</code> to populate the send pool. It does not terminate when there is sufficient data and will need to be killed when the <code>send</code> pool reaches about 50% capacity. The easiest way to kill it is to find the PID of the script and <code>kill &lt;PID&gt;</code> as root.</li>
+<li>Run <code>syncoid</code> as <code>root</code> manually once to mirror <code>send</code> to <code>recv</code>. Set permissions or ownership on the resulting files in <code>send</code> to allow user modification.</li>
+<li>Execute <code>zfs allow</code> as <code>root</code> to provide appropriate permissions so that <code>syncoid</code> can run as your user.</li>
+<li>Create a directory <code>~/logs</code> where the scripts will write logs.</li>
+<li>
+<p>Start the following three scripts. (I hard link them to the user <code>~/bin</code> directory for convenience but it is left to the user to make them available in the PATH.)</p>
+</li>
+<li>
+<p><code>thrash_stir.sh</code> - This script will modify random files in the pool continuously and also capture recursive snapshots.</p>
+</li>
+<li><code>thrash_syncoid.sh</code> - This script will invoke <code>syncoid</code> continuously.</li>
+<li><code>manage_snaps.sh</code> - This script will manage snapshots every minute to limit retained snapshots to 100 for each dataset.</li>
+</ol>
+<p>All three scripts will check for and exit when corruption is detected. In addition I add a cron job as <code>root</code> to <code>zpool scrub</code> both pools several times/day.</p>
+<p>For details on the exact commands used to prepare the test, please see <a href="tests/2025-02-05_methodology/setup/">the methodology exploration</a>.</p></div>
             </div>
         </div>
 
@@ -316,5 +374,5 @@
 
 <!--
 MkDocs version : 1.4.2
-Build Date UTC : 2025-02-07 14:50:56.330333+00:00
+Build Date UTC : 2025-02-12 01:51:45.684637+00:00
 -->
