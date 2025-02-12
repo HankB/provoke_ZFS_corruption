@@ -6,30 +6,33 @@
 
 
 retain_count=100
-pool=send
+# pool=send
 
 start=$(/bin/date  +%Y-%m-%d-%H%M)
 start_s=$(/bin/date +%s)
 
-for fs in $(zfs list -r -H -o name "$pool")
-do  
-    # count snaps
-    count=$(zfs list -t snap "$fs"|wc -l)
+for pool in "send" "recv"
+do
+    for fs in $(zfs list -r -H -o name "$pool")
+    do  
+        # count snaps
+        count=$(zfs list -t snap "$fs"|wc -l)
 
-    delete_count=$(( count-retain_count))
+        delete_count=$(( count-retain_count))
 
-    if [ "$delete_count" -gt 0 ]
-    then
-        echo "deleting $delete_count from $fs" 
-        for snap in $(zfs list -t snap -H -o name "$fs" | sort | head -"$delete_count")
-        do
-            echo "deleting $snap"
-            zfs destroy "$snap"
-        done
-    else
-        echo "deleting none from $fs"
-    fi
+        if [ "$delete_count" -gt 0 ]
+        then
+            echo "deleting $delete_count from $fs" 
+            for snap in $(zfs list -t snap -H -o name "$fs" | sort | head -"$delete_count")
+            do
+                echo "deleting $snap"
+                zfs destroy "$snap"
+            done
+        else
+            echo "deleting none from $fs"
+        fi
 
+    done 
 done 
 
 finish_s=$(/bin/date +%s)
