@@ -265,17 +265,35 @@
 </tr>
 <tr>
 <td>2025-02-05</td>
-<td></td>
+<td>2025-02-05</td>
 <td><a href="tests/2025-02-05_methodology/results/">corruption in 15 minutes</a></td>
 <td>zfs-2.1.11-1+deb12u1</td>
 <td>Debian 12</td>
 <td>6.1.0-30-amd64</td>
 <td>methodology exploration</td>
 </tr>
+<tr>
+<td>2025-02-07</td>
+<td>2025-02-07</td>
+<td><a href="tests/2025-02-06_FreeBSD_test/results/">corruption in 10 hours</a></td>
+<td>zfs-2.3.99-170-FreeBSD_g34205715e</td>
+<td>15.0-CURRENT FreeBSD</td>
+<td>main-n275087-cdacb12065e4</td>
+<td>FreeBSD on Pi 4B</td>
+</tr>
+<tr>
+<td>2025-02-11</td>
+<td>2025-02-11</td>
+<td><a href="tests/2025-02-11_Linux_Repeat/results/">corruption in 2 hopurs</a></td>
+<td>zfs-2.1.11-1+deb12u1</td>
+<td>Debian 12</td>
+<td>6.1.0-30-amd64</td>
+<td>repeat methodology exploration, test FreeBSD tweaks</td>
+</tr>
 </tbody>
 </table>
 <h2 id="2025-02-04-process-improvements">2025-02-04 process improvements</h2>
-<p>These have worked, producing corruption in less than a day. This should shorten testing time and also proves that the H/W in use will produce corruption using current Debian kernel and ZFS. <a href="tests/2025-02-03_methodology/results/">More details</a></p>
+<p>These have worked, producing corruption in less than a day. This should shorten testing time and also proves that the H/W in use will produce corruption using current Debian kernel and ZFS. <a href="tests/2025-02-03_methodology/results/">More details</a> In addition, the scripts have been tweaked to work on FreeBSD (with <code>bash</code>) and corruption was produced on a FreeBSD host.</p>
 <h2 id="2025-02-11-test-instructions">2025-02-11 Test instructions</h2>
 <p>Configure a host and two pools <code>send</code> and <code>recv</code>. Review the scripts that will be used as my user name <code>hbarta</code> has been hard coded in too many places. (PRs to corract that gratefully accepted.)</p>
 <ol>
@@ -374,5 +392,5 @@
 
 <!--
 MkDocs version : 1.4.2
-Build Date UTC : 2025-02-12 01:51:45.684637+00:00
+Build Date UTC : 2025-02-12 02:04:29.750077+00:00
 -->
