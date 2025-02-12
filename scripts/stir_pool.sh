@@ -16,10 +16,21 @@ skip_range=20                   # skip 0-20 files and modify
 # but the first cut will just replace a random character in the file
 # with another random character.
 modify_file() {
-    file_len=$(stat --printf="%s" "$1")
+    case $OSTYPE in
+	linux*)
+	    file_len=$(stat --printf="%s" "$1")
+	    ;;
+	freebsd*)
+	    file_len=$(stat -f%z do_stir.sh)
+	    ;;
+	*)
+	    pri"ntf stderr "unrecotnized OS $OSTYPE
+	    exit
+	    ;;
+    esac
     offset=$((RANDOM % "$file_len"))
-    tr -dc '[:print:]' < /dev/urandom | head -c 1  | \
-        dd of=file bs=1 count=1 seek=$offset conv=notrunc of="$1" || true
+    LC_ALL=C tr -dc '[:print:]' < /dev/urandom | head -c 1  | \
+        dd bs=1 count=1 seek=$offset conv=notrunc of="$1" || true
 }
 
 # following solution found at 

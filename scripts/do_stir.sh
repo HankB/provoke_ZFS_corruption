@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 start=$(/bin/date  +%Y-%m-%d-%H%M)
 start_s=$(/bin/date +%s)
 
-/bin/time -p /home/hbarta/bin/stir_pool.sh >"/home/hbarta/logs/$start.stir_pools.txt" 2>&1
+/usr/bin/time -p /home/hbarta/bin/stir_pool.sh >"/home/hbarta/logs/$start.stir_pools.txt" 2>&1
 
 finish_s=$(/bin/date +%s)
 elapsed=$((finish_s-start_s))

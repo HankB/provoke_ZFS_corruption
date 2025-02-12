@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Use a file '/home/hbarta/logs/halt_test.txt' to stop the test
 # by writing the current time to that file.

@@ -2,6 +2,7 @@
 
 # Use a file '/home/hbarta/logs/halt_test.txt' to stop the test
 # by writing the current time to that file.
+
 while(:)
 do
     # check for halt condition
@@ -11,8 +12,7 @@ do
         exit
     fi
 
-    # thrash away and check for corruption reported
-    time -p do_stir.sh
+    do_trim_snaps.sh
     
     # And check for corruption
     for log in $(find /home/hbarta/logs -type f|sort|tail)
@@ -24,7 +24,7 @@ do
             exit
         fi
     done
-    
-    zfs snap -r send@"$(date +%s).$(date +%Y-%m-%d-%H%M)"
+
+    sleep 60
 
 done
