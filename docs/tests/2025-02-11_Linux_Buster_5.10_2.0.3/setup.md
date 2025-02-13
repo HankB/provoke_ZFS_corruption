@@ -8,7 +8,7 @@ The versions for which the bug was reported. repeating with the current testing 
 ## 2025-02-11 initial setup
 
 * install using `netinst` media
-* remao MAC 
+* remap MAC
 
 ```text
 root@orcus:/etc/systemd/network# cat 00-enp7s0.link
@@ -138,4 +138,4 @@ Running in seperate (`tmux`) windows.
 * `tmux new -s syncoid` and `thrash_syncoid.sh`
 * `tmux new -s snaps` and `manage_snaps.sh` (After tweaking to manage both pools)
 
-At 1513 after the test was running for hours I was surprised that there was no fragmentation. I checked and found that I had apparently forgotten to check perms/ownership and no files were being modified. That's now fixed and the test is *really* running.
+At 1513 after the test was running for hours I was surprised that there was no fragmentation. I checked and found that I had apparently forgotten to check perms/ownership and no files were being modified. That's now fixed and the test is *really* running. And within seconds corruption was produced.
