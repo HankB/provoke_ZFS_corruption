@@ -9,9 +9,9 @@ echo list
 echo
 zpool list
 echo
-echo send snapshoput count
+echo send snapshot count
 zfs list -t snap -r send|wc -l
 echo
-echo recv snapshoput count
+echo recv snapshot count
 zfs list -t snap -r recv|wc -l
 
