@@ -1,6 +1,7 @@
 # Data 
 
 * [Results](./results.md)
+* [Setup](./setup.md)
 
 ## 2025-02-11 list of logs
 
@@ -490,3 +491,5 @@ config:
 errors: 1 data errors, use '-v' for a list
 hbarta@orcus:~/logs$
 ```
+
+A complete list of log files is not included here but is available on request (icluding the contents of the log files.)
