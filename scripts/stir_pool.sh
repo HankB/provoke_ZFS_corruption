@@ -4,7 +4,7 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-#set -x
+set -x
 ############### end of Boilerplate
 
 # see https://github.com/HankB/provoke_ZFS_corruption
@@ -21,7 +21,7 @@ modify_file() {
 	    file_len=$(stat --printf="%s" "$1")
 	    ;;
 	freebsd*)
-	    file_len=$(stat -f%z do_stir.sh)
+	    file_len=$(stat -f%z "$1")
 	    ;;
 	*)
 	    pri"ntf stderr "unrecotnized OS $OSTYPE
