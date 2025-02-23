@@ -239,6 +239,10 @@
     <ul class="dropdown-menu">
             
 <li>
+    <a href="../data/" class="dropdown-item">Setup</a>
+</li>
+            
+<li>
     <a href="./" class="dropdown-item active">Setup</a>
 </li>
     </ul>
@@ -254,7 +258,7 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-02-12_Linux_Buster_4.19_0.8.6/setup/" class="nav-link">
+                                <a rel="prev" href="../data/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
@@ -296,6 +300,10 @@
               </ul>
             </li>
             <li class="nav-item" data-level="2"><a href="#test-mod-to-populate_poolsh" class="nav-link">Test mod to populate_pool.sh</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-23-kicking-off-tests" class="nav-link">2025-02-23 kicking off tests</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -378,7 +386,41 @@ mkdir bin
 ln hbarta@orion:~/provoke_ZFS_corruption/scripts/* bin
 sudo bin/populate_pool.sh
 sudo zfs destroy -r send/test # repeat this and previous as needed
-</code></pre></div>
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~$ zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   128G   336G        -         -     0%    27%  1.00x    ONLINE  -
+send   464G   237G   227G        -         -     0%    51%  1.00x    ONLINE  -
+hbarta@orion:~$ zfs list -r send|wc -l
+33
+hbarta@orion:~$ find /mnt/send -type f|wc -l
+48000
+hbarta@orion:~$ 
+</code></pre>
+<p><a href="../data/#2025-02-23-first-syncoid">First syncoid</a></p>
+<p><code>zfs allow</code> and ownership</p>
+<pre><code class="language-text">user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+sudo zfs mount -a
+sudo chown -R $user:$user /mnt/send /mnt/recv
+</code></pre>
+<p><a href="../data/#2025-02-23-second-syncoid">Second syncoid</a></p>
+<h2 id="2025-02-23-kicking-off-tests">2025-02-23 kicking off tests</h2>
+<ul>
+<li><code>cd</code></li>
+<li><code>mkdir /mnt/storage/logs.2025-02-22_Linux_Buster_2.0.0_local_build</code></li>
+<li><code>ln -s /mnt/storage/logs.2025-02-22_Linux_Buster_2.0.0_local_build /home/hbarta/logs</code></li>
+<li><code>tmux new -s stir</code> and <code>thrash_stir.sh</code></li>
+<li><code>tmux new -s syncoid</code> and <code>thrash_syncoid.sh</code></li>
+<li><code>tmux new -s snaps</code> and <code>manage_snaps.sh</code> (After tweaking to manage both pools)</li>
+</ul>
+<p>testing kicked off at 2025-02-23-1429.</p></div>
             </div>
         </div>
 
