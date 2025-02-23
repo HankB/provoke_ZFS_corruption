@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>2025-02-03 Setup - Provoke ZFS corruption</title>
+        <title>Setup - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -109,19 +109,19 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../additional/" class="dropdown-item">Additional information</a>
+    <a href="../../2025-02-03_methodology/additional/" class="dropdown-item">Additional information</a>
 </li>
             
 <li>
-    <a href="../data/" class="dropdown-item">data</a>
+    <a href="../../2025-02-03_methodology/data/" class="dropdown-item">data</a>
 </li>
             
 <li>
-    <a href="../results/" class="dropdown-item">2025-02-03 Results</a>
+    <a href="../../2025-02-03_methodology/results/" class="dropdown-item">2025-02-03 Results</a>
 </li>
             
 <li>
-    <a href="./" class="dropdown-item active">2025-02-03 Setup</a>
+    <a href="../../2025-02-03_methodology/setup/" class="dropdown-item">2025-02-03 Setup</a>
 </li>
     </ul>
   </li>
@@ -239,7 +239,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-02-22_Linux_Buster_2.0.0_local_build/setup/" class="dropdown-item">Setup</a>
+    <a href="./" class="dropdown-item active">Setup</a>
 </li>
     </ul>
   </li>
@@ -254,12 +254,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../results/" class="nav-link">
+                                <a rel="prev" href="../../2025-02-12_Linux_Buster_4.19_0.8.6/setup/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-02-05_methodology/data/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -281,13 +281,13 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#2025-02-03-setup" class="nav-link">2025-02-03 Setup</a>
+            <li class="nav-item" data-level="1"><a href="#setup" class="nav-link">Setup</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#2025-02-03-initial-setup" class="nav-link">2025-02-03 initial setup</a>
+            <li class="nav-item" data-level="2"><a href="#2025-02-22-restore-previous-image" class="nav-link">2025-02-22 Restore previous image</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#2025-02-04-pausing-to-enhance-scripts" class="nav-link">2025-02-04 pausing to enhance scripts</a>
+            <li class="nav-item" data-level="2"><a href="#2025-02-22-build-zfs-200" class="nav-link">2025-02-22 Build ZFS 2.0.0</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -298,204 +298,40 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="2025-02-03-setup">2025-02-03 Setup</h1>
+<h1 id="setup">Setup</h1>
+<p>Purpose:</p>
 <ul>
-<li><a href="../results/">Results</a></li>
-<li><a href="../additional/">Additional information</a></li>
-<li><a href="../data/">data</a></li>
+<li>Establish that bug exists in 2.0.0</li>
+<li>Verify that local build from repo (as opposed to Debian packages) demonstrates the problem.</li>
+<li>Establish the base for testing <a href="https://github.com/openzfs/zfs/issues/12014#issuecomment-2668683109">https://github.com/openzfs/zfs/issues/12014#issuecomment-2668683109</a> <a href="https://github.com/openzfs/zfs/pull/17069">https://github.com/openzfs/zfs/pull/17069</a></li>
+<li>Exercise the procedure of shipping the install and restoring the saved images.</li>
 </ul>
-<h2 id="2025-02-03-initial-setup">2025-02-03 initial setup</h2>
+<h2 id="2025-02-22-restore-previous-image">2025-02-22 Restore previous image</h2>
 <ol>
-<li>Install using Netinst media for Debian 12.7.0.</li>
-<li>Remap MAC address.</li>
-<li>Add <code>contrib</code> to <code>sources.list</code></li>
-<li>Update/upgrade: "All packages are up to date." (Netinst benefit)</li>
-<li>Reboot.</li>
-<li>Install useful utilities</li>
+<li>Backup <code>/mnt/storage/logs.2025-02-12_Linux_Buster_4.19_0.8.6</code></li>
+<li>Copy <code>/mnt/storage/image/dev.sdc1</code> to <code>/dev/sdX1</code> (on a different PC)</li>
+<li>Copy <code>/mnt/storage/image/MBR.img</code> to <code>/dev/sdX</code> (on a different PC)</li>
+<li>Replace SSD in test host, boot and confirm that ZFS is not installed.</li>
 </ol>
-<pre><code class="language-text">apt install -y vim git linux-headers-$(uname -r) lzop pv mbuffer sanoid tree smartmontools lm-sensors parted shellcheck tmux time mkdocs lshw
+<h2 id="2025-02-22-build-zfs-200">2025-02-22 Build ZFS 2.0.0</h2>
+<p>Following the same procedure used to previously <a href="../../../first-efforts/x86_SATA_Buster/#2025-01-06-move-to-200">to build 2.0.0</a>.</p>
+<pre><code class="language-text">sudo apt install linux-headers-4.19.0-27-amd64
+wget https://github.com/openzfs/zfs/releases/download/zfs-2.0.0/zfs-2.0.0.tar.gz
+tar xf zfs-2.0.0.tar.gz
+cd zfs-2.0.0
+git checkout master # fails - not a git repo
+sh autogen.sh
+./configure
+make -s -j$(nproc)
+sudo make install
+sudo ldconfig
+sudo modprobe zfs
 </code></pre>
-<ol>
-<li>Install ZFS per instructions at <a href="https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/index.html">https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/index.html</a> (except no <code>backports</code>)</li>
-</ol>
-<pre><code class="language-text">apt install dpkg-dev linux-headers-generic linux-image-generic
-apt install zfs-dkms zfsutils-linux
-</code></pre>
-<p>Resulting versions</p>
-<pre><code class="language-text">root@orcus:~# zfs --version
-zfs-2.1.11-1+deb12u1
-zfs-kmod-2.1.11-1+deb12u1
-root@orcus:~# uname -a
-Linux orcus 6.1.0-30-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.124-1 (2025-01-12) x86_64 GNU/Linux
-root@orcus:~# 
-</code></pre>
-<ol>
-<li>Generate SSH key and add to my Githgub account. Clone <code>git@github.com:HankB/provoke_ZFS_corruption.git</code> in HOME dir.</li>
-<li>Use <code>hdparm</code> to secure erase Samsung SSDs (<code>/dev/sda</code>, <code>/dev/sdb</code>). </li>
-<li>Run <code>partprobe</code> and ID the WWN for <code>/dev/sda</code></li>
-</ol>
-<pre><code class="language-text">root@orcus:~# ls -l /dev/disk/by-id|grep sda
-lrwxrwxrwx 1 root root  9 Feb  3 16:05 ata-Samsung_SSD_850_EVO_500GB_S21HNXAGC35770F -&gt; ../../sda
-lrwxrwxrwx 1 root root  9 Feb  3 16:05 wwn-0x5002538d40878f8e -&gt; ../../sda
-root@orcus:~# 
-</code></pre>
-<ol>
-<li>Create the 'send' pool.</li>
-</ol>
-<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key
-zpool create -o ashift=12 \
-      -O acltype=posixacl -O canmount=on -O compression=lz4 \
-      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
-      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
-      -O mountpoint=/mnt/send \
-      send wwn-0x5002538d40878f8e
-zfs load-key -a
-chmod a+rwx /mnt/send/
-</code></pre>
-<pre><code class="language-text">root@orcus:~# zpool list
-NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
-send   464G   564K   464G        -         -     0%     0%  1.00x    ONLINE  -
-root@orcus:~# 
-</code></pre>
-<p>From Google AI - random printable character (To use in <code>stir_pool.sh</code>)</p>
-<pre><code class="language-text">tr -dc '[:print:]' &lt; /dev/urandom | head -c 1
-</code></pre>
-<pre><code class="language-text">root@orcus:~# /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
-</code></pre>
-<p>Killed with pool at 73%. </p>
-<pre><code class="language-text">hbarta@orcus:~$ find /mnt/send/ -type f | wc -l
-7003
-hbarta@orcus:~$ find /mnt/send/ -type d | wc -l
-46
-hbarta@orcus:~$ zfs list -rH send|wc -l
-46
-hbarta@orcus:~$ 
-</code></pre>
-<p>Compared to my "problem child" - it has a <em>lot</em> more files. Let's rework this to produce more smaller files.</p>
-<pre><code class="language-text">hbarta@rocinante:~$ zfs list -r rpool | wc -l
-26
-hbarta@rocinante:~$ sudo find / -type f | wc -l
-[sudo] password for hbarta: 
-find: ‘/run/user/1000/doc’: Permission denied
-2318567
-hbarta@rocinante:~$ 
-</code></pre>
-<p>NB: Host is emitting an overtemperature alarm with the processor that does not have a fan hitting 95°C. OPening the case and placing a small desk fan directed toward it is keeping it within limits. Result after some tweaking (and killing the process) is</p>
-<pre><code class="language-text">hbarta@orcus:~/provoke_ZFS_corruption/scripts$ zpool list
-NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
-send   464G   335G   129G        -         -     1%    72%  1.00x    ONLINE  -
-hbarta@orcus:~/provoke_ZFS_corruption/scripts$ find /mnt/send -type f | wc -l
-67738
-hbarta@orcus:~/provoke_ZFS_corruption/scripts$ find /mnt/send -type d | wc -l
-45
-hbarta@orcus:~/provoke_ZFS_corruption/scripts$ 
-</code></pre>
-<p>That seems more appropriate for further testing. Next set up <code>sanoid</code> (as root).</p>
-<pre><code class="language-text">mkdir /etc/sanoid
-cp /usr/share/doc/sanoid/examples/sanoid.conf /etc/sanoid/
-vim /etc/sanoid/sanoid.conf
-sanoid --cron --verbose # test config
-</code></pre>
-<pre><code class="language-text">[send/test]
-        use_template = production
-        frequently = 10
-        recursive = zfs
-</code></pre>
-<p>Result:</p>
-<pre><code class="language-text">root@orcus:~# zfs list -t snap -r|wc -l
-177
-root@orcus:~# 
-</code></pre>
-<p>Create the <code>recv</code> pool, set <code>allow</code> and run the first <code>syncoid</code> as root to allow filesystems to be mounted.</p>
-<pre><code class="language-text">root@orcus:~# ls -l /dev/disk/by-id|grep sdb
-lrwxrwxrwx 1 root root  9 Feb  3 16:05 ata-Samsung_SSD_850_EVO_500GB_S2RANB0HA37864N -&gt; ../../sdb
-lrwxrwxrwx 1 root root  9 Feb  3 16:05 wwn-0x5002538d41628a33 -&gt; ../../sdb
-root@orcus:~# 
-</code></pre>
-<pre><code class="language-text">zpool create -o ashift=12 \
-      -O acltype=posixacl -O canmount=on -O compression=lz4 \
-      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
-      -O mountpoint=/mnt/recv \
-      recv wwn-0x5002538d41628a33
-chmod a+rwx /mnt/recv/
-
-user=hbarta
-sudo zfs allow -u $user \
-    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
-    send
-sudo zfs allow -u $user \
-    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
-    recv
-
-time -p syncoid --recursive --no-privilege-elevation send/test recv/test
-</code></pre>
-<p>Part way through the first <code>syncoid</code> run</p>
-<pre><code class="language-text">hbarta@orcus:~$ zpool status
-  pool: recv
- state: ONLINE
-config:
-
-        NAME                      STATE     READ WRITE CKSUM
-        recv                      ONLINE       0     0     0
-          wwn-0x5002538d41628a33  ONLINE       0     0     0
-
-errors: No known data errors
-
-  pool: send
- state: ONLINE
-config:
-
-        NAME                      STATE     READ WRITE CKSUM
-        send                      ONLINE       0     0     0
-          wwn-0x5002538d40878f8e  ONLINE       0     0     0
-
-errors: No known data errors
-hbarta@orcus:~$ zpool list
-NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
-recv   464G   193G   271G        -         -     0%    41%  1.00x    ONLINE  -
-send   464G   335G   129G        -         -     1%    72%  1.00x    ONLINE  -
-hbarta@orcus:~$ 
-</code></pre>
-<p>Thoughts on speeding up results.</p>
-<ul>
-<li>Probably need less time between executions than 750s.</li>
-<li><code>sanoid</code> and <code>syncoid</code> should be run at slightly different intervals so the 'overlap' shifts around and there are times where there is no overlay. Can <code>sanoid</code> be scheduled more often?</li>
-<li>The pool should be stirred more often - perhaps continuously.</li>
-<li>Daily (or more often) scrubs should be automated.</li>
-</ul>
-<p>After the first syncoid pass, times will be taken for a stir and <code>syncoid</code> runs to establish basic timing.</p>
-<p>Also need to add the <code>sbin</code> directories to the user path. And link the script <code>stir_pool.sh</code> to <code>~/bin/stir_pool.sh</code></p>
-<pre><code class="language-text">ln provoke_ZFS_corruption/scripts/stir_pool.sh bin
-</code></pre>
-<p>Therre is not an order of magnitude between the time it takes to stir the pool and the resulting time for the <code>syncoid</code> pass to complete, but they are sufficiently different to introduce skew between them. Rather than scheduling at fixed interval;s (e.g. <code>cron</code>) it seems to make more sense to allow a matching delay between and allow the difference in execution time to provide the skew. Or is that a good idea. Could some effect between the stir and the <code>syncoid</code> operation cause them to sync up? With that thought it seems to make more sense to schedule them using <code>cron</code> and make the skew intentional. Output will be redirected to time stamp named files in <code>~/logs</code>. The <code>syncoid</code> process will run every 6 minutes and the <code>stir_pool.sh</code> every 7. These intervals will allow these processes to skew with <code>sanoid</code> which runs every 15 minutes.</p>
-<pre><code class="language-text">/bin/time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).syncoid.txt 2&gt;&amp;1
-</code></pre>
-<pre><code class="language-text">/bin/time -p /home/hbarta/bin/stir_pool.sh &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).stir_pools.txt 2&gt;&amp;1
-</code></pre>
-<p>Perhaps an enhancement would be to create another dataset. Crontab for now is</p>
-<pre><code class="language-text"># m h  dom mon dow   command
-*/6 * * * * /bin/time -p /sbin/syncoid --recursive --no-privilege-elevation send/test recv/test &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).syncoid.txt 2&gt;&amp;1
-*/7 * * * * /bin/time -p /home/hbarta/bin/stir_pool.sh &gt;/home/hbarta/logs/$(/bin/date  +%Y-%m-%d-%H%M).stir_pools.txt 2&gt;&amp;1
-</code></pre>
-<p><code>cron</code> entries seem not to be running. Encapsulate in <code>bash</code> scripts and link to <code>~/bin</code>. After they are confirmed to work, edit <code>crontab</code> accorcingly.</p>
-<pre><code class="language-text">hbarta@orcus:~$ ln provoke_ZFS_corruption/scripts/do_stir.sh bin
-hbarta@orcus:~$ ln provoke_ZFS_corruption/scripts/do_syncoid.sh bin
-hbarta@orcus:~$ chmod +x provoke_ZFS_corruption/scripts/do_syncoid.sh provoke_ZFS_corruption/scripts/do_stir.sh
-hbarta@orcus:~$ ls -l bin
-total 12
--rwxr-xr-x 2 hbarta hbarta  124 Feb  3 22:11 do_stir.sh
--rwxr-xr-x 2 hbarta hbarta  162 Feb  3 22:12 do_syncoid.sh
--rwxr-xr-x 2 hbarta hbarta 1186 Feb  3 19:00 stir_pool.sh
-hbarta@orcus:~$ do_stir.sh
-hbarta@orcus:~$ do_syncoid.sh
-hbarta@orcus:~$ 
-</code></pre>
-<p><code>crontab</code> entry for scrubs 4x daily. I wonder if this will result in overlapped <code>syncoid</code> or stir runs.</p>
-<pre><code class="language-text"># m h  dom mon dow   command
-3 */6 * * * /sbin/zpool scrub send recv
-</code></pre>
-<h2 id="2025-02-04-pausing-to-enhance-scripts">2025-02-04 pausing to enhance scripts</h2>
-<p>Adding <code>zpool status</code> to output and elapsed time to log file name.</p></div>
+<pre><code class="language-text">hbarta@orion:~/zfs-2.0.0$ zfs --version
+zfs-2.0.0-1
+zfs-kmod-2.0.0-1
+hbarta@orion:~/zfs-2.0.0$ 
+</code></pre></div>
             </div>
         </div>
 
