@@ -14,7 +14,7 @@ Purpose:
 1. Copy `/mnt/storage/image/MBR.img` to `/dev/sdX` (on a different PC)
 1. Replace SSD in test host, boot and confirm that ZFS is not installed.
 
-## 2025-02-22 Build ZFS 2.0.0
+## 2025-02-23 Build ZFS 2.0.0
 
 Following the same procedure used to previously [to build 2.0.0](../../first-efforts/x86_SATA_Buster.md#2025-01-06-move-to-200).
 
@@ -37,4 +37,57 @@ hbarta@orion:~/zfs-2.0.0$ zfs --version
 zfs-2.0.0-1
 zfs-kmod-2.0.0-1
 hbarta@orion:~/zfs-2.0.0$ 
+```
+
+## 2025-02-23 secure erase SSDs and build test pools
+
+Confirm that `/dev/sda` and `/dev/sdb` are Samsung SSDs (boot is a Patriot.)
+
+```text
+sudo hdparm --user-master u --security-set-pass Eins /dev/sda
+sudo hdparm --security-erase Eins /dev/sda
+sudo hdparm --user-master u --security-set-pass Eins /dev/sdb
+sudo hdparm --security-erase Eins /dev/sdb
+```
+
+Create pools, swapping drives between `send` and `recv`
+
+```text
+sudo -s
+dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d41628a33
+zfs load-key -a
+
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d40878f8e
+```
+
+Result:
+
+```text
+root@orion:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   420K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   564K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orion:~# 
+```
+
+## Test mod to `populate_pool.sh`
+
+`populate_pool.sh` should exit when desired capoacity ius met (set to 5% for testing) but first link scripts to `~/bin`.
+
+```text
+cd
+mkdir bin
+ln hbarta@orion:~/provoke_ZFS_corruption/scripts/* bin
+sudo bin/populate_pool.sh
+sudo zfs destroy -r send/test # repeat this and previous as needed
 ```
