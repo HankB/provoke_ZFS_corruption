@@ -16,7 +16,18 @@ random_blk_size=100K            # max block size for random
 user=hbarta
 pool=send
 test_fs="test"
+target_usage=50
 
+
+# Check usage for the `send` pool and exit if it exceeds $s
+check_usage() {
+    usage=$(zpool list -H "$pool" -o capacity|tr -d '%')
+    if [ "$usage" -ge "$target_usage" ]
+    then
+        echo "Capacity target $target_usage met"
+        exit 
+    fi
+}
 
 add_files() {
     cd "$1"
@@ -27,6 +38,7 @@ add_files() {
         blocks=$((1 + RANDOM % "$max_random_count"))
         dd if=/dev/urandom bs=$random_blk_size count=$blocks of="rnd_$fn" 
     done
+    check_usage
 }
 
 # Create nested filesystems 3 layers deep.
