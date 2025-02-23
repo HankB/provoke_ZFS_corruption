@@ -91,3 +91,46 @@ ln hbarta@orion:~/provoke_ZFS_corruption/scripts/* bin
 sudo bin/populate_pool.sh
 sudo zfs destroy -r send/test # repeat this and previous as needed
 ```
+
+```text
+hbarta@orion:~$ zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   128G   336G        -         -     0%    27%  1.00x    ONLINE  -
+send   464G   237G   227G        -         -     0%    51%  1.00x    ONLINE  -
+hbarta@orion:~$ zfs list -r send|wc -l
+33
+hbarta@orion:~$ find /mnt/send -type f|wc -l
+48000
+hbarta@orion:~$ 
+```
+
+[First syncoid](./data.md#2025-02-23-first-syncoid)
+
+`zfs allow` and ownership
+
+```text
+user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+sudo zfs mount -a
+sudo chown -R $user:$user /mnt/send /mnt/recv
+```
+
+[Second syncoid](./data.md#2025-02-23-second-syncoid)
+
+
+## 2025-02-23 kicking off tests
+
+* `cd`
+* `mkdir /mnt/storage/logs.2025-02-22_Linux_Buster_2.0.0_local_build`
+* `ln -s /mnt/storage/logs.2025-02-22_Linux_Buster_2.0.0_local_build /home/hbarta/logs`
+* `tmux new -s stir` and `thrash_stir.sh`
+* `tmux new -s syncoid` and `thrash_syncoid.sh`
+* `tmux new -s snaps` and `manage_snaps.sh` (After tweaking to manage both pools)
+
+testing kicked off at 2025-02-23-1429.
