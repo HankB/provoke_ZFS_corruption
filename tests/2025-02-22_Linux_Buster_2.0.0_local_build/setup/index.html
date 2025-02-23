@@ -287,7 +287,15 @@
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#2025-02-22-build-zfs-200" class="nav-link">2025-02-22 Build ZFS 2.0.0</a>
+            <li class="nav-item" data-level="2"><a href="#2025-02-23-build-zfs-200" class="nav-link">2025-02-23 Build ZFS 2.0.0</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-23-secure-erase-ssds-and-build-test-pools" class="nav-link">2025-02-23 secure erase SSDs and build test pools</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#test-mod-to-populate_poolsh" class="nav-link">Test mod to populate_pool.sh</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -313,7 +321,7 @@
 <li>Copy <code>/mnt/storage/image/MBR.img</code> to <code>/dev/sdX</code> (on a different PC)</li>
 <li>Replace SSD in test host, boot and confirm that ZFS is not installed.</li>
 </ol>
-<h2 id="2025-02-22-build-zfs-200">2025-02-22 Build ZFS 2.0.0</h2>
+<h2 id="2025-02-23-build-zfs-200">2025-02-23 Build ZFS 2.0.0</h2>
 <p>Following the same procedure used to previously <a href="../../../first-efforts/x86_SATA_Buster/#2025-01-06-move-to-200">to build 2.0.0</a>.</p>
 <pre><code class="language-text">sudo apt install linux-headers-4.19.0-27-amd64
 wget https://github.com/openzfs/zfs/releases/download/zfs-2.0.0/zfs-2.0.0.tar.gz
@@ -331,6 +339,45 @@ sudo modprobe zfs
 zfs-2.0.0-1
 zfs-kmod-2.0.0-1
 hbarta@orion:~/zfs-2.0.0$ 
+</code></pre>
+<h2 id="2025-02-23-secure-erase-ssds-and-build-test-pools">2025-02-23 secure erase SSDs and build test pools</h2>
+<p>Confirm that <code>/dev/sda</code> and <code>/dev/sdb</code> are Samsung SSDs (boot is a Patriot.)</p>
+<pre><code class="language-text">sudo hdparm --user-master u --security-set-pass Eins /dev/sda
+sudo hdparm --security-erase Eins /dev/sda
+sudo hdparm --user-master u --security-set-pass Eins /dev/sdb
+sudo hdparm --security-erase Eins /dev/sdb
+</code></pre>
+<p>Create pools, swapping drives between <code>send</code> and <code>recv</code></p>
+<pre><code class="language-text">sudo -s
+dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d41628a33
+zfs load-key -a
+
+zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d40878f8e
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-text">root@orion:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   420K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   564K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orion:~# 
+</code></pre>
+<h2 id="test-mod-to-populate_poolsh">Test mod to <code>populate_pool.sh</code></h2>
+<p><code>populate_pool.sh</code> should exit when desired capoacity ius met (set to 5% for testing) but first link scripts to <code>~/bin</code>.</p>
+<pre><code class="language-text">cd
+mkdir bin
+ln hbarta@orion:~/provoke_ZFS_corruption/scripts/* bin
+sudo bin/populate_pool.sh
+sudo zfs destroy -r send/test # repeat this and previous as needed
 </code></pre></div>
             </div>
         </div>

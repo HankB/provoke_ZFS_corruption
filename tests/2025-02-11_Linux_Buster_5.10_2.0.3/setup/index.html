@@ -361,7 +361,7 @@ hdparm --security-erase Eins /dev/sda
 hdparm --user-master u --security-set-pass Eins /dev/sdb
 hdparm --security-erase Eins /dev/sdb
 </code></pre>
-<p>Create the <code>send</code> and recv pools.</p>
+<p>Create the <code>send</code> and <code>recv</code> pools.</p>
 <pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key
 zpool create -o ashift=12 \
       -O acltype=posixacl -O canmount=on -O compression=lz4 \
