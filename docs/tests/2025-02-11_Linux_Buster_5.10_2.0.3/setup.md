@@ -76,7 +76,7 @@ hdparm --user-master u --security-set-pass Eins /dev/sdb
 hdparm --security-erase Eins /dev/sdb
 ```
 
-Create the `send` and recv pools.
+Create the `send` and `recv` pools.
 
 ```text
 dd if=/dev/urandom bs=32 count=1 of=/pool-key
