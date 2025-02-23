@@ -26,4 +26,4 @@ thrash_syncoid.sh
 manage_snaps.sh
 ```
 
-Testing in full at 1525. `top` shows I/O wait at 2.5 t0 4.6%, idle over 72%. Test finished with corruyption at 1727. Not as good as 15 minutes previously but still reasonable.
+Testing in full at 1525. `top` shows I/O wait at 2.5 t0 4.6%, idle over 72%. Test finished with corruption at 1727. Not as good as 15 minutes previously but still reasonable.
