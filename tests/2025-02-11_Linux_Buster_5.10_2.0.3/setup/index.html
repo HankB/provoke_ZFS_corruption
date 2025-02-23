@@ -197,6 +197,42 @@
 </li>
     </ul>
   </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 FreeBSD 13 stock</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/data/" class="dropdown-item">FreeBSD 13 stock ZFS 2.1.</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/results/" class="dropdown-item">Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/setup/" class="dropdown-item">Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 Linux Buster 4.19 0.8.6</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/data/" class="dropdown-item">Data Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/results/" class="dropdown-item">Linux Buster 4.19 and 0.8.6 results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/setup/" class="dropdown-item">Setup Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                         </ul>
@@ -261,7 +297,7 @@
 <h2 id="2025-02-11-initial-setup">2025-02-11 initial setup</h2>
 <ul>
 <li>install using <code>netinst</code> media</li>
-<li>remao MAC </li>
+<li>remap MAC</li>
 </ul>
 <pre><code class="language-text">root@orcus:/etc/systemd/network# cat 00-enp7s0.link
 [Match]
@@ -364,7 +400,7 @@ root@orcus:~#
 <li><code>tmux new -s syncoid</code> and <code>thrash_syncoid.sh</code></li>
 <li><code>tmux new -s snaps</code> and <code>manage_snaps.sh</code> (After tweaking to manage both pools)</li>
 </ul>
-<p>At 1513 after the test was running for hours I was surprised that there was no fragmentation. I checked and found that I had apparently forgotten to check perms/ownership and no files were being modified. That's now fixed and the test is <em>really</em> running.</p></div>
+<p>At 1513 after the test was running for hours I was surprised that there was no fragmentation. I checked and found that I had apparently forgotten to check perms/ownership and no files were being modified. That's now fixed and the test is <em>really</em> running. And within seconds corruption was produced.</p></div>
             </div>
         </div>
 

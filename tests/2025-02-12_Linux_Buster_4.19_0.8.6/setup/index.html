@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>Setup Linux Buster 4.19 kernel with ZFS 0.8.6 - Provoke ZFS corruption</title>
+        <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../../.." class="nav-link">Blog version of provoke_ZFS_corruption</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../../methodology/" class="nav-link">methodology</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../first-efforts/" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tests <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 03 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-03_methodology/additional/" class="dropdown-item">Additional information</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/results/" class="dropdown-item">2025-02-03 Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/setup/" class="dropdown-item">2025-02-03 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 05 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-05_methodology/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-05_methodology/results/" class="dropdown-item">results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-05_methodology/setup/" class="dropdown-item">2025-02-05 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 06 FreeBSD test</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/results/" class="dropdown-item">FreeBSD test results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/setup/" class="dropdown-item">2025-02-06 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Buster 5.10 2.0.3</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/data/" class="dropdown-item">Data - Buster 5.10 and 2.0.3 repeat</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/results/" class="dropdown-item">Linux Buster kernel 5.10.0 with ZFS 2.0.3</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/setup/" class="dropdown-item">Setup Buster 5.10 kernel and ZFS 2.0.3</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Repeat</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/data/" class="dropdown-item">Data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/results/" class="dropdown-item">Linux Repeat Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/setup/" class="dropdown-item">2025-02-11 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 FreeBSD 13 stock</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/data/" class="dropdown-item">FreeBSD 13 stock ZFS 2.1.</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/results/" class="dropdown-item">Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/setup/" class="dropdown-item">Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 Linux Buster 4.19 0.8.6</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../data/" class="dropdown-item">Data Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../results/" class="dropdown-item">Linux Buster 4.19 and 0.8.6 results</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active">Setup Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../results/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#setup-linux-buster-419-kernel-with-zfs-086" class="nav-link">Setup Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-02-12-1710-install" class="nav-link">2025-02-12-1710 install</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-13-build-zfs-086" class="nav-link">2025-02-13 build ZFS 0.8.6</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-13-destroy-and-recreate-pools" class="nav-link">2025-02-13 destroy and recreate pools</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-13-start-thrashing" class="nav-link">2025-02-13 start thrashing</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="setup-linux-buster-419-kernel-with-zfs-086">Setup Linux Buster 4.19 kernel with ZFS 0.8.6</h1>
+<p>Testing with default kernel and ZFS version.</p>
+<h2 id="2025-02-12-1710-install">2025-02-12-1710 install</h2>
+<p>Installing using Netinst media 10.13. Using full disk, no home partition and will adjust partition for extra storage to preserve the install (before installing ZFS) for later repeated installation.</p>
+<p>Not bothering with the MAC remap and will change the host name to <code>orion</code> locally and on the DNS assignment.</p>
+<ul>
+<li>Tweak sources (add contrib) and upgrade.</li>
+<li><code>apt install -y vim git  lzop pv mbuffer tree smartmontools lm-sensors parted shellcheck tmux time mkdocs lshw dpkg-dev build-essential dh-autoreconf libghc-zlib-dev uuid-dev libblkid-dev libssl-dev libnvpair1linux rsync</code></li>
+</ul>
+<pre><code class="language-text">ssh-keygen -t rsa -b 4096 -C &quot;hbarta@gmail.com&quot;
+cat /home/hbarta/.ssh/id_rsa.pub
+git clone git@github.com:HankB/provoke_ZFS_corruption.git
+</code></pre>
+<p>Copy and install custom <code>sanoid</code> package (remove ZFS dependencies - https://github.com/jimsalterjrs/sanoid/issues/975)</p>
+<p>Backup image to <code>/mnt/storage/image/</code> (as root) First the partition table (for the system drive - <code>/dev/sdc</code>)</p>
+<pre><code class="language-text">hbarta@orion:~$ sudo fdisk /dev/sdc
+
+Welcome to fdisk (util-linux 2.33.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): p
+Disk /dev/sdc: 223.6 GiB, 240057409536 bytes, 468862128 sectors
+Disk model: Patriot Burst El
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xaa3e6d34
+
+Device     Boot     Start       End   Sectors   Size Id Type
+/dev/sdc1  *         2048  58597375  58595328    28G 83 Linux
+/dev/sdc2       466864126 468860927   1996802   975M  5 Extended
+/dev/sdc3        58597376 466862079 408264704 194.7G 83 Linux
+/dev/sdc5       466864128 468860927   1996800   975M 82 Linux swap / Solaris
+
+Partition table entries are not in disk order.
+
+Command (m for help): q
+
+hbarta@orion:~$ 
+</code></pre>
+<p>The extra partition is mounted at <code>/mnt/storage</code></p>
+<pre><code class="language-text">hbarta@orion:~$ cat /etc/fstab
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;
+# / was on /dev/sdd1 during installation
+UUID=6a5513df-bbd0-4b28-9cd6-e0de908be639 /               ext4    errors=remount-ro 0       1
+# swap was on /dev/sdd5 during installation
+
+UUID=acafc71d-e96a-4ad6-bcc8-156f6643bc26 none            swap    sw              0       0
+
+# /dev/sdc3: LABEL=&quot;storage&quot; UUID=&quot;16c539ec-35b1-4189-ad43-da9857fce914&quot; TYPE=&quot;ext4&quot; PARTUUID=&quot;aa3e6d34-03&quot;
+UUID=&quot;16c539ec-35b1-4189-ad43-da9857fce914&quot; /mnt/storage ext4    errors=remount-ro 0       1
+hbarta@orion:~$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+udev            7.9G     0  7.9G   0% /dev
+tmpfs           1.6G  8.9M  1.6G   1% /run
+/dev/sdc1        27G  2.7G   23G  11% /
+tmpfs           7.9G     0  7.9G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           7.9G     0  7.9G   0% /sys/fs/cgroup
+/dev/sdc3       191G   28G  153G  16% /mnt/storage
+tmpfs           1.6G     0  1.6G   0% /run/user/1000
+hbarta@orion:~$
+</code></pre>
+<p>Need to store the MBR, and /dev/sdc1.</p>
+<pre><code class="language-text">dd if=/dev/sdc of=/mnt/storage/image/MBR.img bs=512 count=1
+time -p rsync --copy-devices --partial --inplace \
+        /dev/sdc1 /mnt/storage/image/dev.sdc1 
+</code></pre>
+<p>Log directory is also placed in the storage mount.</p>
+<pre><code class="language-text">ln -s /mnt/storage/logs.2025-02-12_Linux_Buster_4.19_0.8.6 /home/hbarta/logs
+</code></pre>
+<h2 id="2025-02-13-build-zfs-086">2025-02-13 build ZFS 0.8.6</h2>
+<pre><code class="language-text">cd
+git clone https://github.com/openzfs/zfs.git
+cd zfs
+git reset --hard 2bc6689
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~$ git clone https://github.com/openzfs/zfs.git
+Cloning into 'zfs'...
+remote: Enumerating objects: 199584, done.
+remote: Counting objects: 100% (905/905), done.
+remote: Compressing objects: 100% (520/520), done.
+remote: Total 199584 (delta 650), reused 385 (delta 385), pack-reused 198679 (from 3)
+Receiving objects: 100% (199584/199584), 132.55 MiB | 10.95 MiB/s, done.
+Resolving deltas: 100% (146103/146103), done.
+hbarta@orion:~$ cd zfs
+hbarta@orion:~/zfs$ git reset --hard 2bc6689
+HEAD is now at 2bc66898b Tag zfs-0.8.6
+hbarta@orion:~/zfs$ 
+</code></pre>
+<p>Build instructions at <a href="https://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html">https://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html</a> and 0.8.6 will be built "in tree" (and the Debian packages may not be available anyway.) Following <a href="https://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html#configure-and-build">https://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html#configure-and-build</a></p>
+<pre><code class="language-text">sh autogen.sh
+./configure
+make -s -j$(nproc)
+</code></pre>
+<p>Need to install kernel source package and rerun <code>./configure</code>.</p>
+<pre><code class="language-text">sudo apt install linux-source-4.19
+</code></pre>
+<p>And perhaps running the suggested install for requirements.</p>
+<pre><code class="language-text">sudo apt install alien autoconf automake build-essential debhelper-compat dh-autoreconf dh-dkms dh-python dkms fakeroot gawk git libaio-dev libattr1-dev libblkid-dev libcurl4-openssl-dev libelf-dev libffi-dev libpam0g-dev libssl-dev libtirpc-dev libtool libudev-dev linux-headers-generic parallel po-debconf python3 python3-all-dev python3-cffi python3-dev python3-packaging python3-setuptools python3-sphinx uuid-dev zlib1g-dev
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~/zfs$ sudo apt install alien autoconf automake build-essential debhelper-compat dh-autoreconf dh-dkms dh-python dkms fakeroot gawk git libaio-dev libattr1-dev libblkid-dev libcurl4-openssl-dev libelf-dev libffi-dev libpam0g-dev libssl-dev libtirpc-dev libtool libudev-dev linux-headers-generic parallel po-debconf python3 python3-all-dev python3-cffi python3-dev python3-packaging python3-setuptools python3-sphinx uuid-dev zlib1g-dev
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Note, selecting 'debhelper' instead of 'debhelper-compat'
+Package linux-headers-generic is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Unable to locate package dh-dkms
+E: Package 'linux-headers-generic' has no installation candidate
+hbarta@orion:~/zfs$ 
+</code></pre>
+<p>Try again, removing <code>dh-dkms</code> and substituting <code>linux-headers-amd64</code>.</p>
+<pre><code class="language-text">sudo apt install alien autoconf automake build-essential debhelper-compat dh-autoreconf dh-python dkms fakeroot gawk git libaio-dev libattr1-dev libblkid-dev libcurl4-openssl-dev libelf-dev libffi-dev libpam0g-dev libssl-dev libtirpc-dev libtool libudev-dev linux-headers-amd64 parallel po-debconf python3 python3-all-dev python3-cffi python3-dev python3-packaging python3-setuptools python3-sphinx uuid-dev zlib1g-dev
+</code></pre>
+<p>Seems to have worked.</p>
+<pre><code class="language-test">sudo make install
+sudo ldconfig
+zfs --version
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~/zfs$ zfs --version
+zfs-0.8.6-1
+zfs-kmod-0.8.6-1
+hbarta@orion:~/zfs$ 
+</code></pre>
+<p>Great success!</p>
+<h2 id="2025-02-13-destroy-and-recreate-pools">2025-02-13 destroy and recreate pools</h2>
+<pre><code class="language-text">root@orion:/home/hbarta# zpool import -f send
+This pool uses the following feature(s) not supported by this system:
+        com.delphix:log_spacemap (Log metaslab changes on a single spacemap and flush them periodically.)
+All unsupported features are only required for writing to the pool.
+The pool can be imported using '-o readonly=on'.
+cannot import 'send': unsupported version or feature
+root@orion:/home/hbarta# zpool import -f -o readonly=on send
+root@orion:/home/hbarta# zpool import -f -o readonly=on recv
+root@orion:/home/hbarta# zpool destroy send
+root@orion:/home/hbarta# zpool destroy recv
+root@orion:/home/hbarta# 
+</code></pre>
+<p>Referring to `Debian Buster root on ZFS" instructions for pool creation for pool options.</p>
+<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key
+zpool create -f \
+        -o ashift=12 \
+        -O encryption=on \
+        -O keylocation=file:///pool-key -O keyformat=raw \
+        -O acltype=posixacl -O canmount=on -O compression=lz4 \
+        -O dnodesize=auto -O normalization=formD -O relatime=on \
+        -O xattr=sa  \
+        -O mountpoint=/mnt/send \
+        send wwn-0x5002538d40878f8e
+zfs load-key -a
+
+zpool create -f \
+        -o ashift=12 \
+        -O acltype=posixacl -O canmount=on -O compression=lz4 \
+        -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+        -O mountpoint=/mnt/recv \
+        recv wwn-0x5002538d41628a33
+</code></pre>
+<pre><code class="language-text">root@orion:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   552K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   684K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orion:~# 
+</code></pre>
+<p>And populate <code>send</code>.</p>
+<pre><code class="language-text">time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+...
+Terminated
+real 3386.57
+user 101.69
+sys 3363.83
+</code></pre>
+<p>Missed the threshold:</p>
+<pre><code class="language-text">hbarta@orion:~$ zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   576K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   351G   113G        -         -     0%    75%  1.00x    ONLINE  -
+hbarta@orion:~$ 
+</code></pre>
+<p>Will roll with this and can remove some data sets or reduce retained snapshots if needed.</p>
+<p>Set up <code>zfs allow</code>, perform first <code>syncoid</code> transfer and set ownership.</p>
+<pre><code class="language-text">user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+chown -R $user:$user /mnt/send /mnt/recv
+</code></pre>
+<p>Link scripts to ~/bin for convenience.</p>
+<pre><code class="language-text">hbarta@orion:~$ mkdir -p ~/bin
+hbarta@orion:~$ ln provoke_ZFS_corruption/scripts/*.sh bin/
+</code></pre>
+<h2 id="2025-02-13-start-thrashing">2025-02-13 start thrashing</h2>
+<p>Running in seperate (<code>tmux</code>) windows.</p>
+<ul>
+<li><code>cd</code></li>
+<li><code>ln provoke_ZFS_corruption/scripts/*.sh bin/</code></li>
+<li><code>mkdir logs</code></li>
+<li><code>tmux new -s stir</code> and <code>thrash_stir.sh</code></li>
+<li><code>tmux new -s syncoid</code> and <code>thrash_syncoid.sh</code></li>
+<li><code>tmux new -s snaps</code> and <code>manage_snaps.sh</code> (After tweaking to manage both pools)</li>
+</ul>
+<p>Kicking off at 1216. At 1532</p>
+<pre><code class="language-text">hbarta@orion:~/logs$ zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   406G  58.2G        -         -    37%    87%  1.00x    ONLINE  -
+send   464G   417G  46.6G        -         -    53%    89%  1.00x    ONLINE  -
+hbarta@orion:~/logs$ 
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../../js/base.js" defer></script>
+        <script src="../../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

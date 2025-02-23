@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>Setup - Provoke ZFS corruption</title>
+        <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../../.." class="nav-link">Blog version of provoke_ZFS_corruption</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../../methodology/" class="nav-link">methodology</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../first-efforts/" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tests <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 03 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-03_methodology/additional/" class="dropdown-item">Additional information</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/results/" class="dropdown-item">2025-02-03 Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/setup/" class="dropdown-item">2025-02-03 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 05 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-05_methodology/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-05_methodology/results/" class="dropdown-item">results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-05_methodology/setup/" class="dropdown-item">2025-02-05 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 06 FreeBSD test</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/results/" class="dropdown-item">FreeBSD test results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/setup/" class="dropdown-item">2025-02-06 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Buster 5.10 2.0.3</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/data/" class="dropdown-item">Data - Buster 5.10 and 2.0.3 repeat</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/results/" class="dropdown-item">Linux Buster kernel 5.10.0 with ZFS 2.0.3</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/setup/" class="dropdown-item">Setup Buster 5.10 kernel and ZFS 2.0.3</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Repeat</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/data/" class="dropdown-item">Data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/results/" class="dropdown-item">Linux Repeat Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/setup/" class="dropdown-item">2025-02-11 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 FreeBSD 13 stock</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../data/" class="dropdown-item">FreeBSD 13 stock ZFS 2.1.</a>
+</li>
+            
+<li>
+    <a href="../results/" class="dropdown-item">Results</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active">Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 Linux Buster 4.19 0.8.6</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/data/" class="dropdown-item">Data Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/results/" class="dropdown-item">Linux Buster 4.19 and 0.8.6 results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/setup/" class="dropdown-item">Setup Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../results/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../2025-02-12_Linux_Buster_4.19_0.8.6/data/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#2025-02-13-start-thrashing" class="nav-link">2025-02-13 start thrashing</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<pre><code class="language-text">zfs allow -u hbarta \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+zfs allow -u hbarta \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+</code></pre>
+<h2 id="2025-02-13-start-thrashing">2025-02-13 start thrashing</h2>
+<p>Running in seperate (<code>tmux</code>) windows.</p>
+<ul>
+<li><code>cd</code></li>
+<li><code>ln provoke_ZFS_corruption/scripts/*.sh bin/</code></li>
+<li><code>mkdir logs</code></li>
+<li><code>tmux new -s stir</code> and <code>thrash_stir.sh</code></li>
+<li><code>tmux new -s syncoid</code> and <code>thrash_syncoid.sh</code></li>
+<li><code>tmux new -s snaps</code> and <code>manage_snaps.sh</code> (After tweaking to manage both pools)</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../../js/base.js" defer></script>
+        <script src="../../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
