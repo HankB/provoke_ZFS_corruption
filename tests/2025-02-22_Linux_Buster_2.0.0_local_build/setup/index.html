@@ -251,6 +251,26 @@
 </li>
     </ul>
   </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 23 Linux Buster 2.0.0 patched</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-23_Linux_Buster_2.0.0_patched/setup/" class="dropdown-item">setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025.02.23 Linux Bookworm Trixie 2.3.0</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025.02.23_Linux_Bookworm_Trixie_2.3.0/setup/" class="dropdown-item">setup</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                         </ul>
@@ -267,7 +287,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../../2025-02-23_Linux_Buster_2.0.0_patched/setup/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -395,8 +415,8 @@ root@orion:~#
 <p><code>populate_pool.sh</code> should exit when desired capoacity ius met (set to 5% for testing) but first link scripts to <code>~/bin</code>.</p>
 <pre><code class="language-text">cd
 mkdir bin
-ln hbarta@orion:~/provoke_ZFS_corruption/scripts/* bin
-sudo bin/populate_pool.sh
+ln /home/hbarta/provoke_ZFS_corruption/scripts/* bin/
+sudo /home/hbarta/bin/populate_pool.sh
 sudo zfs destroy -r send/test # repeat this and previous as needed
 </code></pre>
 <pre><code class="language-text">hbarta@orion:~$ zpool list
