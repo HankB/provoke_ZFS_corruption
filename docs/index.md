@@ -15,6 +15,7 @@ Directory of tests starting with preliminary exploration.
 |2025-02-12|2025-02-12|[corruption instantly [1]](./tests/2025-02-11_Linux_Buster_5.10_2.0.3/results.md)|zfs-2.0.3-9~bpo10+1|Debian 10|5.10.0-0.deb10.24-amd64|repeat previous tests using new methodology|
 |2025-02-11|2025-02-22|[no corruption](./tests/2025-02-12_Linux_Buster_4.19_0.8.6/results.md)|zfs-0.8.6-1|Debian 10|4.19.0-27-amd64|demonstrate no corruption with 0.8.6|
 |2025-02-22|2025-02-23|[corruption in 2 hours](./tests/2025-02-22_Linux_Buster_2.0.0_local_build/results.md)|zfs-2.0.0-1|Debian 10|4.19.0-27-amd64|first image restore test|
+|2025-02-22||[deferred](./tests/2025-02-23_Linux_Buster_2.0.0_patched/setup.md)|zfs-2.0.0-1|Debian 10|4.19.0-27-amd64|unable to resolve symbol issue|
 
 * `[1]` Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.
 
