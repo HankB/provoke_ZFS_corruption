@@ -16,12 +16,12 @@ do
     time -p do_stir.sh
 
     # And check for corruption
-    for log in $(find /home/hbarta/logs -type f|sort|tail)
+    for log in $(find /home/hbarta/logs -L -type f|sort|tail)
     do
         if ( grep -q "use '-v' for a list" "$log" )
         then
             echo "corruption detected in $log"
-            date +%Y-%m-%d-%H%M >>/home/hbarta/logs/halt_test.txt
+            date +%Y-%m-%d-%H%M%S >>/home/hbarta/logs/halt_test.txt
             exit
         fi
     done
@@ -30,12 +30,12 @@ do
     do_syncoid.sh
     
     # And check for corruption
-    for log in $(find /home/hbarta/logs -type f|sort|tail)
+    for log in $(find -L /home/hbarta/logs -type f|sort|tail)
     do
         if ( grep -q "use '-v' for a list" "$log" )
         then
             echo "corruption detected in $log"
-            date +%Y-%m-%d-%H%M >>/home/hbarta/logs/halt_test.txt
+            date +%Y-%m-%d-%H%M%S  >>/home/hbarta/logs/halt_test.txt
             exit
         fi
     done
