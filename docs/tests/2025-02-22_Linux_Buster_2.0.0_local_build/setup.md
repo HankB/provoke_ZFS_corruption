@@ -91,8 +91,8 @@ root@orion:~#
 ```text
 cd
 mkdir bin
-ln hbarta@orion:~/provoke_ZFS_corruption/scripts/* bin
-sudo bin/populate_pool.sh
+ln /home/hbarta/provoke_ZFS_corruption/scripts/* bin/
+sudo /home/hbarta/bin/populate_pool.sh
 sudo zfs destroy -r send/test # repeat this and previous as needed
 ```
 
