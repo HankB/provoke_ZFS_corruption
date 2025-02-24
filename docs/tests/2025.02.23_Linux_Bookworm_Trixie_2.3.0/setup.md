@@ -1,5 +1,9 @@
 # setup
 
+* [Results](./results.md)
+* [Data](./data.md)
+
+
 Perform bookworm Netinst (no DE) and pull 2.3.0 and build for tests. 
 
 ## 2025-02-23 Initial setup
@@ -137,3 +141,72 @@ mkdir bin
 ln /home/hbarta/provoke_ZFS_corruption/scripts/* bin/
 sudo /home/hbarta/bin/populate_pool.sh
 ```
+
+Results:
+
+```text
+hbarta@orion:~$ zfs list -r send|wc -l
+33
+hbarta@orion:~$ find /mnt/send/test -type f | wc -l
+48000
+hbarta@orion:~$ 
+```
+
+### First `syncoid`
+
+```text
+sudo apt install -y sanoid
+time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+```
+
+```text
+root@orion:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 2367.12
+user 39.88
+sys 2118.01
+root@orion:~# 
+```
+
+[full output](./data.md#2025-02-24-first-syncoid)
+
+`zfs allow` and ownership
+
+```text
+user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+sudo zfs mount -a
+sudo chown -R $user:$user /mnt/send /mnt/recv
+```
+
+### Second symcoid
+
+```text
+hbarta@orion:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 11.86
+user 2.71
+sys 6.00
+hbarta@orion:~$ 
+```
+
+[full output](./data.md#2025-02-24-second-syncoid)
+
+## 2025-02-24 start thrashing
+
+```text
+cd
+mkdir /mnt/storage/logs.2025.02.23_Linux_Bookworm_Trixie_2.3.0/`
+ln -s /mnt/storage/logs.2025.02.23_Linux_Bookworm_Trixie_2.3.0/ /home/hbarta/logs
+tmux new -D -s "stir" thrash_stir.sh
+tmux new -D -s syncoid thrash_syncoid.sh
+tmux new -D -s snaps manage_snaps.sh
+```
+
+Kicked off at 1218. First corruption at 1416. Once again the process did not terminate when the first error was detected. There were several stir operations that reported  before 
