@@ -267,6 +267,14 @@
     <ul class="dropdown-menu">
             
 <li>
+    <a href="../data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../results/" class="dropdown-item">Linux Trixie 2.3.0 results</a>
+</li>
+            
+<li>
     <a href="./" class="dropdown-item active">setup</a>
 </li>
     </ul>
@@ -282,7 +290,7 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-02-23_Linux_Buster_2.0.0_patched/setup/" class="nav-link">
+                                <a rel="prev" href="../results/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
@@ -331,6 +339,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-24-start-thrashing" class="nav-link">2025-02-24 start thrashing</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -339,6 +351,10 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="setup">setup</h1>
+<ul>
+<li><a href="../results/">Results</a></li>
+<li><a href="../data/">Data</a></li>
+</ul>
 <p>Perform bookworm Netinst (no DE) and pull 2.3.0 and build for tests. </p>
 <h2 id="2025-02-23-initial-setup">2025-02-23 Initial setup</h2>
 <ol>
@@ -442,7 +458,56 @@ root@orion:~#
 mkdir bin
 ln /home/hbarta/provoke_ZFS_corruption/scripts/* bin/
 sudo /home/hbarta/bin/populate_pool.sh
-</code></pre></div>
+</code></pre>
+<p>Results:</p>
+<pre><code class="language-text">hbarta@orion:~$ zfs list -r send|wc -l
+33
+hbarta@orion:~$ find /mnt/send/test -type f | wc -l
+48000
+hbarta@orion:~$ 
+</code></pre>
+<h3 id="first-syncoid">First <code>syncoid</code></h3>
+<pre><code class="language-text">sudo apt install -y sanoid
+time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+</code></pre>
+<pre><code class="language-text">root@orion:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 2367.12
+user 39.88
+sys 2118.01
+root@orion:~# 
+</code></pre>
+<p><a href="../data/#2025-02-24-first-syncoid">full output</a></p>
+<p><code>zfs allow</code> and ownership</p>
+<pre><code class="language-text">user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+sudo zfs mount -a
+sudo chown -R $user:$user /mnt/send /mnt/recv
+</code></pre>
+<h3 id="second-symcoid">Second symcoid</h3>
+<pre><code class="language-text">hbarta@orion:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 11.86
+user 2.71
+sys 6.00
+hbarta@orion:~$ 
+</code></pre>
+<p><a href="../data/#2025-02-24-second-syncoid">full output</a></p>
+<h2 id="2025-02-24-start-thrashing">2025-02-24 start thrashing</h2>
+<pre><code class="language-text">cd
+mkdir /mnt/storage/logs.2025.02.23_Linux_Bookworm_Trixie_2.3.0/`
+ln -s /mnt/storage/logs.2025.02.23_Linux_Bookworm_Trixie_2.3.0/ /home/hbarta/logs
+tmux new -D -s &quot;stir&quot; thrash_stir.sh
+tmux new -D -s syncoid thrash_syncoid.sh
+tmux new -D -s snaps manage_snaps.sh
+</code></pre>
+<p>Kicked off at 1218. First corruption at 1416. Once again the process did not terminate when the first error was detected. There were several stir operations that reported  before </p></div>
             </div>
         </div>
 
