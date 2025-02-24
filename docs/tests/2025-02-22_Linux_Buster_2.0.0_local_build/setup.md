@@ -1,5 +1,9 @@
 # Setup
 
+* [Data](./data.md)
+* [Results](./results.md)
+
+
 Purpose:
 
 * Establish that bug exists in 2.0.0
@@ -134,3 +138,8 @@ sudo chown -R $user:$user /mnt/send /mnt/recv
 * `tmux new -s snaps` and `manage_snaps.sh` (After tweaking to manage both pools)
 
 testing kicked off at 2025-02-23-1429.
+
+## 2025-02-23 corruption
+
+[See Results for details](./data.md)
+
