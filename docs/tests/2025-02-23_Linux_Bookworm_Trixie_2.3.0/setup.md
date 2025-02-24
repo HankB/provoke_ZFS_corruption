@@ -202,7 +202,7 @@ hbarta@orion:~$
 
 ```text
 cd
-mkdir /mnt/storage/logs.2025.02.23_Linux_Bookworm_Trixie_2.3.0/`
+mkdir /mnt/storage/logs.2025.02.23_Linux_Bookworm_Trixie_2.3.0/
 ln -s /mnt/storage/logs.2025.02.23_Linux_Bookworm_Trixie_2.3.0/ /home/hbarta/logs
 tmux new -D -s "stir" thrash_stir.sh
 tmux new -D -s syncoid thrash_syncoid.sh
