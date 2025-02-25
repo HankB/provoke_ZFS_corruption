@@ -353,6 +353,10 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="linux-trixie-230-patched">Linux Trixie 2.3.0 patched</h1>
+<ul>
+<li><a href="../results/">Results</a></li>
+<li><a href="../data/">Data</a></li>
+</ul>
 <p>Corruption was previously <a href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/results/">produiced with 2.3.0 on Debian Trixie</a> (with 2.3.0 installed via the Debian package.) The purpose of this test is to apply the <a href="https://github.com/openzfs/zfs/pull/17069">patch provided by Ivan Volosyuk</a></p>
 <p>The plan here is to continue with the same installation after editing the indicated file <code>dbuf.c</code> and updating the ZFS modules.</p>
 <pre><code class="language-text">sudo vim /usr/src/zfs-2.3.0/module/zfs/dbuf.c
