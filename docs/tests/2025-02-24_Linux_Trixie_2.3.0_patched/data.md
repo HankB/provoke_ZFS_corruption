@@ -1,5 +1,8 @@
 # data
 
+* [Setup](./setup.md)
+* [Results](./results.md)
+
 ## 2025-02-24 first syncoid
 
 ```text

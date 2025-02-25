@@ -1,5 +1,8 @@
 # Linux Trixie 2.3.0 patched
 
+* [Results](./results.md)
+* [Data](./data.md)
+
 Corruption was previously [produiced with 2.3.0 on Debian Trixie](../2025-02-23_Linux_Bookworm_Trixie_2.3.0/results.md) (with 2.3.0 installed via the Debian package.) The purpose of this test is to apply the [patch provided by Ivan Volosyuk](https://github.com/openzfs/zfs/pull/17069)
 
 The plan here is to continue with the same installation after editing the indicated file `dbuf.c` and updating the ZFS modules.

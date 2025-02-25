@@ -1,5 +1,8 @@
 # Linux Trixie 2.3.0 patched results
 
+* [Setup](./setup.md)
+* [Data](./data.md)
+
 Corruption in about 2 hours.
 
 ```text
