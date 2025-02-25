@@ -120,6 +120,19 @@ sudo zfs mount -a
 sudo chown -R $user:$user /mnt/send /mnt/recv
 ```
 
+## 2025-02-24 second syncoid
+
+```text
+hbarta@orion:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 16.31
+user 4.08
+sys 8.22
+hbarta@orion:~$ 
+```
+
+[full output](./data.md#2025-02-24-second-syncoid)
+
 ## 2025-02-24 start thrashing
 
 ```text
@@ -130,3 +143,5 @@ tmux new -D -s "stir" thrash_stir.sh
 tmux new -D -s syncoid thrash_syncoid.sh
 tmux new -D -s snaps manage_snaps.sh
 ```
+
+Kicked off at about 1942 and produced corruption at 2143.
