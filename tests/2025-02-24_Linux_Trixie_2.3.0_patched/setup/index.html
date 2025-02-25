@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>Linux Repeat Results - Provoke ZFS corruption</title>
+        <title>Linux Trixie 2.3.0 patched - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -185,15 +185,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../data/" class="dropdown-item">Data</a>
+    <a href="../../2025-02-11_Linux_Repeat/data/" class="dropdown-item">Data</a>
 </li>
             
 <li>
-    <a href="./" class="dropdown-item active">Linux Repeat Results</a>
+    <a href="../../2025-02-11_Linux_Repeat/results/" class="dropdown-item">Linux Repeat Results</a>
 </li>
             
 <li>
-    <a href="../setup/" class="dropdown-item">2025-02-11 Setup</a>
+    <a href="../../2025-02-11_Linux_Repeat/setup/" class="dropdown-item">2025-02-11 Setup</a>
 </li>
     </ul>
   </li>
@@ -285,11 +285,11 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-02-24_Linux_Trixie_2.3.0_patched/data/" class="dropdown-item">data</a>
+    <a href="../data/" class="dropdown-item">data</a>
 </li>
             
 <li>
-    <a href="../../2025-02-24_Linux_Trixie_2.3.0_patched/setup/" class="dropdown-item">Linux Trixie 2.3.0 patched</a>
+    <a href="./" class="dropdown-item active">Linux Trixie 2.3.0 patched</a>
 </li>
     </ul>
   </li>
@@ -309,7 +309,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../setup/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -331,8 +331,12 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#linux-repeat-results" class="nav-link">Linux Repeat Results</a>
+            <li class="nav-item" data-level="1"><a href="#linux-trixie-230-patched" class="nav-link">Linux Trixie 2.3.0 patched</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-02-24-start-thrashing" class="nav-link">2025-02-24 start thrashing</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -340,70 +344,109 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="linux-repeat-results">Linux Repeat Results</h1>
-<ul>
-<li><a href="../data/">Data</a></li>
-<li><a href="../setup/">Setup</a></li>
-</ul>
-<p>This is with the same configuration used for the two methodology studies - Current Debian and (not from backports) ZFS.</p>
-<pre><code class="language-text">hbarta@orcus:~$ uname -a
-Linux orcus 6.1.0-30-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.124-1 (2025-01-12) x86_64 GNU/Linux
-hbarta@orcus:~$ zfs --version
-zfs-2.1.11-1+deb12u1
-zfs-kmod-2.1.11-1+deb12u1
-hbarta@orcus:~$ 
+<h1 id="linux-trixie-230-patched">Linux Trixie 2.3.0 patched</h1>
+<p>Corruption was previously <a href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/results/">produiced with 2.3.0 on Debian Trixie</a> (with 2.3.0 installed via the Debian package.) The purpose of this test is to apply the <a href="https://github.com/openzfs/zfs/pull/17069">patch provided by Ivan Volosyuk</a></p>
+<p>The plan here is to continue with the same installation after editing the indicated file <code>dbuf.c</code> and updating the ZFS modules.</p>
+<pre><code class="language-text">sudo vim /usr/src/zfs-2.3.0/module/zfs/dbuf.c
+sudo dpkg-reconfigure zfs-dkms
 </code></pre>
-<p>There were two goals for this test. First see if the scripts modified to work for FreeBSD still worked with Linux. They did. Second was to see if the previous 15 minute result was a fluke. It was, a bit. Test ran from 1525 to 1727 for about 2 hours to provoke corruption - still not too bad. Much improved over a couple days.</p>
-<p>Conditions at the end of the test were</p>
-<pre><code class="language-text">root@orcus:~# zpool status -v
-  pool: recv
- state: ONLINE
-  scan: scrub repaired 0B in 00:16:09 with 0 errors on Tue Feb 11 18:19:10 2025
-config:
+<pre><code class="language-text">hbarta@orion:/usr/src/zfs-2.3.0$ sudo dpkg-reconfigure zfs-dkms
+Module zfs/2.3.0 for kernel 6.1.0-31-amd64 (x86_64):
+Before uninstall, this module version was ACTIVE on this kernel.
+Deleting /lib/modules/6.1.0-31-amd64/updates/dkms/zfs.ko
+Deleting /lib/modules/6.1.0-31-amd64/updates/dkms/spl.ko
+Running depmod.... done.
 
-        NAME                      STATE     READ WRITE CKSUM
-        recv                      ONLINE       0     0     0
-          wwn-0x5002538d41628a33  ONLINE       0     0     0
+Module zfs/2.3.0 for kernel 6.12.12-amd64 (x86_64):
+Before uninstall, this module version was ACTIVE on this kernel.
+Deleting /lib/modules/6.12.12-amd64/updates/dkms/zfs.ko.xz
+Deleting /lib/modules/6.12.12-amd64/updates/dkms/spl.ko.xz
+Running depmod...... done.
 
-errors: No known data errors
+Deleting module zfs/2.3.0 completely from the DKMS tree.
+Loading new zfs/2.3.0 DKMS files...
+Building for 6.1.0-31-amd64 and 6.12.12-amd64
 
-  pool: send
- state: ONLINE
-status: One or more devices has experienced an error resulting in data
-        corruption.  Applications may be affected.
-action: Restore the file in question if possible.  Otherwise restore the
-        entire pool from backup.
-   see: https://openzfs.github.io/openzfs-docs/msg/ZFS-8000-8A
-  scan: scrub repaired 0B in 00:14:20 with 0 errors on Tue Feb 11 18:17:22 2025
-config:
+Building initial module zfs/2.3.0 for 6.1.0-31-amd64
+Done.
+Installing /lib/modules/6.1.0-31-amd64/updates/dkms/zfs.ko
+Installing /lib/modules/6.1.0-31-amd64/updates/dkms/spl.ko
+Running depmod... done.
 
-        NAME                      STATE     READ WRITE CKSUM
-        send                      ONLINE       0     0     0
-          wwn-0x5002538d40878f8e  ONLINE       0     0     0
+Building initial module zfs/2.3.0 for 6.12.12-amd64
+Done.
+Installing /lib/modules/6.12.12-amd64/updates/dkms/zfs.ko.xz
+Installing /lib/modules/6.12.12-amd64/updates/dkms/spl.ko.xz
+Running depmod..... done.
+hbarta@orion:/usr/src/zfs-2.3.0$ 
+</code></pre>
+<p>(Reboot to be absolutely certain that the patched module is loaded.)</p>
+<p>Repeating steps from <a href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/setup/#2025-02-24-secure-erase-and-create-pools">the previous test</a></p>
+<pre><code class="language-text">sudo zpool export recv
+sudo zpool export send
+sudo hdparm --user-master u --security-set-pass Eins /dev/sda
+sudo hdparm --security-erase Eins /dev/sda
+sudo hdparm --user-master u --security-set-pass Eins /dev/sdb
+sudo hdparm --security-erase Eins /dev/sdb
+</code></pre>
+<pre><code class="language-text">sudo zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d41628a33
+sudo zfs load-key -a
 
-errors: Permanent errors have been detected in the following files:
 
-        send/test/l0_1/l1_1/l2_1@1739318230.2025-02-11-1757:&lt;0x0&gt;
-root@orcus:~# zpool list
+sudo zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d40878f8e
+</code></pre>
+<pre><code class="language-text">root@orion:/home/hbarta# zpool list
 NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
-recv   464G   372G  92.0G        -         -     9%    80%  1.00x    ONLINE  -
-send   464G   339G   125G        -         -    28%    73%  1.00x    ONLINE  -
-root@orcus:~# zfs list -t snap -r send | wc -l
-3901
-root@orcus:~# zfs list -t snap -r recv | wc -l
-7720
-root@orcus:~# 
+recv   464G   552K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   612K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orion:/home/hbarta# 
 </code></pre>
-<p>It will be necessary to manage snapshots in <code>recv</code> to avoid disk full during long running texts.</p>
-<p>The error as reported ny syncoid:</p>
-<pre><code class="language-text">Sending incremental send/test/l0_1/l1_1/l2_1@syncoid_orcus_2025-02-11:17:55:57-GMT-06:00 ... syncoid_orcus_2025-02-11:17:57:12-GMT-06:00 (~ 21.7 MB):
-warning: cannot send 'send/test/l0_1/l1_1/l2_1@1739318230.2025-02-11-1757': Invalid argument
-cannot receive incremental stream: most recent snapshot of recv/test/l0_1/l1_1/l2_1 does not
-match incremental source
-CRITICAL ERROR:  zfs send  -I 'send/test/l0_1/l1_1/l2_1'@'syncoid_orcus_2025-02-11:17:55:57-GMT-06:00' 'send/test/l0_1/l1_1/l2_1'@'syncoid_orcus_2025-02-11:17:57:12-GMT-06:00' | mbuffer  -q -s 128k -m 16M 2&gt;/dev/null | pv -p -t -e -r -b -s 22772136 |  zfs receive  -s -F 'recv/test/l0_1/l1_1/l2_1' 2&gt;&amp;1 failed: 256 at /sbin/syncoid line 817.
-Sending incremental send/test/l0_1/l1_1/l2_2@syncoid_orcus_2025-02-11:17:56:00-GMT-06:00 ... syncoid_orcus_2025-02-11:17:57:13-GMT-06:00 (~ 22.5 MB):
+<p>Populate <code>send</code> pool.</p>
+<pre><code class="language-text">root@orion:/home/hbarta# sudo /home/hbarta/bin/populate_pool.sh
+...
+Capacity target 50 met
++ exit
 </code></pre>
-<p>The previous syncoid run appeared to complete w/out issue. The full log can be viewed in <a href="../data/#2025-02-11-syncoid-that-produced-the-error">Data</a>.</p></div>
+<p>First <code>syncoid</code> (as root)</p>
+<pre><code class="language-text">time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+</code></pre>
+<pre><code class="language-text">root@orion:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 2432.08
+user 40.82
+sys 2020.74
+root@orion:~# 
+</code></pre>
+<p><a href="../data/#2025-02-24-first-syncoid">full output</a></p>
+<p><code>zfs allow</code> and ownership</p>
+<pre><code class="language-text">user=hbarta
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+
+sudo zfs mount -a
+sudo chown -R $user:$user /mnt/send /mnt/recv
+</code></pre>
+<h2 id="2025-02-24-start-thrashing">2025-02-24 start thrashing</h2>
+<pre><code class="language-text">cd
+mkdir /mnt/storage/logs.2025-02-24_Linux_Trixie_2.3.0_patched/
+ln -s /mnt/storage/logs.2025-02-24_Linux_Trixie_2.3.0_patched/ /home/hbarta/logs
+tmux new -D -s &quot;stir&quot; thrash_stir.sh
+tmux new -D -s syncoid thrash_syncoid.sh
+tmux new -D -s snaps manage_snaps.sh
+</code></pre></div>
             </div>
         </div>
 
