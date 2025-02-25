@@ -289,6 +289,10 @@
 </li>
             
 <li>
+    <a href="../results/" class="dropdown-item">Linux Trixie 2.3.0 patched results</a>
+</li>
+            
+<li>
     <a href="./" class="dropdown-item active">Linux Trixie 2.3.0 patched</a>
 </li>
     </ul>
@@ -304,7 +308,7 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../data/" class="nav-link">
+                                <a rel="prev" href="../results/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
@@ -333,6 +337,10 @@
             
             <li class="nav-item" data-level="1"><a href="#linux-trixie-230-patched" class="nav-link">Linux Trixie 2.3.0 patched</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-02-24-second-syncoid" class="nav-link">2025-02-24 second syncoid</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#2025-02-24-start-thrashing" class="nav-link">2025-02-24 start thrashing</a>
               <ul class="nav flex-column">
               </ul>
@@ -439,6 +447,15 @@ sudo zfs allow -u $user \
 sudo zfs mount -a
 sudo chown -R $user:$user /mnt/send /mnt/recv
 </code></pre>
+<h2 id="2025-02-24-second-syncoid">2025-02-24 second syncoid</h2>
+<pre><code class="language-text">hbarta@orion:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 16.31
+user 4.08
+sys 8.22
+hbarta@orion:~$ 
+</code></pre>
+<p><a href="../data/#2025-02-24-second-syncoid">full output</a></p>
 <h2 id="2025-02-24-start-thrashing">2025-02-24 start thrashing</h2>
 <pre><code class="language-text">cd
 mkdir /mnt/storage/logs.2025-02-24_Linux_Trixie_2.3.0_patched/
@@ -446,7 +463,8 @@ ln -s /mnt/storage/logs.2025-02-24_Linux_Trixie_2.3.0_patched/ /home/hbarta/logs
 tmux new -D -s &quot;stir&quot; thrash_stir.sh
 tmux new -D -s syncoid thrash_syncoid.sh
 tmux new -D -s snaps manage_snaps.sh
-</code></pre></div>
+</code></pre>
+<p>Kicked off at about 1942 and produced corruption at 2143.</p></div>
             </div>
         </div>
 
