@@ -52,7 +52,9 @@ sh autogen.sh
 make -s -j$(nproc)
 ```
 
-`autogen.sh` and `configure` scripts complete w/out errors or warnings. Now to build 2.0.0.
+`autogen.sh` and `configure` scripts complete w/out errors or warnings and `make` likewise completes. 
+
+Now to build 2.0.0.
 
 ```text
 make clean
