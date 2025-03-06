@@ -23,3 +23,7 @@ Tried suggestion to modify `config/kernel.m4` and did not fix. Fix at ... helps 
 ```text
 KBUILD_MODPOST_WARN=1 ./configure
 ```
+
+## 2025-03-05 
+
+Notes above are a bit scattershot. I was thrashing trying to figure out how to build older versions on ZFS and realized that I had inadvertently built and was using the 5.4.0 kernel which seems not wise. Now stepping back to build the 5.9.16 kernel.
