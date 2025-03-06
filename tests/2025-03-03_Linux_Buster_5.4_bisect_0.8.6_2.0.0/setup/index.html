@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>2025-02-11 Setup - Provoke ZFS corruption</title>
+        <title>Built - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -185,15 +185,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../data/" class="dropdown-item">Data</a>
+    <a href="../../2025-02-11_Linux_Repeat/data/" class="dropdown-item">Data</a>
 </li>
             
 <li>
-    <a href="../results/" class="dropdown-item">Linux Repeat Results</a>
+    <a href="../../2025-02-11_Linux_Repeat/results/" class="dropdown-item">Linux Repeat Results</a>
 </li>
             
 <li>
-    <a href="./" class="dropdown-item active">2025-02-11 Setup</a>
+    <a href="../../2025-02-11_Linux_Repeat/setup/" class="dropdown-item">2025-02-11 Setup</a>
 </li>
     </ul>
   </li>
@@ -327,7 +327,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-03-03_Linux_Buster_5.4_bisect_0.8.6_2.0.0/setup/" class="dropdown-item">Built</a>
+    <a href="./" class="dropdown-item active">Built</a>
 </li>
     </ul>
   </li>
@@ -352,12 +352,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../results/" class="nav-link">
+                                <a rel="prev" href="../../2025-03-01_Linux_Bookworm_bisect_0.8.6_2.0.0/setup/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-02-12_FreeBSD_13_stock/data/" class="nav-link">
+                                <a rel="next" href="../../2025-03-03_Linux_Buster_5.9.16_bisect_0.8.6_2.0.0/Setup/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -379,9 +379,9 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#2025-02-11-setup" class="nav-link">2025-02-11 Setup</a>
+            <li class="nav-item" data-level="1"><a href="#built" class="nav-link">Built</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#2025-02-11-plan" class="nav-link">2025-02-11 Plan</a>
+            <li class="nav-item" data-level="2"><a href="#2025-03-05" class="nav-link">2025-03-05</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -392,24 +392,26 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="2025-02-11-setup">2025-02-11 Setup</h1>
-<p><a href="../results/">Results</a>
-<a href="../data/">Data</a></p>
-<p>Purpose: Repeat the test from <a href="../../2025-02-05_methodology/setup/">2025-02-05 methodology</a> following modificatin of scripts to work on FreeBSD to see if they still work on Linux. Secondarily, test to see if the "corruption in 15 minutes" was a fluke or is typical.</p>
-<h2 id="2025-02-11-plan">2025-02-11 Plan</h2>
-<p>Refer to the previous iteration for specifics. This is just a repeat of that.</p>
-<p>Time to complete first sync:</p>
-<pre><code class="language-text">real 3468.47
-user 42.80
-sys 2188.07
-root@orcus:~#
+<h1 id="built">Built</h1>
+<pre><code class="language-text">hbarta@orion:~/zfs$ git bisect reset
+Previous HEAD position was 78fac8d92 Fix kstat state update during pool transition
+HEAD is now at d2632f0cc Tag zfs-0.8.5
+hbarta@orion:~/zfs$ git bisect start
+hbarta@orion:~/zfs$ git bisect good 2bc6689
+hbarta@orion:~/zfs$ git bisect bad dcbf847
+Bisecting: a merge base must be tested
+[78fac8d925fdd64584292fbda4ed9e3e2bbaae66] Fix kstat state update during pool transition
+hbarta@orion:~/zfs$
 </code></pre>
-<p>Second <code>syncoid</code> took 20s. All looks good. Kicking off in separate terminals.</p>
-<pre><code class="language-text">thrash_stir.sh
-thrash_syncoid.sh
-manage_snaps.sh
+<pre><code class="language-text">./configure
+...
+checking whether set_fs_pwd() requires const struct path *... configure: error: unknown
 </code></pre>
-<p>Testing in full at 1525. <code>top</code> shows I/O wait at 2.5 t0 4.6%, idle over 72%. Test finished with corruption at 1727. Not as good as 15 minutes previously but still reasonable.</p></div>
+<p>Tried suggestion to modify <code>config/kernel.m4</code> and did not fix. Fix at ... helps <code>.configure</code> succeed.</p>
+<pre><code class="language-text">KBUILD_MODPOST_WARN=1 ./configure
+</code></pre>
+<h2 id="2025-03-05">2025-03-05</h2>
+<p>Notes above are a bit scattershot. I was thrashing trying to figure out how to build older versions on ZFS and realized that I had inadvertently built and was using the 5.4.0 kernel which seems not wise. Now stepping back to build the 5.9.16 kernel.</p></div>
             </div>
         </div>
 
