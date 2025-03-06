@@ -72,7 +72,7 @@ hbarta@orion:~/zfs$
 sh autogen.sh
 ./configure
 
-```text
+```
 
 The scripts complete w/out error and the make fails with
 
