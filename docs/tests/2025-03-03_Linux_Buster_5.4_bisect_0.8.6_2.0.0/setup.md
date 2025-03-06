@@ -17,3 +17,9 @@ hbarta@orion:~/zfs$
 ...
 checking whether set_fs_pwd() requires const struct path *... configure: error: unknown
 ```
+
+Tried suggestion to modify `config/kernel.m4` and did not fix. Fix at ... helps `.configure` succeed.
+
+```text
+KBUILD_MODPOST_WARN=1 ./configure
+```
