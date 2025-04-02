@@ -6,7 +6,7 @@ Setup will restore the recently backuped Bookworm install and pull the OpenZFS r
 
 ## 2025-03-01 Restore backup 
 
-Iin another host to avoid the need to boot a live environment. Forst mount the storage partition using Gnome Disks and then as `root`:
+In another host to avoid the need to boot a live environment. Frst mount the storage partition using Gnome Disks and then as `root`:
 
 ```text
 cd /media/hbarta/storage/image/bookworm
