@@ -132,3 +132,6 @@ checking whether make_request_fn() returns blk_qc_t... configure: error: no - Pl
 hbarta@orion:~/zfs$
 ```
 
+## 2025-03-06 set aside
+
+Unable to build ZFS and 5.9 is likely not a good choice for building older releases. Returning to 4.19.
