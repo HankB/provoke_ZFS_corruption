@@ -20,6 +20,8 @@ Directory of tests starting with preliminary exploration.
 |2025-02-24||[corruption in 2 hours](./tests/2025-02-23_Linux_Bookworm_Trixie_2.3.0/results.md)|2.3.0-1|Debian Trixie|6.12.12-amd64
 |2025-02-24||[corruption in 2 hours](./tests/2025-02-24_Linux_Trixie_2.3.0_patched/results.md)|2.3.0-1+patch|Debian Trixie|6.12.12-amd64	||
 |2025-02-25||[set aside](./tests/2025-02-26_Linux_Trixie_2.3.0_bzfs/setup.md#2025-02-26-results)|2.3.0-1|Debian Trixie|6.12.12-amd64|
+|2025-04-02|2025-04-02|[corruption in 2 hours](./tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bad/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|Confirm that 4.19 + 2.0.0 results in corruption|
+
 
 * `[1]` Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.
 
