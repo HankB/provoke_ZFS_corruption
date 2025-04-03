@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>setup - Provoke ZFS corruption</title>
+        <title>Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6 - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -275,7 +275,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="./" class="dropdown-item active">setup</a>
+    <a href="../../2025-02-23_Linux_Buster_2.0.0_patched/setup/" class="dropdown-item">setup</a>
 </li>
     </ul>
   </li>
@@ -365,15 +365,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="../data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="../results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="./" class="dropdown-item active">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
     </ul>
   </li>
@@ -388,12 +388,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/setup/" class="nav-link">
+                                <a rel="prev" href="../results/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-02-24_Linux_Trixie_2.3.0_patched/data/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -415,8 +415,16 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#setup" class="nav-link">setup</a>
+            <li class="nav-item" data-level="1"><a href="#setup-git-bisect-086-to-200-testing-086" class="nav-link">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-04-02-remove-zfs" class="nav-link">2025-04-02 remove ZFS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-04-02-build-zfs-086" class="nav-link">2025-04-02 Build ZFS 0.8.6</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -424,8 +432,95 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="setup">setup</h1>
-<p>Intent is to apply patch <a href="https://github.com/openzfs/zfs/commit/0e29700318692cee74698d13d53d635e73a6cf28">https://github.com/openzfs/zfs/commit/0e29700318692cee74698d13d53d635e73a6cf28</a> but I cannot determine where it should go in 2.0.0 so this is deferred.</p></div>
+<h1 id="setup-git-bisect-086-to-200-testing-086">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</h1>
+<ul>
+<li><a href="../results/">Results</a></li>
+<li><a href="../data/">Data</a></li>
+</ul>
+<h2 id="2025-04-02-remove-zfs">2025-04-02 remove ZFS</h2>
+<pre><code class="language-text">cd ~/zfx
+sudo make uninstall
+find /lib|grep zfs
+lsmod|grep zfs # shows ZFS modules still in kernel.
+reboot
+lsmod|grep zfs # no ZFS modules
+</code></pre>
+<p>Confirm kernel</p>
+<pre><code class="language-text">hbarta@orion:~$ uname -a
+Linux orion 4.19.0-27-amd64 #1 SMP Debian 4.19.316-1 (2024-06-25) x86_64 GNU/Linux
+hbarta@orion:~$
+</code></pre>
+<h2 id="2025-04-02-build-zfs-086">2025-04-02 Build ZFS 0.8.6</h2>
+<pre><code class="language-text">cd ~/zfs
+make distclean
+git checkout 2bc6689
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~/zfs$ git checkout 2bc6689
+Previous HEAD position was dcbf84749 Tag 2.0.0
+HEAD is now at 2bc66898b Tag zfs-0.8.6
+hbarta@orion:~/zfs$ 
+</code></pre>
+<pre><code class="language-text">sh autogen.sh
+./configure
+time -p make -s -j$(nproc)
+sudo make install
+sudo ldconfig
+sudo modprobe zfs
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~/zfs$ time -p make -s -j$(nproc)
+real 103.56
+user 679.76
+sys 74.62
+hbarta@orion:~/zfs$ 
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~/zfs$ zfs --version
+zfs-0.8.6-1
+zfs-kmod-0.8.6-1
+hbarta@orion:~/zfs$ 
+</code></pre>
+<p>Secure erase targets (after confirmingv that <code>/dev/sdc</code> is still the boot drive.)</p>
+<pre><code class="language-text">sudo -s
+hdparm --user-master u --security-set-pass Eins /dev/sda
+hdparm --security-erase Eins /dev/sda
+hdparm --user-master u --security-set-pass Eins /dev/sdb
+hdparm --security-erase Eins /dev/sdb
+</code></pre>
+<h3 id="create-pools">Create pools</h3>
+<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key 
+sudo zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d41628a33
+sudo zfs load-key -a
+
+sudo zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d40878f8e
+</code></pre>
+<pre><code class="language-text">root@orion:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   552K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   684K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orion:~# 
+</code></pre>
+<h3 id="prepare-for-testing">Prepare for testing</h3>
+<pre><code class="language-text">time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+</code></pre>
+<pre><code class="language-text">Capacity target 50 met
++ exit
+real 2283.06
+user 69.76
+sys 2268.02
+root@orion:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   576K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   238G   226G        -         -     0%    51%  1.00x    ONLINE  -
+root@orion:~# 
+</code></pre></div>
             </div>
         </div>
 

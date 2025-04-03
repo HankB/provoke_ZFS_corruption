@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>setup - Provoke ZFS corruption</title>
+        <title>Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6 - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -275,7 +275,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="./" class="dropdown-item active">setup</a>
+    <a href="../../2025-02-23_Linux_Buster_2.0.0_patched/setup/" class="dropdown-item">setup</a>
 </li>
     </ul>
   </li>
@@ -365,15 +365,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="./" class="dropdown-item active">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="../results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="../setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
     </ul>
   </li>
@@ -388,12 +388,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/setup/" class="nav-link">
+                                <a rel="prev" href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bad/setup/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-02-24_Linux_Trixie_2.3.0_patched/data/" class="nav-link">
+                                <a rel="next" href="../results/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -415,8 +415,12 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#setup" class="nav-link">setup</a>
+            <li class="nav-item" data-level="1"><a href="#data-git-bisect-086-to-200-testing-086" class="nav-link">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-04-02-first-syncoid" class="nav-link">2025-04-02 first syncoid</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -424,8 +428,80 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="setup">setup</h1>
-<p>Intent is to apply patch <a href="https://github.com/openzfs/zfs/commit/0e29700318692cee74698d13d53d635e73a6cf28">https://github.com/openzfs/zfs/commit/0e29700318692cee74698d13d53d635e73a6cf28</a> but I cannot determine where it should go in 2.0.0 so this is deferred.</p></div>
+<h1 id="data-git-bisect-086-to-200-testing-086">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</h1>
+<ul>
+<li><a href="../results/">Results</a></li>
+<li><a href="../setup/">Setup</a></li>
+</ul>
+<h2 id="2025-04-02-first-syncoid">2025-04-02 first syncoid</h2>
+<pre><code class="language-text">root@orion:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+INFO: Sending oldest full snapshot send/test@syncoid_orion_2025-04-02:19:34:44-GMT-05:00 to new target filesystem recv/test (~ 86 KB):
+48.9KiB 0:00:00 [4.00MiB/s] [=======================================================&gt;                                            ] 56%            
+INFO: Sending oldest full snapshot send/test/l0_0@syncoid_orion_2025-04-02:19:34:44-GMT-05:00 to new target filesystem recv/test/l0_0 (~ 15.3 GB):
+15.3GiB 0:01:03 [ 245MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0@syncoid_orion_2025-04-02:19:35:49-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0 (~ 15.5 GB):
+15.5GiB 0:01:04 [ 245MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_0@syncoid_orion_2025-04-02:19:36:54-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_0 (~ 15.4 GB):
+15.4GiB 0:01:03 [ 247MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_1@syncoid_orion_2025-04-02:19:37:58-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_1 (~ 15.3 GB):
+15.3GiB 0:01:04 [ 242MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_2@syncoid_orion_2025-04-02:19:39:03-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_2 (~ 16.0 GB):
+16.0GiB 0:01:07 [ 241MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_3@syncoid_orion_2025-04-02:19:40:11-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_3 (~ 15.6 GB):
+15.6GiB 0:01:06 [ 241MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1@syncoid_orion_2025-04-02:19:41:18-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1 (~ 14.9 GB):
+14.9GiB 0:01:02 [ 243MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_0@syncoid_orion_2025-04-02:19:42:21-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_0 (~ 15.3 GB):
+15.3GiB 0:01:03 [ 246MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_1@syncoid_orion_2025-04-02:19:43:25-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_1 (~ 15.5 GB):
+15.5GiB 0:01:05 [ 241MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_2@syncoid_orion_2025-04-02:19:44:31-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_2 (~ 15.6 GB):
+15.6GiB 0:01:05 [ 244MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_3@syncoid_orion_2025-04-02:19:45:37-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_3 (~ 15.5 GB):
+15.5GiB 0:01:06 [ 239MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2@syncoid_orion_2025-04-02:19:46:43-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2 (~ 15.6 GB):
+15.7GiB 0:01:04 [ 248MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_0@syncoid_orion_2025-04-02:19:47:48-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_0 (~ 15.9 GB):
+15.9GiB 0:01:07 [ 240MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_1@syncoid_orion_2025-04-02:19:48:57-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_1 (~ 15.3 GB):
+15.3GiB 0:01:04 [ 243MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_2@syncoid_orion_2025-04-02:19:50:01-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_2 (~ 15.5 GB):
+15.5GiB 0:01:04 [ 246MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_3@syncoid_orion_2025-04-02:19:51:06-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_3 (~ 15.8 GB):
+15.8GiB 0:01:06 [ 242MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3@syncoid_orion_2025-04-02:19:52:13-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3 (~ 15.6 GB):
+15.6GiB 0:01:06 [ 241MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_0@syncoid_orion_2025-04-02:19:53:20-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_0 (~ 15.5 GB):
+15.6GiB 0:01:04 [ 245MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_1@syncoid_orion_2025-04-02:19:54:25-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_1 (~ 15.7 GB):
+15.7GiB 0:01:04 [ 249MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_2@syncoid_orion_2025-04-02:19:55:30-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_2 (~ 15.5 GB):
+15.5GiB 0:01:05 [ 242MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_3@syncoid_orion_2025-04-02:19:56:36-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_3 (~ 15.8 GB):
+15.8GiB 0:01:06 [ 243MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1@syncoid_orion_2025-04-02:19:57:43-GMT-05:00 to new target filesystem recv/test/l0_1 (~ 15.3 GB):
+15.3GiB 0:01:04 [ 242MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0@syncoid_orion_2025-04-02:19:58:48-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0 (~ 15.1 GB):
+15.1GiB 0:01:03 [ 244MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_0@syncoid_orion_2025-04-02:19:59:52-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_0 (~ 15.2 GB):
+15.2GiB 0:01:03 [ 244MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_1@syncoid_orion_2025-04-02:20:00:57-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_1 (~ 15.2 GB):
+15.2GiB 0:01:06 [ 235MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_2@syncoid_orion_2025-04-02:20:02:03-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_2 (~ 15.7 GB):
+15.7GiB 0:01:06 [ 242MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_3@syncoid_orion_2025-04-02:20:03:10-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_3 (~ 15.2 GB):
+15.2GiB 0:01:03 [ 244MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_1@syncoid_orion_2025-04-02:20:04:14-GMT-05:00 to new target filesystem recv/test/l0_1/l1_1 (~ 15.3 GB):
+15.3GiB 0:01:04 [ 241MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_0@syncoid_orion_2025-04-02:20:05:19-GMT-05:00 to new target filesystem recv/test/l0_1/l1_1/l2_0 (~ 15.6 GB):
+15.6GiB 0:01:06 [ 241MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_1@syncoid_orion_2025-04-02:20:06:26-GMT-05:00 to new target filesystem recv/test/l0_1/l1_1/l2_1 (~ 15.3 GB):
+15.3GiB 0:01:04 [ 244MiB/s] [==================================================================================================&gt;] 100%            
+real 1966.58
+user 25.71
+sys 1834.88
+root@orion:~# 
+</code></pre></div>
             </div>
         </div>
 

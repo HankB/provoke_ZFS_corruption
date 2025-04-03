@@ -317,7 +317,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-03-01_Linux_Bookworm_bisect_0.8.6_2.0.0/setup/" class="dropdown-item">Git bisect 0.8.6 to 2.0.0</a>
+    <a href="../../2025-03-01_Linux_Bookworm_bisect_0.8.6_2.0.0/setup/" class="dropdown-item">Git bisect 0.8.6 to 2.0.0 - testing 2.0.0</a>
 </li>
     </ul>
   </li>
@@ -359,6 +359,24 @@
 </li>
     </ul>
   </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 good</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                         </ul>
@@ -375,7 +393,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/data/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -530,8 +548,9 @@ hbarta@orion:~$
 </code></pre>
 <h3 id="start-thrashing">start thrashing</h3>
 <pre><code class="language-text">cd
-mkdir /mnt/storage/logs.2025-04-02_Linux_Buster_4.18_2.0.0-1/
-ln -s /mnt/storage/logs.2025-04-02_Linux_Buster_4.18_2.0.0-1 /home/hbarta/logs
+mkdir /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6/
+rm /home/hbarta/logs
+ln -s /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6 /home/hbarta/logs
 mkdir -p bin
 export PATH=/home/hbarta/bin:$PATH
 tmux new -D -s &quot;stir&quot; thrash_stir.sh

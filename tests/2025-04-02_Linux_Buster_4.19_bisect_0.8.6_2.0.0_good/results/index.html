@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>setup - Provoke ZFS corruption</title>
+        <title>Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6 - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -275,7 +275,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="./" class="dropdown-item active">setup</a>
+    <a href="../../2025-02-23_Linux_Buster_2.0.0_patched/setup/" class="dropdown-item">setup</a>
 </li>
     </ul>
   </li>
@@ -365,15 +365,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="../data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="./" class="dropdown-item active">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
             
 <li>
-    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+    <a href="../setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
 </li>
     </ul>
   </li>
@@ -388,12 +388,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/setup/" class="nav-link">
+                                <a rel="prev" href="../data/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-02-24_Linux_Trixie_2.3.0_patched/data/" class="nav-link">
+                                <a rel="next" href="../setup/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -415,8 +415,16 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#setup" class="nav-link">setup</a>
+            <li class="nav-item" data-level="1"><a href="#results-git-bisect-086-to-200-testing-086" class="nav-link">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-02-02-test-start" class="nav-link">2025-02-02 test start</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-02-02-test-concluding" class="nav-link">2025-02-02 test concluding</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -424,8 +432,52 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="setup">setup</h1>
-<p>Intent is to apply patch <a href="https://github.com/openzfs/zfs/commit/0e29700318692cee74698d13d53d635e73a6cf28">https://github.com/openzfs/zfs/commit/0e29700318692cee74698d13d53d635e73a6cf28</a> but I cannot determine where it should go in 2.0.0 so this is deferred.</p></div>
+<h1 id="results-git-bisect-086-to-200-testing-086">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</h1>
+<ul>
+<li><a href="../setup/">Setup</a></li>
+<li><a href="../data/">Data</a></li>
+</ul>
+<h2 id="2025-02-02-test-start">2025-02-02 test start</h2>
+<p>Thrashing began about 2020 local time.</p>
+<h2 id="2025-02-02-test-concluding">2025-02-02 test concluding</h2>
+<p>At 0800 the following morning no corruption had been detected (as expected.) Previous testing with this same setup went much longer with no corruption so this test will be comncluded. Monitor output is:</p>
+<pre><code class="language-text">hbarta@orion:~$ monitor.sh 
+status
+  pool: recv
+ state: ONLINE
+  scan: none requested
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        recv                      ONLINE       0     0     0
+          wwn-0x5002538d40878f8e  ONLINE       0     0     0
+
+errors: No known data errors
+
+  pool: send
+ state: ONLINE
+  scan: none requested
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        send                      ONLINE       0     0     0
+          wwn-0x5002538d41628a33  ONLINE       0     0     0
+
+errors: No known data errors
+
+list
+
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   308G   156G        -         -    45%    66%  1.00x    ONLINE  -
+send   464G   329G   135G        -         -    54%    70%  1.00x    ONLINE  -
+
+send snapshot count
+3177
+
+recv snapshot count
+3107
+hbarta@orion:~$ 
+</code></pre></div>
             </div>
         </div>
 
