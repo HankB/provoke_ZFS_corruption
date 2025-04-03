@@ -1,4 +1,4 @@
-# Git bisect 0.8.6 to 2.0.0
+# Git bisect 0.8.6 to 2.0.0 - testing 2.0.0
 
 0.8.65 does not exhibit corruption and 2.0.0 does.
 
@@ -113,7 +113,7 @@ hbarta@orion:~/zfs$
 
 And build.
 
-```
+```text
 cd zfs
 sh autogen.sh
 ./configure
