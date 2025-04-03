@@ -156,8 +156,9 @@ hbarta@orion:~$
 
 ```text
 cd
-mkdir /mnt/storage/logs.2025-04-02_Linux_Buster_4.18_2.0.0-1/
-ln -s /mnt/storage/logs.2025-04-02_Linux_Buster_4.18_2.0.0-1 /home/hbarta/logs
+mkdir /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6/
+rm /home/hbarta/logs
+ln -s /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6 /home/hbarta/logs
 mkdir -p bin
 export PATH=/home/hbarta/bin:$PATH
 tmux new -D -s "stir" thrash_stir.sh
