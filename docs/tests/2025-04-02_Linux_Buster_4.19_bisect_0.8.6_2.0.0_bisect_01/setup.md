@@ -3,7 +3,7 @@
 ## 2025-04-03 remove ZFS
 
 ```text
-cd ~/zfx
+cd ~/zfs
 sudo make uninstall
 find /lib|grep zfs
 lsmod|grep zfs # shows ZFS modules still in kernel.
@@ -128,6 +128,9 @@ recv   464G   576K   464G        -         -     0%     0%  1.00x    ONLINE  -
 send   464G   239G   225G        -         -     0%    51%  1.00x    ONLINE  -
 root@orion:~# 
 ```
+
+[First syncoid (as root)](./data.md)
+
 ```text
 time -p syncoid --recursive --no-privilege-elevation send/test recv/test
 ```
