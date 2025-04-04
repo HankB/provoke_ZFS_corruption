@@ -61,7 +61,7 @@ zfs-kmod-0.8.6-1
 hbarta@orion:~/zfs$ 
 ```
 
-Secure erase targets (after confirmingv that `/dev/sdc` is still the boot drive.)
+Secure erase targets (after confirming that `/dev/sdc` is still the boot drive.)
 
 ```text
 sudo -s
@@ -116,4 +116,37 @@ recv   464G   576K   464G        -         -     0%     0%  1.00x    ONLINE  -
 send   464G   238G   226G        -         -     0%    51%  1.00x    ONLINE  -
 root@orion:~# 
 ```
+
+
+
+### start thrashing
+
+```text
+cd
+mkdir /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6/
+rm /home/hbarta/logs
+ln -s /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6 /home/hbarta/logs
+mkdir -p bin
+export PATH=/home/hbarta/bin:$PATH
+tmux new -D -s "stir" thrash_stir.sh
+tmux new -D -s syncoid thrash_syncoid.sh
+tmux new -D -s snaps manage_snaps.sh
+watch -n 30 monitor.sh
+```
+
+(Last 4 commands get their own SSH login.) Also running `sanoid` in a tight loop with the following configuration:
+
+```text
+[send/test]
+        use_template = production
+        frequently = 10
+        recursive = zfs
+
+[recv/test]
+        use_template = production
+        recursive = zfs
+        autosnap = no
+```
+
+Disabling the timer and looping manually using `thrash_sanoid.sh` 
 
