@@ -361,6 +361,24 @@
   </li>
                                     
   <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 01</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
     <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 good</a>
     <ul class="dropdown-menu">
             
@@ -374,6 +392,24 @@
             
 <li>
     <a href="./" class="dropdown-item active">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 04 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 02</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
 </li>
     </ul>
   </li>
@@ -393,7 +429,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/data/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -478,7 +514,7 @@ zfs-0.8.6-1
 zfs-kmod-0.8.6-1
 hbarta@orion:~/zfs$ 
 </code></pre>
-<p>Secure erase targets (after confirmingv that <code>/dev/sdc</code> is still the boot drive.)</p>
+<p>Secure erase targets (after confirming that <code>/dev/sdc</code> is still the boot drive.)</p>
 <pre><code class="language-text">sudo -s
 hdparm --user-master u --security-set-pass Eins /dev/sda
 hdparm --security-erase Eins /dev/sda
@@ -520,7 +556,31 @@ NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALT
 recv   464G   576K   464G        -         -     0%     0%  1.00x    ONLINE  -
 send   464G   238G   226G        -         -     0%    51%  1.00x    ONLINE  -
 root@orion:~# 
-</code></pre></div>
+</code></pre>
+<h3 id="start-thrashing">start thrashing</h3>
+<pre><code class="language-text">cd
+mkdir /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6/
+rm /home/hbarta/logs
+ln -s /mnt/storage/logs.2025-04-02_Linux_Buster_4.19_0.8.6 /home/hbarta/logs
+mkdir -p bin
+export PATH=/home/hbarta/bin:$PATH
+tmux new -D -s &quot;stir&quot; thrash_stir.sh
+tmux new -D -s syncoid thrash_syncoid.sh
+tmux new -D -s snaps manage_snaps.sh
+watch -n 30 monitor.sh
+</code></pre>
+<p>(Last 4 commands get their own SSH login.) Also running <code>sanoid</code> in a tight loop with the following configuration:</p>
+<pre><code class="language-text">[send/test]
+        use_template = production
+        frequently = 10
+        recursive = zfs
+
+[recv/test]
+        use_template = production
+        recursive = zfs
+        autosnap = no
+</code></pre>
+<p>Disabling the timer and looping manually using <code>thrash_sanoid.sh</code> </p></div>
             </div>
         </div>
 

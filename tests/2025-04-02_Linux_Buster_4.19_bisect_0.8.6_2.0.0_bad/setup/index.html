@@ -361,6 +361,24 @@
   </li>
                                     
   <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 01</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
     <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 good</a>
     <ul class="dropdown-menu">
             
@@ -374,6 +392,24 @@
             
 <li>
     <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 04 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 02</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
 </li>
     </ul>
   </li>
@@ -393,7 +429,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/data/" class="nav-link">
+                                <a rel="next" href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/data/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -520,6 +556,15 @@ root@orion:~#
 </code></pre>
 <h3 id="prepare-for-testing">Prepare for testing</h3>
 <pre><code class="language-text">/home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+</code></pre>
+<pre><code class="language-text">root@orion:~# time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+...
+Capacity target 50 met
++ exit
+real 2299.26
+user 70.48
+sys 2282.26
+root@orion:~# 
 </code></pre>
 <pre><code class="language-text">root@orion:~# zpool list
 NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
