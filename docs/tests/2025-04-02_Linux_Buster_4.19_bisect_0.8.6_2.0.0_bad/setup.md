@@ -119,6 +119,17 @@ root@orion:~#
 ```
 
 ```text
+root@orion:~# time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+...
+Capacity target 50 met
++ exit
+real 2299.26
+user 70.48
+sys 2282.26
+root@orion:~# 
+```
+
+```text
 root@orion:~# zpool list
 NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
 recv   464G   636K   464G        -         -     0%     0%  1.00x    ONLINE  -
