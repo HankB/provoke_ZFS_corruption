@@ -105,7 +105,6 @@ send   464G   239G   225G        -         -     0%    51%  1.00x    ONLINE  -
 root@orion:~# 
 ```
 
-
 [First syncoid (as root)](./data.md)
 
 ```text
