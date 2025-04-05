@@ -3,7 +3,7 @@
 * [Data](./data.md)
 * [Results](./results.md)
 
-## 2025-04-03 remove ZFS
+## 2025-04-04 remove ZFS
 
 ```text
 cd ~/zfs
