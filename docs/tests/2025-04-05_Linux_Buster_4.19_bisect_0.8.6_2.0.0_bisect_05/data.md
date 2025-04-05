@@ -1,6 +1,6 @@
 # Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect
 
-* [Results](./daresultsta.md)
+* [Results](./results.md)
 * [Setup](./setup.md)
 
 ## 2025-04-05 first syncoid
