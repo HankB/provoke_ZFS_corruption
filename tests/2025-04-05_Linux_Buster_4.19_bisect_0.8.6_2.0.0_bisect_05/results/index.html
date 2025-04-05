@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>Built - Provoke ZFS corruption</title>
+        <title>Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -327,7 +327,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="./" class="dropdown-item active">Built</a>
+    <a href="../../2025-03-03_Linux_Buster_5.4_bisect_0.8.6_2.0.0/setup/" class="dropdown-item">Built</a>
 </li>
     </ul>
   </li>
@@ -455,15 +455,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/data/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
+    <a href="../data/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
 </li>
             
 <li>
-    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
+    <a href="./" class="dropdown-item active">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
 </li>
             
 <li>
-    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
+    <a href="../setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
 </li>
     </ul>
   </li>
@@ -478,12 +478,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-03-01_Linux_Bookworm_bisect_0.8.6_2.0.0/setup/" class="nav-link">
+                                <a rel="prev" href="../data/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-03-03_Linux_Buster_5.9.16_bisect_0.8.6_2.0.0/Setup/" class="nav-link">
+                                <a rel="next" href="../setup/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -505,12 +505,8 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#built" class="nav-link">Built</a>
+            <li class="nav-item" data-level="1"><a href="#results-git-bisect-086-to-200-testing-fifth-bisect" class="nav-link">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#2025-03-05" class="nav-link">2025-03-05</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
               </ul>
             </li>
         </ul>
@@ -518,26 +514,74 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="built">Built</h1>
-<pre><code class="language-text">hbarta@orion:~/zfs$ git bisect reset
-Previous HEAD position was 78fac8d92 Fix kstat state update during pool transition
-HEAD is now at d2632f0cc Tag zfs-0.8.5
-hbarta@orion:~/zfs$ git bisect start
-hbarta@orion:~/zfs$ git bisect good 2bc6689
-hbarta@orion:~/zfs$ git bisect bad dcbf847
-Bisecting: a merge base must be tested
-[78fac8d925fdd64584292fbda4ed9e3e2bbaae66] Fix kstat state update during pool transition
-hbarta@orion:~/zfs$
+<h1 id="results-git-bisect-086-to-200-testing-fifth-bisect">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</h1>
+<ul>
+<li><a href="../data/">Data</a></li>
+<li><a href="../setup/">Setup</a></li>
+</ul>
+<p><a href="../data/#2025-04-05-last-syncoid">Output of the last <code>syncoid</code> run</a></p>
+<p>Non-priviledged invocation reports 83 (now 84) permanent errors</p>
+<pre><code class="language-text">hbarta@orion:~/logs$ zpool status send
+  pool: send
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: http://zfsonlinux.org/msg/ZFS-8000-8A
+  scan: none requested
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        send                      ONLINE       0     0     0
+          wwn-0x5002538d41628a33  ONLINE       0     0     0
+errors: List of errors unavailable: permission denied
+
+errors: 84 data errors, use '-v' for a list
+hbarta@orion:~/logs$ 
 </code></pre>
-<pre><code class="language-text">./configure
-...
-checking whether set_fs_pwd() requires const struct path *... configure: error: unknown
-</code></pre>
-<p>Tried suggestion to modify <code>config/kernel.m4</code> and did not fix. Fix at ... helps <code>.configure</code> succeed.</p>
-<pre><code class="language-text">KBUILD_MODPOST_WARN=1 ./configure
-</code></pre>
-<h2 id="2025-03-05">2025-03-05</h2>
-<p>Notes above are a bit scattershot. I was thrashing trying to figure out how to build older versions on ZFS and realized that I had inadvertently built and was using the 5.4.0 kernel which seems not wise. Now stepping back to build the 5.9.16 kernel.</p></div>
+<p>Priviledged reports only 5 and <code>-v</code> lists 7 files.</p>
+<pre><code class="language-text">hbarta@orion:~/logs$ sudo zpool status send
+  pool: send
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: http://zfsonlinux.org/msg/ZFS-8000-8A
+  scan: none requested
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        send                      ONLINE       0     0     0
+          wwn-0x5002538d41628a33  ONLINE       0     0     0
+
+errors: 5 data errors, use '-v' for a list
+hbarta@orion:~/logs$ 
+hbarta@orion:~/logs$ sudo zpool status send -v
+  pool: send
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: http://zfsonlinux.org/msg/ZFS-8000-8A
+  scan: none requested
+config:
+
+        NAME                      STATE     READ WRITE CKSUM
+        send                      ONLINE       0     0     0
+          wwn-0x5002538d41628a33  ONLINE       0     0     0
+
+errors: Permanent errors have been detected in the following files:
+
+        send/test/l0_1/l1_1/l2_0@syncoid_orion_2025-04-05:13:18:53-GMT-05:00:&lt;0x0&gt;
+        send/test/l0_1/l1_1/l2_1@1743877119.2025-04-05-1318:&lt;0x0&gt;
+        send/test/l0_1/l1_1@syncoid_orion_2025-04-05:13:18:51-GMT-05:00:&lt;0x0&gt;
+        send/test/l0_1/l1_0/l2_0@1743877074.2025-04-05-1317:&lt;0x0&gt;
+        send/test/l0_1/l1_0/l2_3@1743877074.2025-04-05-1317:&lt;0x0&gt;
+hbarta@orion:~/logs$ 
+</code></pre></div>
             </div>
         </div>
 
