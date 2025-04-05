@@ -1,4 +1,4 @@
-# rRsults: Git bisect 0.8.6 to 2.0.0 - testing second bisect
+# Results: Git bisect 0.8.6 to 2.0.0 - testing second bisect
 
 * [Setup](./setup.md)
 * [Data](./data.md)
