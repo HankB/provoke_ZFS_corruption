@@ -3,7 +3,7 @@
 * [Data](./data.md)
 * [Setup](./setup.md)
 
-Corruption in about half an hour. Monitor output
+Corruption in about two and a half hours. Monitor output
 
 ```text
 hbarta@orion:~$ monitor.sh 
