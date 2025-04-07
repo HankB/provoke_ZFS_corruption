@@ -503,6 +503,24 @@
 </li>
     </ul>
   </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 06 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 08</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/data/" class="dropdown-item">Data</a>
+</li>
+            
+<li>
+    <a href="tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/results/" class="dropdown-item">Results</a>
+</li>
+            
+<li>
+    <a href="tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                         </ul>
@@ -691,7 +709,7 @@
 <td>2025-04-02</td>
 <td>2025-04-03</td>
 <td><a href="tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results/">no corruption after 12 hours</a></td>
-<td>2.0.0-1</td>
+<td>0.8.6</td>
 <td>Debian 10</td>
 <td>4.19.0-27-amd64</td>
 <td>Confirm that 4.19 + 0.8.6 does not cause corruption</td>
@@ -700,16 +718,25 @@
 <td>2025-04-03</td>
 <td>2025-04-04</td>
 <td><a href="tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/results/">no corruption after 20 hours</a></td>
-<td>2.0.0-1</td>
+<td>78fac8d925fdd64584292fbda4ed9e3e2bbaae66</td>
 <td>Debian 10</td>
 <td>4.19.0-27-amd64</td>
-<td>first bisect between 2.0.0 and 0.8.6</td>
+<td>first bisect between 2.0.0 and 0.8.6,</td>
+</tr>
+<tr>
+<td>2025-04-03</td>
+<td>2025-04-04</td>
+<td><a href="tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/results/">corruption after 2 1/2 hours</a></td>
+<td>327000ce04b4243f140a38647dca59683d39b8e7</td>
+<td>Debian 10</td>
+<td>4.19.0-27-amd64</td>
+<td>2nd bisect</td>
 </tr>
 <tr>
 <td>2025-04-04</td>
 <td>2025-04-04</td>
 <td><a href="tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/results/">corruption after 2:50</a></td>
-<td>2.0.0-1</td>
+<td>eedb3a62b9f16b989aa02d00db63de5dff200572</td>
 <td>Debian 10</td>
 <td>4.19.0-27-amd64</td>
 <td>3rd bisect</td>
@@ -718,7 +745,7 @@
 <td>2025-04-04</td>
 <td>2025-04-05</td>
 <td><a href="tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_04/results/">corruption after 2 1/2 hours</a></td>
-<td>2.0.0-1</td>
+<td>1e620c98727a5a5cff1af70fef9bc25626b4e9d8</td>
 <td>Debian 10</td>
 <td>4.19.0-27-amd64</td>
 <td>4th bisect</td>
@@ -727,7 +754,7 @@
 <td>2025-04-05</td>
 <td>2025-04-05</td>
 <td><a href="tests/2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/results/">corruption after 3+ hours</a></td>
-<td>2.0.0-1</td>
+<td>a64f8276c7c2e121f438866d2f91ddff22031e7f</td>
 <td>Debian 10</td>
 <td>4.19.0-27-amd64</td>
 <td>5th bisect</td>
@@ -736,7 +763,7 @@
 <td>2025-04-05</td>
 <td>2025-04-06</td>
 <td><a href="tests/2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_06/results/">no corruption after 12+ hours</a></td>
-<td>2.0.0-1</td>
+<td>8e91c5ba6a1b2c607a1ed4a0a42b2d07eca13091</td>
 <td>Debian 10</td>
 <td>4.19.0-27-amd64</td>
 <td>6th bisect</td>
@@ -745,7 +772,16 @@
 <td>2025-04-06</td>
 <td>2025-04-06</td>
 <td><a href="tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_07/results/">no corruption after 11:30 hours</a></td>
-<td>2.0.0-1</td>
+<td>d9cd66e45f285356624d26eb92e10e2baf2738ee</td>
+<td>Debian 10</td>
+<td>4.19.0-27-amd64</td>
+<td>7th bisect</td>
+</tr>
+<tr>
+<td>2025-04-06</td>
+<td></td>
+<td><a href="tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/setup/">in progress</a></td>
+<td>b1b4ac27082aede8522e479c87897026519f1dd7</td>
 <td>Debian 10</td>
 <td>4.19.0-27-amd64</td>
 <td>7th bisect</td>
@@ -855,5 +891,5 @@
 
 <!--
 MkDocs version : 1.4.2
-Build Date UTC : 2025-04-07 02:13:53.779741+00:00
+Build Date UTC : 2025-04-07 03:29:21.314039+00:00
 -->

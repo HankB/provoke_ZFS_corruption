@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>Bisect 0.8.6 to 2.0.0 on Debian Buster running a user built 5.9.16 kernel - Provoke ZFS corruption</title>
+        <title>Results - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -337,7 +337,7 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="./" class="dropdown-item active">Bisect 0.8.6 to 2.0.0 on Debian Buster running a user built 5.9.16 kernel</a>
+    <a href="../../2025-03-03_Linux_Buster_5.9.16_bisect_0.8.6_2.0.0/Setup/" class="dropdown-item">Bisect 0.8.6 to 2.0.0 on Debian Buster running a user built 5.9.16 kernel</a>
 </li>
     </ul>
   </li>
@@ -509,15 +509,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/data/" class="dropdown-item">Data</a>
+    <a href="../data/" class="dropdown-item">Data</a>
 </li>
             
 <li>
-    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/results/" class="dropdown-item">Results</a>
+    <a href="./" class="dropdown-item active">Results</a>
 </li>
             
 <li>
-    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
+    <a href="../setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
 </li>
     </ul>
   </li>
@@ -532,12 +532,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../2025-03-03_Linux_Buster_5.4_bisect_0.8.6_2.0.0/setup/" class="nav-link">
+                                <a rel="prev" href="../data/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bad/data/" class="nav-link">
+                                <a rel="next" href="../setup/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -558,123 +558,12 @@
     
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
-            
-            <li class="nav-item" data-level="1"><a href="#bisect-086-to-200-on-debian-buster-running-a-user-built-5916-kernel" class="nav-link">Bisect 0.8.6 to 2.0.0 on Debian Buster running a user built 5.9.16 kernel</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#2025-03-06-clone-and-build-zfs" class="nav-link">2025-03-06 clone and build ZFS</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#2025-03-06-start-bisect" class="nav-link">2025-03-06 start bisect</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#2025-03-06-set-aside" class="nav-link">2025-03-06 set aside</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="bisect-086-to-200-on-debian-buster-running-a-user-built-5916-kernel">Bisect 0.8.6 to 2.0.0 on Debian Buster running a user built 5.9.16 kernel</h1>
-<p>And will re-clone the Github repo to insure a clean slate. Insuring that ZFS is not installed:</p>
-<pre><code class="language-text">hbarta@orion:~$ zfs
--bash: zfs: command not found
-hbarta@orion:~$ find /lib|grep zfs
-hbarta@orion:~$ 
-</code></pre>
-<p>Starting points for bisecting.</p>
-<ul>
-<li><a href="https://github.com/openzfs/zfs/releases/tag/zfs-2.0.0">https://github.com/openzfs/zfs/releases/tag/zfs-2.0.0</a> hash <code>dcbf847</code></li>
-<li><a href="https://github.com/openzfs/zfs/releases/tag/zfs-0.8.6">https://github.com/openzfs/zfs/releases/tag/zfs-0.8.6</a> hash <code>2bc6689</code></li>
-</ul>
-<p>Note: 0.8.6 released 2020-12-14 and 2.0.0 released prior on 2020-11-20.</p>
-<h2 id="2025-03-06-clone-and-build-zfs">2025-03-06 clone and build ZFS</h2>
-<p>Before starting bisect, verify that 0.8.6 and 2.0.0 can build.</p>
-<p>Following instructions at <a href="https://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html">https://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html</a></p>
-<pre><code class="language-text">git clone https://github.com/openzfs/zfs
-cd zfs
-git checkout master
-git checkout 2bc6689
-</code></pre>
-<pre><code class="language-text">hbarta@orion:~/zfs$ git checkout 2bc6689
-Note: checking out '2bc6689'.
-
-You are in 'detached HEAD' state. You can look around, make experimental
-changes and commit them, and you can discard any commits you make in this
-state without impacting any branches by performing another checkout.
-
-If you want to create a new branch to retain commits you create, you may
-do so (now or later) by using -b with the checkout command again. Example:
-
-  git checkout -b &lt;new-branch-name&gt;
-
-HEAD is now at 2bc66898b Tag zfs-0.8.6
-hbarta@orion:~/zfs$ 
-</code></pre>
-<pre><code class="language-text">sh autogen.sh
-./configure
-make -s -j$(nproc)
-</code></pre>
-<p><code>autogen.sh</code> and <code>configure</code> scripts complete w/out errors or warnings and <code>make</code> likewise completes. </p>
-<p>Now to build 2.0.0.</p>
-<pre><code class="language-text">make clean
-git checkout dcbf847
-</code></pre>
-<pre><code class="language-text">hbarta@orion:~/zfs$ git checkout dcbf847
-Previous HEAD position was 2bc66898b Tag zfs-0.8.6
-HEAD is now at dcbf84749 Tag 2.0.0
-hbarta@orion:~/zfs$ 
-</code></pre>
-<pre><code class="language-text">sh autogen.sh
-./configure
-
-</code></pre>
-<p>The scripts complete w/out error and the make fails with</p>
-<pre><code class="language-text">Making all in libzfs
-...
-make[3]: *** No rule to make target '../../module/zfs/cityhash.c', needed by 'cityhash.lo'.  Stop.
-make[3]: *** Waiting for unfinished jobs....
-  CC       bqueue.lo
-make[2]: *** [Makefile:678: all-recursive] Error 1
-make[1]: *** [Makefile:883: all-recursive] Error 1
-make: *** [Makefile:744: all] Error 2
-hbarta@orion:~/zfs$ find . -name cityhash.c
-./module/zcommon/cityhash.c
-hbarta@orion:~/zfs$ 
-</code></pre>
-<p>From <a href="https://github.com/openzfs/zfs/issues/10907">https://github.com/openzfs/zfs/issues/10907</a></p>
-<pre><code class="language-text">make distclean
-sh autogen.sh
-./configure
-make -s -j$(nproc)
-</code></pre>
-<p>And the build completed.</p>
-<h2 id="2025-03-06-start-bisect">2025-03-06 start bisect</h2>
-<pre><code class="language-text">hbarta@orion:~/zfs$ git bisect start
-hbarta@orion:~/zfs$ git bisect good 2bc6689
-hbarta@orion:~/zfs$ git bisect bad dcbf847
-Bisecting: a merge base must be tested
-[78fac8d925fdd64584292fbda4ed9e3e2bbaae66] Fix kstat state update during pool transition
-hbarta@orion:~/zfs$
-</code></pre>
-<p><code>autogen.sh</code> completed w/out errors. <code>configure</code> threw</p>
-<pre><code class="language-text">checking whether set_fs_pwd() requires const struct path *... configure: error: unknown
-</code></pre>
-<p>Fix possibly from <a href="https://github.com/openzfs/zfs/issues/8799">https://github.com/openzfs/zfs/issues/8799</a></p>
-<pre><code class="language-text">KBUILD_MODPOST_WARN=1 ./configure
-</code></pre>
-<p>Now throwing:</p>
-<pre><code class="language-text">checking whether make_request_fn() returns blk_qc_t... configure: error: no - Please file a bug report at
-                                    https://github.com/zfsonlinux/zfs/issues/new
-hbarta@orion:~/zfs$
-</code></pre>
-<h2 id="2025-03-06-set-aside">2025-03-06 set aside</h2>
-<p>Unable to build ZFS and 5.9 is likely not a good choice for building older releases. Returning to 4.19.</p></div>
+</div>
             </div>
         </div>
 
