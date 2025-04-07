@@ -21,13 +21,15 @@ Directory of tests starting with preliminary exploration.
 |2025-02-24||[corruption in 2 hours](./tests/2025-02-24_Linux_Trixie_2.3.0_patched/results.md)|2.3.0-1+patch|Debian Trixie|6.12.12-amd64	||
 |2025-02-25||[set aside](./tests/2025-02-26_Linux_Trixie_2.3.0_bzfs/setup.md#2025-02-26-results)|2.3.0-1|Debian Trixie|6.12.12-amd64|
 |2025-04-02|2025-04-02|[corruption in 2 hours](./tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bad/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|Confirm that 4.19 + 2.0.0 results in corruption|
-|2025-04-02|2025-04-03|[no corruption after 12 hours](./tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|Confirm that 4.19 + 0.8.6 does not cause corruption|
-|2025-04-03|2025-04-04|[no corruption after 20 hours](./tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|first bisect between 2.0.0 and 0.8.6|
-|2025-04-04|2025-04-04|[corruption after 2:50](./tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|3rd bisect|
-|2025-04-04|2025-04-05|[corruption after 2 1/2 hours](./tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_04/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|4th bisect|
-|2025-04-05|2025-04-05|[corruption after 3+ hours](./tests/2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|5th bisect|
-|2025-04-05|2025-04-06|[no corruption after 12+ hours](./tests/2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_06/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|6th bisect|
-|2025-04-06|2025-04-06|[no corruption after 11:30 hours](./tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_07/results.md)|2.0.0-1|Debian 10|4.19.0-27-amd64|7th bisect|
+|2025-04-02|2025-04-03|[no corruption after 12 hours](./tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results.md)|0.8.6|Debian 10|4.19.0-27-amd64|Confirm that 4.19 + 0.8.6 does not cause corruption|
+|2025-04-03|2025-04-04|[no corruption after 20 hours](./tests/2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/results.md)|78fac8d925fdd64584292fbda4ed9e3e2bbaae66|Debian 10|4.19.0-27-amd64|first bisect between 2.0.0 and 0.8.6, |
+|2025-04-03|2025-04-04|[corruption after 2 1/2 hours](./tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/results.md)|327000ce04b4243f140a38647dca59683d39b8e7|Debian 10|4.19.0-27-amd64|2nd bisect |
+|2025-04-04|2025-04-04|[corruption after 2:50](./tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/results.md)|eedb3a62b9f16b989aa02d00db63de5dff200572|Debian 10|4.19.0-27-amd64|3rd bisect |
+|2025-04-04|2025-04-05|[corruption after 2 1/2 hours](./tests/2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_04/results.md)|1e620c98727a5a5cff1af70fef9bc25626b4e9d8|Debian 10|4.19.0-27-amd64|4th bisect |
+|2025-04-05|2025-04-05|[corruption after 3+ hours](./tests/2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/results.md)|a64f8276c7c2e121f438866d2f91ddff22031e7f|Debian 10|4.19.0-27-amd64|5th bisect |
+|2025-04-05|2025-04-06|[no corruption after 12+ hours](./tests/2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_06/results.md)|8e91c5ba6a1b2c607a1ed4a0a42b2d07eca13091|Debian 10|4.19.0-27-amd64|6th bisect|
+|2025-04-06|2025-04-06|[no corruption after 11:30 hours](./tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_07/results.md)|d9cd66e45f285356624d26eb92e10e2baf2738ee|Debian 10|4.19.0-27-amd64|7th bisect |
+|2025-04-06||[in progress](./tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/setup.md)|b1b4ac27082aede8522e479c87897026519f1dd7|Debian 10|4.19.0-27-amd64|7th bisect|
 
 * `[1]` Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.
 
