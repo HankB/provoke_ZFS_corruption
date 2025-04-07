@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>Results - Provoke ZFS corruption</title>
+        <title>Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -509,11 +509,11 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../data/" class="dropdown-item">Data</a>
+    <a href="../data/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
 </li>
             
 <li>
-    <a href="./" class="dropdown-item active">Results</a>
+    <a href="./" class="dropdown-item active">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
 </li>
             
 <li>
@@ -558,12 +558,29 @@
     
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#results-git-bisect-086-to-200-testing-eighth-bisect" class="nav-link">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-04-07-no-corruption-but" class="nav-link">2025-04-07 no corruption, but ...</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-</div>
+<h1 id="results-git-bisect-086-to-200-testing-eighth-bisect">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</h1>
+<ul>
+<li><a href="../data/">Data</a></li>
+<li><a href="../setup/">Setup</a></li>
+</ul>
+<h2 id="2025-04-07-no-corruption-but">2025-04-07 no corruption, but ...</h2>
+<p>This test was problematic in that all ZFS commands required root. That required some ad-hoc script and commands to get it started and then one aspect (the custom snapshot management) was overlooked until morning. At that tome the pool was full and some snapshots were failing due to lack of space. Snapshot management was rerun with appropriate privileges and took quite a while to get things back to normal. Other processes were not paused so this loaded the storage system heavily. Following that the system was allowed to continue running for several hours longer just to confirm the "no corruption" detected.</p>
+<p>Before stopping the test, an additional command <code>zpool trim send</code> was executed. Before starting the next iteration, the <code>set -x</code> flag will be removed from the scripts where it was left in in order to make it easier to look for errors. Searching for "No space" in the log files indicates that the pool became full about 0500.</p>
+<p><a href="../data/#2024-04-07-final-pool-status">final pool status</a></p></div>
             </div>
         </div>
 

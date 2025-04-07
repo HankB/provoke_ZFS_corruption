@@ -509,11 +509,11 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../data/" class="dropdown-item">Data</a>
+    <a href="../data/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
 </li>
             
 <li>
-    <a href="../results/" class="dropdown-item">Results</a>
+    <a href="../results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
 </li>
             
 <li>
@@ -562,6 +562,10 @@
             <li class="nav-item" data-level="1"><a href="#setup-git-bisect-086-to-200-testing-eighth-bisect" class="nav-link">Setup: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
               <ul class="nav flex-column">
             <li class="nav-item" data-level="2"><a href="#2025-04-05-remove-zfs" class="nav-link">2025-04-05 remove ZFS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-04-07-checking-operation" class="nav-link">2025-04-07 checking operation</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -655,7 +659,68 @@ send   464G   238G   226G        -         -     0%    51%  1.00x    ONLINE  -
 root@orion:~# 
 </code></pre>
 <p><a href="../data/">First syncoid (as root)</a></p>
-<pre><code class="language-text"></code></pre></div>
+<pre><code class="language-text">root@orion:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 1992.24
+user 27.12
+sys 1924.31
+root@orion:~# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   238G   226G        -         -     0%    51%  1.00x    ONLINE  -
+send   464G   238G   226G        -         -     0%    51%  1.00x    ONLINE  -
+root@orion:~# 
+</code></pre>
+<p>Perms and related:</p>
+<pre><code class="language-text">user=hbarta
+chown -R $user:$user /mnt/send/ /mnt/recv/
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+</code></pre>
+<p>Repeat <code>syncoid</code> as user. Or not.</p>
+<pre><code class="language-text">hbarta@orion:~$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+WARNING: ZFS resume feature not available on source and target machine - sync will continue without resume support.
+Permission denied the ZFS utilities must be run as root.
+CRITICAL ERROR: no datasets found
+real 0.15
+user 0.13
+sys 0.02
+hbarta@orion:~$ 
+</code></pre>
+<p>Prepare logs, confirm <code>sanoid.timer</code> is disabled.</p>
+<pre><code class="language-text">cd
+mkdir /mnt/storage/logs.2025-04-06_Linux_Buster_4.19_bisect_8/
+rm /home/hbarta/logs
+ln -s /mnt/storage/logs.2025-04-06_Linux_Buster_4.19_bisect_8 /home/hbarta/logs
+systemctl status sanoid.timer
+</code></pre>
+<h3 id="start-thrashing">start thrashing</h3>
+<pre><code class="language-text">tmux new -D -s &quot;stir&quot; thrash_stir.sh
+tmux new -D -s syncoid thrash_syncoid.sh
+tmux new -D -s snaps manage_snaps.sh
+tmux new -D -s sanoid sudo /home/hbarta/bin/thrash_sanoid.sh
+watch -n 30 sudo /home/hbarta/bin/monitor.sh
+</code></pre>
+<p>Much ad-hoc tweaking of the scripts and commands to satisfy the requirement that all ZFS commands be run as root. GRRR. Testing rolling about 2315.</p>
+<h2 id="2025-04-07-checking-operation">2025-04-07 checking operation</h2>
+<pre><code class="language-text">hbarta@orion:~/logs$ sudo zpool list
+[sudo] password for hbarta: 
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   413G  51.4G        -         -    23%    88%  1.00x    ONLINE  -
+send   464G   446G  18.1G        -         -    65%    96%  1.00x    ONLINE  -
+hbarta@orion:~/logs$ 
+</code></pre>
+<pre><code class="language-text">send snapshot count
+14457
+
+recv snapshot count
+14792
+</code></pre>
+<p>Due to the "root only for ZFS" issue the scripted snapshots were not being trimmed. The 'stir' process complained about not being able to create snapshots. Fixed this morning and slowly unwinding, likely due to the number of snapshots and how busy the other tasks are keeping the pools. Once that settles, I need to let it run a couple more hours to insure this mis-operation did not nullify test results.</p>
+<p>Stopping the test at 1200 with no corruption reported.</p></div>
             </div>
         </div>
 
