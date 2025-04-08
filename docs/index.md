@@ -32,6 +32,7 @@ Directory of tests starting with preliminary exploration.
 |2025-04-06|2025-04-07|[no corruption during flawed test](./tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/results.md)|b1b4ac27082aede8522e479c87897026519f1dd7|Debian 10|4.19.0-27-amd64|8th bisect|
 |2025-04-07|2025-04-07|[corruption after 3 hours](./tests/2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_09/results.md)|0b755ec3d5ba531d2662da54fb9ac62627ce2c66|Debian 10|4.19.0-27-amd64|9th bisect|
 |2025-04-07|2025-04-08|[corruption after about 2 1/2 hours](./tests/2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/results.md)|30af21b02569ac192f52ce6e6511015f8a8d5729|Debian 10|4.19.0-27-amd64|10th bisect|
+|2025-04-07|2025-04-08|[in progress, 7 1/2 hours in](./tests/2025-04-08_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_11/setup.md)|c1b5801bb5af0055e5f3d263beaa07026103e212|Debian 10|4.19.0-27-amd64|11th bisect|
 
 * `[1]` Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.
 
