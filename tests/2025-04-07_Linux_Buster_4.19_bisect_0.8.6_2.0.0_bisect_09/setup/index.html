@@ -539,6 +539,24 @@
 </li>
     </ul>
   </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 07 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 10</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                         </ul>
@@ -555,7 +573,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/data/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -579,7 +597,7 @@
             
             <li class="nav-item" data-level="1"><a href="#setup-git-bisect-086-to-200-testing-ninth-bisect" class="nav-link">Setup: Git bisect 0.8.6 to 2.0.0 - testing ninth bisect</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#2025-04-05-remove-zfs" class="nav-link">2025-04-05 remove ZFS</a>
+            <li class="nav-item" data-level="2"><a href="#2025-04-07-remove-zfs" class="nav-link">2025-04-07 remove ZFS</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -595,7 +613,7 @@
 <li><a href="../data/">Data</a></li>
 <li><a href="../results/">Results</a></li>
 </ul>
-<h2 id="2025-04-05-remove-zfs">2025-04-05 remove ZFS</h2>
+<h2 id="2025-04-07-remove-zfs">2025-04-07 remove ZFS</h2>
 <pre><code class="language-text">cd ~/zfs
 sudo make uninstall
 ls -l $(find /usr/lib -name zfs.ko)
@@ -615,6 +633,7 @@ Bisecting: 4 revisions left to test after this (roughly 2 steps)
 [0b755ec3d5ba531d2662da54fb9ac62627ce2c66] Fix memory leak in check_disk()
 hbarta@orion:~/zfs$ 
 </code></pre>
+<p>Build</p>
 <pre><code class="language-text">make distclean
 sh autogen.sh
 ./configure

@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>Setup: Git bisect 0.8.6 to 2.0.0 - testing third bisect - Provoke ZFS corruption</title>
+        <title>Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - Provoke ZFS corruption</title>
         <link href="../../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -419,15 +419,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
 </li>
             
 <li>
-    <a href="../results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
 </li>
             
 <li>
-    <a href="./" class="dropdown-item active">Setup: Git bisect 0.8.6 to 2.0.0 - testing third bisect</a>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing third bisect</a>
 </li>
     </ul>
   </li>
@@ -545,15 +545,15 @@
     <ul class="dropdown-menu">
             
 <li>
-    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+    <a href="./" class="dropdown-item active">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
 </li>
             
 <li>
-    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+    <a href="../results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
 </li>
             
 <li>
-    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+    <a href="../setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
 </li>
     </ul>
   </li>
@@ -568,12 +568,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../results/" class="nav-link">
+                                <a rel="prev" href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_09/setup/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_04/data/" class="nav-link">
+                                <a rel="next" href="../results/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -595,9 +595,13 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#setup-git-bisect-086-to-200-testing-third-bisect" class="nav-link">Setup: Git bisect 0.8.6 to 2.0.0 - testing third bisect</a>
+            <li class="nav-item" data-level="1"><a href="#data-git-bisect-086-to-200-testing-tenth-bisect" class="nav-link">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#2025-04-04-remove-zfs" class="nav-link">2025-04-04 remove ZFS</a>
+            <li class="nav-item" data-level="2"><a href="#2025-04-08-first-syncoid" class="nav-link">2025-04-08 first syncoid</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2025-04-08-last-syncoid" class="nav-link">2025-04-08 last syncoid</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -608,132 +612,135 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="setup-git-bisect-086-to-200-testing-third-bisect">Setup: Git bisect 0.8.6 to 2.0.0 - testing third bisect</h1>
+<h1 id="data-git-bisect-086-to-200-testing-tenth-bisect">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</h1>
 <ul>
-<li><a href="../data/">Data</a></li>
+<li><a href="../setup/">Setup</a></li>
 <li><a href="../results/">Results</a></li>
 </ul>
-<h2 id="2025-04-04-remove-zfs">2025-04-04 remove ZFS</h2>
-<pre><code class="language-text">cd ~/zfs
-sudo make uninstall
-find /lib|grep zfs
-lsmod|grep zfs # shows ZFS modules still in kernel.
-reboot
-lsmod|grep zfs # no ZFS modules
+<h2 id="2025-04-08-first-syncoid">2025-04-08 first syncoid</h2>
+<pre><code class="language-text">root@orion:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+INFO: Sending oldest full snapshot send/test@syncoid_orion_2025-04-07:21:00:09-GMT-05:00 to new target filesystem recv/test (~ 86 KB):
+47.7KiB 0:00:00 [3.14MiB/s] [======================================================&gt;                                             ] 55%            
+INFO: Sending oldest full snapshot send/test/l0_0@syncoid_orion_2025-04-07:21:00:09-GMT-05:00 to new target filesystem recv/test/l0_0 (~ 15.1 GB):
+15.1GiB 0:01:05 [ 237MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0@syncoid_orion_2025-04-07:21:01:15-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0 (~ 15.4 GB):
+15.4GiB 0:01:06 [ 237MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_0@syncoid_orion_2025-04-07:21:02:21-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_0 (~ 15.2 GB):
+15.2GiB 0:01:05 [ 237MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_1@syncoid_orion_2025-04-07:21:03:28-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_1 (~ 15.7 GB):
+15.7GiB 0:01:08 [ 234MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_2@syncoid_orion_2025-04-07:21:04:37-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_2 (~ 15.6 GB):
+15.6GiB 0:01:07 [ 237MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_0/l2_3@syncoid_orion_2025-04-07:21:05:45-GMT-05:00 to new target filesystem recv/test/l0_0/l1_0/l2_3 (~ 15.6 GB):
+15.6GiB 0:01:07 [ 237MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1@syncoid_orion_2025-04-07:21:06:52-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1 (~ 15.8 GB):
+15.8GiB 0:01:07 [ 238MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_0@syncoid_orion_2025-04-07:21:08:01-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_0 (~ 15.7 GB):
+15.7GiB 0:01:07 [ 239MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_1@syncoid_orion_2025-04-07:21:09:08-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_1 (~ 15.7 GB):
+15.7GiB 0:01:07 [ 239MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_2@syncoid_orion_2025-04-07:21:10:16-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_2 (~ 15.4 GB):
+15.4GiB 0:01:05 [ 239MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_1/l2_3@syncoid_orion_2025-04-07:21:11:22-GMT-05:00 to new target filesystem recv/test/l0_0/l1_1/l2_3 (~ 15.3 GB):
+15.3GiB 0:01:05 [ 239MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2@syncoid_orion_2025-04-07:21:12:28-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2 (~ 15.6 GB):
+15.6GiB 0:01:07 [ 235MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_0@syncoid_orion_2025-04-07:21:13:36-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_0 (~ 15.6 GB):
+15.6GiB 0:01:06 [ 239MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_1@syncoid_orion_2025-04-07:21:14:43-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_1 (~ 15.6 GB):
+15.6GiB 0:01:07 [ 238MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_2@syncoid_orion_2025-04-07:21:15:51-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_2 (~ 15.4 GB):
+15.4GiB 0:01:07 [ 234MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_2/l2_3@syncoid_orion_2025-04-07:21:16:58-GMT-05:00 to new target filesystem recv/test/l0_0/l1_2/l2_3 (~ 15.3 GB):
+15.3GiB 0:01:06 [ 236MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3@syncoid_orion_2025-04-07:21:18:05-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3 (~ 15.5 GB):
+15.5GiB 0:01:06 [ 238MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_0@syncoid_orion_2025-04-07:21:19:12-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_0 (~ 15.6 GB):
+15.6GiB 0:01:07 [ 236MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_1@syncoid_orion_2025-04-07:21:20:20-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_1 (~ 15.4 GB):
+15.4GiB 0:01:07 [ 234MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_2@syncoid_orion_2025-04-07:21:21:28-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_2 (~ 14.9 GB):
+14.9GiB 0:01:03 [ 240MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_0/l1_3/l2_3@syncoid_orion_2025-04-07:21:22:32-GMT-05:00 to new target filesystem recv/test/l0_0/l1_3/l2_3 (~ 15.4 GB):
+15.4GiB 0:01:05 [ 242MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1@syncoid_orion_2025-04-07:21:23:38-GMT-05:00 to new target filesystem recv/test/l0_1 (~ 15.3 GB):
+15.3GiB 0:01:05 [ 238MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0@syncoid_orion_2025-04-07:21:24:44-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0 (~ 15.5 GB):
+15.5GiB 0:01:06 [ 238MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_0@syncoid_orion_2025-04-07:21:25:51-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_0 (~ 15.5 GB):
+15.5GiB 0:01:06 [ 237MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_1@syncoid_orion_2025-04-07:21:26:58-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_1 (~ 15.1 GB):
+15.1GiB 0:01:05 [ 235MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_2@syncoid_orion_2025-04-07:21:28:04-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_2 (~ 15.4 GB):
+15.4GiB 0:01:06 [ 236MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_0/l2_3@syncoid_orion_2025-04-07:21:29:11-GMT-05:00 to new target filesystem recv/test/l0_1/l1_0/l2_3 (~ 15.3 GB):
+15.3GiB 0:01:06 [ 236MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_1@syncoid_orion_2025-04-07:21:30:18-GMT-05:00 to new target filesystem recv/test/l0_1/l1_1 (~ 15.5 GB):
+15.5GiB 0:01:06 [ 238MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_0@syncoid_orion_2025-04-07:21:31:25-GMT-05:00 to new target filesystem recv/test/l0_1/l1_1/l2_0 (~ 15.8 GB):
+15.8GiB 0:01:08 [ 235MiB/s] [==================================================================================================&gt;] 100%            
+INFO: Sending oldest full snapshot send/test/l0_1/l1_1/l2_1@syncoid_orion_2025-04-07:21:32:34-GMT-05:00 to new target filesystem recv/test/l0_1/l1_1/l2_1 (~ 15.3 GB):
+15.4GiB 0:01:06 [ 237MiB/s] [==================================================================================================&gt;] 100%            
+real 2012.05
+user 27.95
+sys 1946.69
+root@orion:~# 
 </code></pre>
-<p>Confirm kernel and modules</p>
-<pre><code class="language-text">hbarta@orion:~$ lsmod|grep zfs # no ZFS modules
-hbarta@orion:~$ uname -a
-Linux orion 4.19.0-27-amd64 #1 SMP Debian 4.19.316-1 (2024-06-25) x86_64 GNU/Linux
-hbarta@orion:~$ 
-</code></pre>
-<p>Bisect</p>
-<pre><code class="language-text">hbarta@orion:~/zfs$ git bisect bad
-Bisecting: 314 revisions left to test after this (roughly 8 steps)
-[eedb3a62b9f16b989aa02d00db63de5dff200572] Make `zil_async_to_sync` visible to platform code
-hbarta@orion:~/zfs$ 
-</code></pre>
-<p>Build and install</p>
-<pre><code class="language-text">make distclean
-sh autogen.sh
-./configure
-time -p make -s -j$(nproc)
-sudo make install
-sudo ldconfig
-sudo modprobe zfs
-</code></pre>
-<pre><code class="language-text">hbarta@orion:~/zfs$ time -p make -s -j$(nproc)
-...
-real 106.08
-user 704.77
-sys 78.49
-hbarta@orion:~/zfs$ 
-</code></pre>
-<pre><code class="language-text">hbarta@orion:~/zfs$ zfs --version
-zfs-0.8.0-317_geedb3a62b
-zfs-kmod-0.8.0-317_geedb3a62b
-hbarta@orion:~/zfs$ 
-</code></pre>
-<p>Secure erase targets (after confirming that <code>/dev/sdc</code> is still the boot drive.)</p>
-<pre><code class="language-text">sudo -s
-hdparm --user-master u --security-set-pass Eins /dev/sda
-hdparm --security-erase Eins /dev/sda
-hdparm --user-master u --security-set-pass Eins /dev/sdb
-hdparm --security-erase Eins /dev/sdb
-</code></pre>
-<h3 id="create-pools">Create pools</h3>
-<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key 
-sudo zpool create -o ashift=12 \
-      -O acltype=posixacl -O canmount=on -O compression=lz4 \
-      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
-      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
-      -O mountpoint=/mnt/send \
-      send wwn-0x5002538d41628a33
-sudo zfs load-key -a
+<h2 id="2025-04-08-last-syncoid">2025-04-08 last syncoid</h2>
+<pre><code class="language-text">hbarta@orion:~/logs$ cat 2025-04-08-002644.syncoid.119.txt
+INFO: Sending incremental send/test@syncoid_orion_2025-04-08:00:24:46-GMT-05:00 ... syncoid_orion_2025-04-08:00:26:45-GMT-05:00 to recv/test (~ 4 KB):
+INFO: Sending incremental send/test/l0_0@syncoid_orion_2025-04-08:00:24:48-GMT-05:00 ... syncoid_orion_2025-04-08:00:26:47-GMT-05:00 to recv/test/l0_0 (~ 67.7 MB):
+INFO: Sending incremental send/test/l0_0/l1_0@syncoid_orion_2025-04-08:00:24:51-GMT-05:00 ... syncoid_orion_2025-04-08:00:26:51-GMT-05:00 to recv/test/l0_0/l1_0 (~ 69.5 MB):
+INFO: Sending incremental send/test/l0_0/l1_0/l2_0@syncoid_orion_2025-04-08:00:24:55-GMT-05:00 ... syncoid_orion_2025-04-08:00:26:56-GMT-05:00 to recv/test/l0_0/l1_0/l2_0 (~ 65.8 MB):
+INFO: Sending incremental send/test/l0_0/l1_0/l2_1@syncoid_orion_2025-04-08:00:24:58-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:00-GMT-05:00 to recv/test/l0_0/l1_0/l2_1 (~ 64.2 MB):
+INFO: Sending incremental send/test/l0_0/l1_0/l2_2@syncoid_orion_2025-04-08:00:25:02-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:04-GMT-05:00 to recv/test/l0_0/l1_0/l2_2 (~ 43.8 MB):
+INFO: Sending incremental send/test/l0_0/l1_0/l2_3@syncoid_orion_2025-04-08:00:25:06-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:08-GMT-05:00 to recv/test/l0_0/l1_0/l2_3 (~ 58.0 MB):
+INFO: Sending incremental send/test/l0_0/l1_1@syncoid_orion_2025-04-08:00:25:10-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:11-GMT-05:00 to recv/test/l0_0/l1_1 (~ 63.5 MB):
+INFO: Sending incremental send/test/l0_0/l1_1/l2_0@syncoid_orion_2025-04-08:00:25:14-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:16-GMT-05:00 to recv/test/l0_0/l1_1/l2_0 (~ 44.8 MB):
+INFO: Sending incremental send/test/l0_0/l1_1/l2_1@syncoid_orion_2025-04-08:00:25:18-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:19-GMT-05:00 to recv/test/l0_0/l1_1/l2_1 (~ 44.2 MB):
+INFO: Sending incremental send/test/l0_0/l1_1/l2_2@syncoid_orion_2025-04-08:00:25:22-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:23-GMT-05:00 to recv/test/l0_0/l1_1/l2_2 (~ 45.6 MB):
+INFO: Sending incremental send/test/l0_0/l1_1/l2_3@syncoid_orion_2025-04-08:00:25:27-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:26-GMT-05:00 to recv/test/l0_0/l1_1/l2_3 (~ 69.6 MB):
+INFO: Sending incremental send/test/l0_0/l1_2@syncoid_orion_2025-04-08:00:25:31-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:30-GMT-05:00 to recv/test/l0_0/l1_2 (~ 68.8 MB):
+INFO: Sending incremental send/test/l0_0/l1_2/l2_0@syncoid_orion_2025-04-08:00:25:35-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:34-GMT-05:00 to recv/test/l0_0/l1_2/l2_0 (~ 67.9 MB):
+INFO: Sending incremental send/test/l0_0/l1_2/l2_1@syncoid_orion_2025-04-08:00:25:39-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:39-GMT-05:00 to recv/test/l0_0/l1_2/l2_1 (~ 65.5 MB):
+INFO: Sending incremental send/test/l0_0/l1_2/l2_2@syncoid_orion_2025-04-08:00:25:42-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:43-GMT-05:00 to recv/test/l0_0/l1_2/l2_2 (~ 66.4 MB):
+INFO: Sending incremental send/test/l0_0/l1_2/l2_3@syncoid_orion_2025-04-08:00:25:46-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:48-GMT-05:00 to recv/test/l0_0/l1_2/l2_3 (~ 68.1 MB):
+INFO: Sending incremental send/test/l0_0/l1_3@syncoid_orion_2025-04-08:00:25:49-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:52-GMT-05:00 to recv/test/l0_0/l1_3 (~ 65.5 MB):
+INFO: Sending incremental send/test/l0_0/l1_3/l2_0@syncoid_orion_2025-04-08:00:25:53-GMT-05:00 ... syncoid_orion_2025-04-08:00:27:56-GMT-05:00 to recv/test/l0_0/l1_3/l2_0 (~ 67.4 MB):
+INFO: Sending incremental send/test/l0_0/l1_3/l2_1@syncoid_orion_2025-04-08:00:25:57-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:00-GMT-05:00 to recv/test/l0_0/l1_3/l2_1 (~ 69.5 MB):
+INFO: Sending incremental send/test/l0_0/l1_3/l2_2@syncoid_orion_2025-04-08:00:26:02-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:04-GMT-05:00 to recv/test/l0_0/l1_3/l2_2 (~ 66.1 MB):
+INFO: Sending incremental send/test/l0_0/l1_3/l2_3@syncoid_orion_2025-04-08:00:26:06-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:08-GMT-05:00 to recv/test/l0_0/l1_3/l2_3 (~ 66.3 MB):
+INFO: Sending incremental send/test/l0_1@syncoid_orion_2025-04-08:00:26:09-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:12-GMT-05:00 to recv/test/l0_1 (~ 50.5 MB):
+INFO: Sending incremental send/test/l0_1/l1_0@syncoid_orion_2025-04-08:00:26:13-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:16-GMT-05:00 to recv/test/l0_1/l1_0 (~ 53.2 MB):
+INFO: Sending incremental send/test/l0_1/l1_0/l2_0@syncoid_orion_2025-04-08:00:26:17-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:19-GMT-05:00 to recv/test/l0_1/l1_0/l2_0 (~ 45.7 MB):
+INFO: Sending incremental send/test/l0_1/l1_0/l2_1@syncoid_orion_2025-04-08:00:26:21-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:22-GMT-05:00 to recv/test/l0_1/l1_0/l2_1 (~ 42.4 MB):
+INFO: Sending incremental send/test/l0_1/l1_0/l2_2@syncoid_orion_2025-04-08:00:26:26-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:25-GMT-05:00 to recv/test/l0_1/l1_0/l2_2 (~ 67.5 MB):
+INFO: Sending incremental send/test/l0_1/l1_0/l2_3@syncoid_orion_2025-04-08:00:26:30-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:29-GMT-05:00 to recv/test/l0_1/l1_0/l2_3 (~ 69.6 MB):
+INFO: Sending incremental send/test/l0_1/l1_1@syncoid_orion_2025-04-08:00:26:34-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:33-GMT-05:00 to recv/test/l0_1/l1_1 (~ 66.6 MB):
+INFO: Sending incremental send/test/l0_1/l1_1/l2_0@syncoid_orion_2025-04-08:00:26:38-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:37-GMT-05:00 to recv/test/l0_1/l1_1/l2_0 (~ 64.9 MB):
+INFO: Sending incremental send/test/l0_1/l1_1/l2_1@syncoid_orion_2025-04-08:00:26:42-GMT-05:00 ... syncoid_orion_2025-04-08:00:28:41-GMT-05:00 to recv/test/l0_1/l1_1/l2_1 (~ 65.5 MB):
+internal error: Invalid argument
+Aborted
+cannot receive: failed to read from stream
+CRITICAL ERROR:  zfs send  -I 'send/test/l0_1/l1_1/l2_1'@'syncoid_orion_2025-04-08:00:26:42-GMT-05:00' 'send/test/l0_1/l1_1/l2_1'@'syncoid_orion_2025-04-08:00:28:41-GMT-05:00' | mbuffer  -q -s 128k -m 16M | pv -p -t -e -r -b -s 68661488 |  zfs receive  -s -F 'recv/test/l0_1/l1_1/l2_1' 2&gt;&amp;1 failed: 256
+errors: List of errors unavailable: permission denied
+  pool: send
+ state: ONLINE
+status: One or more devices has experienced an error resulting in data
+        corruption.  Applications may be affected.
+action: Restore the file in question if possible.  Otherwise restore the
+        entire pool from backup.
+   see: http://zfsonlinux.org/msg/ZFS-8000-8A
+  scan: none requested
+config:
 
-sudo zpool create -o ashift=12 \
-      -O acltype=posixacl -O canmount=on -O compression=lz4 \
-      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
-      -O mountpoint=/mnt/recv \
-      recv wwn-0x5002538d40878f8e
-</code></pre>
-<pre><code class="language-text">root@orion:~# zpool list
-NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
-recv   464G   432K   464G        -         -     0%     0%  1.00x    ONLINE  -
-send   464G   552K   464G        -         -     0%     0%  1.00x    ONLINE  -
-root@orion:~# 
-</code></pre>
-<h3 id="prepare-for-testing">prepare for testing</h3>
-<pre><code class="language-text">root@orion:~# time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
-...
-Capacity target 50 met
-+ exit
-real 2290.77
-user 68.50
-sys 2274.74
-root@orion:~# zpool list
-NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
-recv   464G   636K   464G        -         -     0%     0%  1.00x    ONLINE  -
-send   464G   240G   224G        -         -     0%    51%  1.00x    ONLINE  -
-root@orion:~# 
-</code></pre>
-<p><a href="../data/">First syncoid (as root)</a></p>
-<pre><code class="language-text">time -p syncoid --recursive --no-privilege-elevation send/test recv/test
-</code></pre>
-<p>Perms and related:</p>
-<pre><code class="language-text">user=hbarta
-chown -R $user:$user /mnt/send/ /mnt/recv/
-sudo zfs allow -u $user \
-    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
-    send
-sudo zfs allow -u $user \
-    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
-    recv
-</code></pre>
-<p>Repeat <code>syncoid</code> as user.</p>
-<pre><code class="language-text">hbarta@orion:~/zfs$ time -p syncoid --recursive --no-privilege-elevation send/test recv/test
-...
-real 13.26
-user 3.13
-sys 4.77
-hbarta@orion:~/zfs$ 
-</code></pre>
-<p>Prepare logs, confirm <code>sanoid.timer</code> is disabled.</p>
-<pre><code class="language-text">cd
-mkdir /mnt/storage/logs.2025-04-04_Linux_Buster_4.19_bisect_3/
-rm /home/hbarta/logs
-ln -s /mnt/storage/logs.2025-04-04_Linux_Buster_4.19_bisect_3 /home/hbarta/logs
-systemctl status sanoid.timer
-</code></pre>
-<h3 id="start-thrashing">start thrashing</h3>
-<pre><code class="language-text">tmux new -D -s &quot;stir&quot; thrash_stir.sh
-tmux new -D -s syncoid thrash_syncoid.sh
-tmux new -D -s snaps manage_snaps.sh
-tmux new -D -s sanoid sudo /home/hbarta/bin/thrash_sanoid.sh
-watch -n 30 monitor.sh
-</code></pre>
-<p>(These commands get their own SSH login.) </p>
-<p>Testing started at about 1610. Corruption detected at 1900 - 2:50.</p></div>
+        NAME                      STATE     READ WRITE CKSUM
+        send                      ONLINE       0     0     0
+          wwn-0x5002538d41628a33  ONLINE       0     0     0
+
+errors: 1 data errors, use '-v' for a list
+hbarta@orion:~/logs$ 
+</code></pre></div>
             </div>
         </div>
 
