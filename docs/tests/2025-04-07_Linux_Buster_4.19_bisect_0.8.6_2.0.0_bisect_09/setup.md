@@ -3,7 +3,7 @@
 * [Data](./data.md)
 * [Results](./results.md)
 
-## 2025-04-05 remove ZFS
+## 2025-04-07 remove ZFS
 
 ```text
 cd ~/zfs
@@ -31,6 +31,8 @@ Bisecting: 4 revisions left to test after this (roughly 2 steps)
 [0b755ec3d5ba531d2662da54fb9ac62627ce2c66] Fix memory leak in check_disk()
 hbarta@orion:~/zfs$ 
 ```
+
+Build
 
 ```text
 make distclean
