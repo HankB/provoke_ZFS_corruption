@@ -5,6 +5,8 @@
 * Blog: <https://HankB.github.io/provoke_ZFS_corruption/>
 * [Update on methodology](./methodology.md)
 
+Preliminary results of the bisect are [below](#2025-04-08-bisect-conclusion). There has been discussion during the testing at <https://github.com/openzfs/zfs/discussions/17203> and per suggestion, I will be repeating the test on 30af21b02569ac192f52ce6e6511015f8a8d5729. I have also add some further verification to the results for the final "good" test.
+
 Directory of tests starting with preliminary exploration.
 
 |started|completed|results|ZFS ver|OS|kernel ver|notes|
@@ -32,7 +34,77 @@ Directory of tests starting with preliminary exploration.
 |2025-04-06|2025-04-07|[no corruption during flawed test](./tests/2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/results.md)|b1b4ac27082aede8522e479c87897026519f1dd7|Debian 10|4.19.0-27-amd64|8th bisect|
 |2025-04-07|2025-04-07|[corruption after 3 hours](./tests/2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_09/results.md)|0b755ec3d5ba531d2662da54fb9ac62627ce2c66|Debian 10|4.19.0-27-amd64|9th bisect|
 |2025-04-07|2025-04-08|[corruption after about 2 1/2 hours](./tests/2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/results.md)|30af21b02569ac192f52ce6e6511015f8a8d5729|Debian 10|4.19.0-27-amd64|10th bisect|
-|2025-04-07|2025-04-08|[in progress, 7 1/2 hours in](./tests/2025-04-08_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_11/setup.md)|c1b5801bb5af0055e5f3d263beaa07026103e212|Debian 10|4.19.0-27-amd64|11th bisect|
+|2025-04-07|2025-04-08|[no corruption after 12 hours](./tests/2025-04-08_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_11/results.md)|c1b5801bb5af0055e5f3d263beaa07026103e212|Debian 10|4.19.0-27-amd64|11th bisect|
+
+## 2025-04-08 bisect conclusion
+
+Assuming the tests have successfully identified corruption, the result of the bisect is:
+
+```text
+hbarta@orion:~/zfs$ git bisect good
+30af21b02569ac192f52ce6e6511015f8a8d5729 is the first bad commit
+commit 30af21b02569ac192f52ce6e6511015f8a8d5729
+Author: Paul Dagnelie <pcd@delphix.com>
+Date:   Wed Jun 19 09:48:13 2019 -0700
+
+    Implement Redacted Send/Receive
+    
+    Redacted send/receive allows users to send subsets of their data to
+    a target system. One possible use case for this feature is to not
+    transmit sensitive information to a data warehousing, test/dev, or
+    analytics environment. Another is to save space by not replicating
+    unimportant data within a given dataset, for example in backup tools
+    like zrepl.
+    
+    Redacted send/receive is a three-stage process. First, a clone (or
+    clones) is made of the snapshot to be sent to the target. In this
+    clone (or clones), all unnecessary or unwanted data is removed or
+    modified. This clone is then snapshotted to create the "redaction
+    snapshot" (or snapshots). Second, the new zfs redact command is used
+    to create a redaction bookmark. The redaction bookmark stores the
+    list of blocks in a snapshot that were modified by the redaction
+    snapshot(s). Finally, the redaction bookmark is passed as a parameter
+    to zfs send. When sending to the snapshot that was redacted, the
+    redaction bookmark is used to filter out blocks that contain sensitive
+    or unwanted information, and those blocks are not included in the send
+    stream.  When sending from the redaction bookmark, the blocks it
+    contains are considered as candidate blocks in addition to those
+    blocks in the destination snapshot that were modified since the
+    creation_txg of the redaction bookmark.  This step is necessary to
+    allow the target to rehydrate data in the case where some blocks are
+    accidentally or unnecessarily modified in the redaction snapshot.
+    
+    The changes to bookmarks to enable fast space estimation involve
+    adding deadlists to bookmarks. There is also logic to manage the
+    life cycles of these deadlists.
+    
+    The new size estimation process operates in cases where previously
+    an accurate estimate could not be provided. In those cases, a send
+    is performed where no data blocks are read, reducing the runtime
+    significantly and providing a byte-accurate size estimate.
+    
+    Reviewed-by: Dan Kimmel <dan.kimmel@delphix.com>
+    Reviewed-by: Matt Ahrens <mahrens@delphix.com>
+    Reviewed-by: Prashanth Sreenivasa <pks@delphix.com>
+    Reviewed-by: John Kennedy <john.kennedy@delphix.com>
+    Reviewed-by: George Wilson <george.wilson@delphix.com>
+    Reviewed-by: Chris Williamson <chris.williamson@delphix.com>
+    Reviewed-by: Pavel Zhakarov <pavel.zakharov@delphix.com>
+    Reviewed-by: Sebastien Roy <sebastien.roy@delphix.com>
+    Reviewed-by: Prakash Surya <prakash.surya@delphix.com>
+    Reviewed-by: Brian Behlendorf <behlendorf1@llnl.gov>
+    Signed-off-by: Paul Dagnelie <pcd@delphix.com>
+    Closes #7958
+
+:040000 040000 22bddd232c24007744e929e18259e69cc01be8da 603ec1aaef6c1a7fab80168a9b5309f89fe13c5d M      cmd
+:100644 100644 db614084e37e3edbeef28f0430e85f41a0b46ac8 e0349a18219a5d12b0f1fdcb9b13ad079083d741 M      configure.ac
+:040000 040000 13ca95901c67684f0cdc178dc08e4e2c4f8a0f21 a31bf2b7324d52a429c7accfd2d482edbc9f742d M      include
+:040000 040000 f82837df7ff2132fcc3bb39c6ef925776cce2dcc a90467d84951a2c93f5bf0c02c12108855d995e6 M      lib
+:040000 040000 45d76cb23df175339c0624121e17b4a30f85ad41 3e3a905736d37756b766573b876c75b66084923b M      man
+:040000 040000 6ab2cf3acb56bf25c7b5762d8e7d205b1d9d47f7 ce8fe30aac453c96dc5875839b67d49a4ea63f0f M      module
+:040000 040000 9c3cc75a332d4b006ceb5a7b282a298ac8ecd704 937acde4124386561528a96e2869a98d9dea0aaa M      tests
+hbarta@orion:~/zfs$
+```
 
 * `[1]` Test ran for hours w/ wrong ownership and the stir process changed nothing. When file ownership was fixed, corruption was nearly instant.
 

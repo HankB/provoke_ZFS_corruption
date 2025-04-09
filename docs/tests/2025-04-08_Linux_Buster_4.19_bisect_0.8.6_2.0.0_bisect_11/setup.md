@@ -159,5 +159,4 @@ tmux new -D -s sanoid sudo /home/hbarta/bin/thrash_sanoid.sh
 watch -n 30 /home/hbarta/bin/monitor.sh
 ```
 
-Thrashing began at 1003
-
+Thrashing began at 1003 and terminated just short of 2200 with no corruption detected in 12 hours. [Results](./results.md).
