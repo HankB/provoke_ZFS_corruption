@@ -36,6 +36,7 @@ Directory of tests starting with preliminary exploration.
 |2025-04-07|2025-04-08|[corruption after about 2 1/2 hours](./tests/2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/results.md)|30af21b02569ac192f52ce6e6511015f8a8d5729|Debian 10|4.19.0-27-amd64|10th bisect|
 |2025-04-07|2025-04-08|[no corruption after 12 hours](./tests/2025-04-08_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_11/results.md)|c1b5801bb5af0055e5f3d263beaa07026103e212|Debian 10|4.19.0-27-amd64|11th bisect|
 |2025-04-07|2025-04-08|[corruption after 3 hours](./tests/2025-04-09_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10_repeat/results.md)|30af21b02569ac192f52ce6e6511015f8a8d5729|Debian 10|4.19.0-27-amd64|repeat 10th bisect|
+|2025-04-07|2025-04-08|[corruption after 3 hours](./tests/2025-04-10_Linux_Buster_4.19_30af21b_pool_settings_1/results.md)|30af21b02569ac192f52ce6e6511015f8a8d5729|Debian 10|4.19.0-27-amd64|modified pool settings|
 
 ## 2025-04-08 bisect conclusion
 
