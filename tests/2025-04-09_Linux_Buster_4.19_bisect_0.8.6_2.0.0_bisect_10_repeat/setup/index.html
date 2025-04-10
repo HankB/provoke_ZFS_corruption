@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat - Provoke ZFS corruption</title>
+        <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../../..">Provoke ZFS corruption</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../../.." class="nav-link">Blog version of provoke_ZFS_corruption</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../../methodology/" class="nav-link">methodology</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">First efforts <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../first-efforts/" class="dropdown-item">provoke ZFS corruption</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_1/" class="dropdown-item">X86 trial one</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2-elided/" class="dropdown-item">X86 trial ZFS from backports - elided syncoid output</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/X86_trial_2/" class="dropdown-item">X86 trial ZFS from backports</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-interesting/" class="dropdown-item">arm64 NVME 2.2.6 interesting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6-uninteresting/" class="dropdown-item">arm64 NVME 2.2.6 uninteresting</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_2.2.6/" class="dropdown-item">ARHM64 NVME ZFS 2.2.6</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_NVME_bullseye/" class="dropdown-item">ARM64 Pi CM4 test with older kernel</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/arm64_SATA_USB_trial/" class="dropdown-item">ARM64 SATA via ISB trial</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/initial-results/" class="dropdown-item">ARM64 Pi CM4 Initial Results</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/second-try/" class="dropdown-item">second try</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/syncoid-errors/" class="dropdown-item">syncoid errors</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_SATA_Buster/" class="dropdown-item">X86 SATA testing with Buster</a>
+</li>
+                                    
+<li>
+    <a href="../../../first-efforts/x86_trial_3/" class="dropdown-item">X86 third trial</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tests <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 03 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-03_methodology/additional/" class="dropdown-item">Additional information</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/results/" class="dropdown-item">2025-02-03 Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-03_methodology/setup/" class="dropdown-item">2025-02-03 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 05 methodology</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-05_methodology/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-05_methodology/results/" class="dropdown-item">results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-05_methodology/setup/" class="dropdown-item">2025-02-05 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 06 FreeBSD test</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/results/" class="dropdown-item">FreeBSD test results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-06_FreeBSD_test/setup/" class="dropdown-item">2025-02-06 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Buster 5.10 2.0.3</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/data/" class="dropdown-item">Data - Buster 5.10 and 2.0.3 repeat</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/results/" class="dropdown-item">Linux Buster kernel 5.10.0 with ZFS 2.0.3</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Buster_5.10_2.0.3/setup/" class="dropdown-item">Setup Buster 5.10 kernel and ZFS 2.0.3</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 11 Linux Repeat</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/data/" class="dropdown-item">Data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/results/" class="dropdown-item">Linux Repeat Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-11_Linux_Repeat/setup/" class="dropdown-item">2025-02-11 Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 FreeBSD 13 stock</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/data/" class="dropdown-item">FreeBSD 13 stock ZFS 2.1.</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/results/" class="dropdown-item">Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_FreeBSD_13_stock/setup/" class="dropdown-item">Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 12 Linux Buster 4.19 0.8.6</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/data/" class="dropdown-item">Data Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/results/" class="dropdown-item">Linux Buster 4.19 and 0.8.6 results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-12_Linux_Buster_4.19_0.8.6/setup/" class="dropdown-item">Setup Linux Buster 4.19 kernel with ZFS 0.8.6</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 22 Linux Buster 2.0.0 local build</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-22_Linux_Buster_2.0.0_local_build/data/" class="dropdown-item">Setup</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-22_Linux_Buster_2.0.0_local_build/results/" class="dropdown-item">Results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-22_Linux_Buster_2.0.0_local_build/setup/" class="dropdown-item">Setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 23 Linux Bookworm Trixie 2.3.0</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/results/" class="dropdown-item">Linux Trixie 2.3.0 results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-23_Linux_Bookworm_Trixie_2.3.0/setup/" class="dropdown-item">setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 23 Linux Buster 2.0.0 patched</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-23_Linux_Buster_2.0.0_patched/setup/" class="dropdown-item">setup</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 24 Linux Trixie 2.3.0 patched</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-24_Linux_Trixie_2.3.0_patched/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-24_Linux_Trixie_2.3.0_patched/results/" class="dropdown-item">Linux Trixie 2.3.0 patched results</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-24_Linux_Trixie_2.3.0_patched/setup/" class="dropdown-item">Linux Trixie 2.3.0 patched</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 02 26 Linux Trixie 2.3.0 bzfs</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-02-26_Linux_Trixie_2.3.0_bzfs/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-02-26_Linux_Trixie_2.3.0_bzfs/setup/" class="dropdown-item">Linux Trixie 2.3.0 bzfs</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 03 01 Linux Bookworm bisect 0.8.6 2.0.0</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-03-01_Linux_Bookworm_bisect_0.8.6_2.0.0/setup/" class="dropdown-item">Git bisect 0.8.6 to 2.0.0 - testing 2.0.0</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 03 03 Linux Buster 5.4 bisect 0.8.6 2.0.0</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-03-03_Linux_Buster_5.4_bisect_0.8.6_2.0.0/setup/" class="dropdown-item">Built</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 03 03 Linux Buster 5.9.16 bisect 0.8.6 2.0.0</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-03-03_Linux_Buster_5.9.16_bisect_0.8.6_2.0.0/Setup/" class="dropdown-item">Bisect 0.8.6 to 2.0.0 on Debian Buster running a user built 5.9.16 kernel</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 bad</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bad/data/" class="dropdown-item">data</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bad/results/" class="dropdown-item">results</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bad/setup/" class="dropdown-item">Setup - Buster 4.19 kernel bisect 0.8.6 through 2.0.0</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 01</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_01/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing first bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 02 Linux Buster 4.19 bisect 0.8.6 2.0.0 good</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-02_Linux_Buster_4.19_bisect_0.8.6_2.0.0_good/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing 0.8.6</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 04 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 02</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_02/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 04 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 03</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing second bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_03/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing third bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 04 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 04</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_04/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing fourth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_04/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing fourth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-04_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_04/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing fourth bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 05 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 05</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/data/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_05/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing fifth bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 05 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 06</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_06/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing sixth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_06/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing sixth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-05_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_06/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing sixth bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 06 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 07</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_07/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing sixth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_07/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing sixth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_07/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing seventh bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 06 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 08</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/data/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-06_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_08/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing eighth bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 07 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 09</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_09/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing ninth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_09/results/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing ninth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_09/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing ninth bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 07 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 10</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-07_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_10/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 08 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 11</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-08_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_11/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-08_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_11/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-08_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_11/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing eleventh bisect</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 09 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 10 repeat</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</a>
+</li>
+            
+<li>
+    <a href="../results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">2025 04 09 Linux Buster 4.19 bisect 0.8.6 2.0.0 bisect 9 repeat</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../2025-04-09_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_9_repeat/data/" class="dropdown-item">Data: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-09_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_9_repeat/results/" class="dropdown-item">Results: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</a>
+</li>
+            
+<li>
+    <a href="../../2025-04-09_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_9_repeat/setup/" class="dropdown-item">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../results/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../2025-04-09_Linux_Buster_4.19_bisect_0.8.6_2.0.0_bisect_9_repeat/data/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-light">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#setup-git-bisect-086-to-200-testing-tenth-bisect-repeat" class="nav-link">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#2025-04-09-remove-zfs" class="nav-link">2025-04-09 remove ZFS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="setup-git-bisect-086-to-200-testing-tenth-bisect-repeat">Setup: Git bisect 0.8.6 to 2.0.0 - testing tenth bisect - repeat</h1>
+<ul>
+<li><a href="../data/">Data</a></li>
+<li><a href="../results/">Results</a></li>
+<li><a href="../../../">home/index</a></li>
+</ul>
+<h2 id="2025-04-09-remove-zfs">2025-04-09 remove ZFS</h2>
+<pre><code class="language-text">cd ~/zfs
+sudo make uninstall
+ls -l $(find /usr/lib -name zfs.ko)
+lsmod|grep zfs # shows ZFS modules still in kernel.
+reboot
+lsmod|grep zfs # no ZFS modules
+</code></pre>
+<p>Confirm kernel and modules</p>
+<pre><code class="language-text">hbarta@orion:~$ lsmod|grep zfs # no ZFS modules
+hbarta@orion:~$ uname -a
+Linux orion 4.19.0-27-amd64 #1 SMP Debian 4.19.316-1 (2024-06-25) x86_64 GNU/Linux
+hbarta@orion:~$ 
+</code></pre>
+<p>Checkout</p>
+<pre><code class="language-text">hbarta@orion:~/zfs$ git checkout 30af21b02569ac192f52ce6e6511015f8a8d5729
+Previous HEAD position was 0b755ec3d Fix memory leak in check_disk()
+HEAD is now at 30af21b02 Implement Redacted Send/Receive
+hbarta@orion:~/zfs$ 
+</code></pre>
+<p>Build</p>
+<pre><code class="language-text">make distclean
+sh autogen.sh
+./configure
+time -p make -s -j$(nproc)
+sudo make install
+sudo ldconfig
+sudo modprobe zfs
+zfs --version
+ls -l $(find /usr/lib -name zfs.ko)
+</code></pre>
+<pre><code class="language-text">hbarta@orion:~/zfs$ zfs --version
+zfs-0.8.0-72_g30af21b02
+zfs-kmod-0.8.0-72_g30af21b02
+hbarta@orion:~/zfs$ ls -l $(find /usr/lib -name zfs.ko)
+-rw-r--r-- 1 root root 67454008 Apr  9 16:52 /usr/lib/modules/4.19.0-27-amd64/extra/zfs/zfs.ko
+hbarta@orion:~/zfs$ 
+</code></pre>
+<p>Secure erase targets (after confirming that <code>/dev/sdc</code> is still the boot drive.)</p>
+<pre><code class="language-text">sudo -s
+hdparm --user-master u --security-set-pass Eins /dev/sda
+hdparm --security-erase Eins /dev/sda
+hdparm --user-master u --security-set-pass Eins /dev/sdb
+hdparm --security-erase Eins /dev/sdb
+</code></pre>
+<h3 id="create-pools">Create pools</h3>
+<pre><code class="language-text">dd if=/dev/urandom bs=32 count=1 of=/pool-key 
+sudo zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+      -O mountpoint=/mnt/send \
+      send wwn-0x5002538d41628a33
+sudo zfs load-key -a
+
+sudo zpool create -o ashift=12 \
+      -O acltype=posixacl -O canmount=on -O compression=lz4 \
+      -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+      -O mountpoint=/mnt/recv \
+      recv wwn-0x5002538d40878f8e
+</code></pre>
+<pre><code class="language-text">root@orion:/home/hbarta/zfs# sudo zpool create -o ashift=12 \
+&gt;       -O acltype=posixacl -O canmount=on -O compression=lz4 \
+&gt;       -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+&gt;       -O encryption=aes-256-gcm  -O keylocation=file:///pool-key -O keyformat=raw \
+&gt;       -O mountpoint=/mnt/send \
+&gt;       send wwn-0x5002538d41628a33
+root@orion:/home/hbarta/zfs# sudo zfs load-key -a
+root@orion:/home/hbarta/zfs# 
+root@orion:/home/hbarta/zfs# sudo zpool create -o ashift=12 \
+&gt;       -O acltype=posixacl -O canmount=on -O compression=lz4 \
+&gt;       -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+&gt;       -O mountpoint=/mnt/recv \
+&gt;       recv wwn-0x5002538d40878f8e
+root@orion:/home/hbarta/zfs# zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+recv   464G   552K   464G        -         -     0%     0%  1.00x    ONLINE  -
+send   464G   708K   464G        -         -     0%     0%  1.00x    ONLINE  -
+root@orion:/home/hbarta/zfs# 
+</code></pre>
+<h3 id="prepare-for-testing">prepare for testing</h3>
+<pre><code class="language-text">root@orion:~# time -p /home/hbarta/provoke_ZFS_corruption/scripts/populate_pool.sh
+...
+Capacity target 50 met
+real 2300.91
+user 68.76
+sys 2283.41
+root@orion:~#
+</code></pre>
+<p>First syncoid as root:</p>
+<pre><code class="language-text">root@orion:~# time -p syncoid --recursive --no-privilege-elevation send/test recv/test
+...
+real 2010.42
+user 29.00
+sys 1944.35
+root@orion:~#
+</code></pre>
+<p><a href="../data/#2025-04-09-first-syncoid">first syncoid log</a></p>
+<p>Perms and related:</p>
+<pre><code class="language-text">user=hbarta
+chown -R $user:$user /mnt/send/ /mnt/recv/
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    send
+sudo zfs allow -u $user \
+    compression,create,destroy,hold,mount,mountpoint,receive,send,snapshot,destroy,rollback \
+    recv
+</code></pre>
+<p>Repeat <code>syncoid</code> as user.</p>
+<p>Prepare logs, confirm <code>sanoid.timer</code> is disabled.</p>
+<pre><code class="language-text">cd
+mkdir /mnt/storage/logs.2025-04-09_Linux_Buster_4.19_bisect_10_repeat/
+rm /home/hbarta/logs
+ln -s /mnt/storage/logs.2025-04-09_Linux_Buster_4.19_bisect_10_repeat /home/hbarta/logs
+systemctl status sanoid.timer
+</code></pre>
+<h3 id="start-thrashing">start thrashing</h3>
+<pre><code class="language-text">tmux new -D -s &quot;stir&quot; thrash_stir.sh
+tmux new -D -s syncoid thrash_syncoid.sh
+tmux new -D -s snaps manage_snaps.sh
+tmux new -D -s sanoid sudo /home/hbarta/bin/thrash_sanoid.sh
+watch -n 30 /home/hbarta/bin/monitor.sh
+</code></pre>
+<p>Testing started about 1830 and corruption was detected at 2130.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../../js/base.js" defer></script>
+        <script src="../../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
